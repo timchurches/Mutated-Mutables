@@ -243,7 +243,7 @@ class Settings {
     return data_.signature;
   }
 
-  inline bool meta_modulation() const {
+  inline uint8_t meta_modulation() const {
     return data_.meta_modulation;
   }
   

@@ -92,6 +92,7 @@ enum DigitalOscillatorShape {
   OSC_SHAPE_SNARE,
   OSC_SHAPE_HAT,
 
+  // Leave this here because it marks the end of the oscillator model list.
   OSC_SHAPE_QUESTION_MARK_LAST
 };
 

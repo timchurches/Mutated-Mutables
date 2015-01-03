@@ -71,15 +71,34 @@ class Envelope {
     phase_ = 0;
   }
 
-  inline uint16_t Render() {
+  inline uint16_t Render(bool LfoMode, uint8_t EnvType) {
     uint32_t increment = increment_[segment_];
     phase_ += increment;
+    // Kickstart the LFO if in LFO mode and not already looping
+    if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
+    } 
+
     if (phase_ < increment) {
       value_ = Mix(a_, b_, 65535);
-      Trigger(static_cast<EnvelopeSegment>(segment_ + 1));
+      // This makes the envelope loop if LFO mode selected in META
+      if (LfoMode && segment_ == ENV_SEGMENT_DECAY) {        
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
+      } 
+      else { 
+         Trigger(static_cast<EnvelopeSegment>(segment_ + 1));
+      }
     }
     if (increment_[segment_]) {
-      value_ = Mix(a_, b_, Interpolate824(lut_env_expo, phase_));
+      if (EnvType == 0) {
+         value_ = Mix(a_, b_, Interpolate824(lut_env_expo, phase_));
+      }
+      else if (EnvType == 1) {
+         value_ = Mix(a_, b_, Interpolate824(lut_env_linear, phase_));
+      }         
+      else if (EnvType == 2) {
+         value_ = Mix(a_, b_, Interpolate824(lut_env_wiggly, phase_));
+      }         
     }
     return value_;
   }

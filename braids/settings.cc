@@ -31,7 +31,9 @@
 #include <cstring>
 
 #include "stmlib/system/storage.h"
-#include "stmlib/utils/murmurhash3.h"
+
+// Easter egg disable, murmurhash3 not required.
+// #include "stmlib/utils/murmurhash3.h"
 
 namespace braids {
 
@@ -85,10 +87,12 @@ void Settings::Save() {
 }
 
 void Settings::CheckPaques() {
-  paques_ = !strcmp(data_.marquee_text, "49");
+  // Disable ability to invoke Easter egg mode
+  // paques_ = !strcmp(data_.marquee_text, "49");
+  paques_ = false;
 }
 
-const char* const boolean_values[] = { "OFF ", "ON " };
+const char* const boolean_values[] = { "OFF ", "ON  " };
 
 const char* const algo_values[] = {
     "CSAW",
@@ -143,7 +147,7 @@ const char* const bits_values[] = {
     "4BIT",
     "6BIT",
     "8BIT",
-    "12B",
+    "12B ",
     "16B " };
     
 const char* const rates_values[] = {
@@ -188,14 +192,45 @@ const char* const ad_shape_values[] = {
     "LONG",
     "SLOW",
     "WOMP",
-    "YIFF"
+    "YIFF",
+    "M005",
+    "M010",
+    "M020",
+    "M030",
+    "M040",
+    "M050",
+    "M060",
+    "M070",
+    "M080",
+    "M090",
+    "M100",
+    "M110",
+    "M120",
+    "M130",    
+    "M140",    
+    "M150",    
+    "M160",    
+    "M170",    
+    "M180",    
+    "M190",    
+    "M200",    
+    "M210",    
+    "M220",    
+    "M230",    
+    "M240",    
+    "M250",    
+    "M255",    
 };
 
 const char* const trig_destination_values[] = {
     "SYNC",
     "TIMB",
     "LEVL",
-    "BOTH",
+    "T+L ",
+    "COLR",
+    "T+C ",
+    "L+C ",
+    "ALL "
 };
 
 const char* const brightness_values[] = {
@@ -204,15 +239,45 @@ const char* const brightness_values[] = {
     "\xff\xff\xff\xff",
 };
 
+const char* const meta_values[] = { 
+    "OFF ",
+    "MODL",
+    "ATTK",
+    "DCAY",
+    "AD02",
+    "AD05",
+    "AD10",
+    "AD15",
+    "AD20",
+    "AD30",
+    "AD40",
+    "AD50",
+    "AD75",
+    "A=D ",
+    "DA90",
+    "DA80",
+    "DA70",
+    "DA60",
+    "DA50",
+    "DA25",
+    "DA10",
+    "LFOX",
+    "LFO^",
+    "LFOw",
+    "LFO\x8F",
+    "LFO\x88",
+};
+
+
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 2, "WAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
   { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
-  { 0, 3, "TDST", trig_destination_values },
+  { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 1, "META", boolean_values },
+  { 0, 25, "META", meta_values },
   { 0, 3, "RANG", pitch_range_values },
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -220,7 +285,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "DRFT", boolean_values },
   { 0, 1, "SIGN", boolean_values },
   { 0, 2, "BRIG", brightness_values },
-  { 0, 8, "TENV", ad_shape_values },
+  { 0, 35, "TENV", ad_shape_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "    ", NULL },  // Placeholder for marquee

@@ -165,7 +165,7 @@ characters = {
   '\x8C': 'efabc', # Square
   '\x8D': 'epkc',   # Baby square
   '\x8E': 'dhm',   # Pulse
-  '\x8F': 'efgkc', # ADSR
+  '\x8F': 'glef', # Ramp
   
   # Spinner
   '\x90': 'abcdefn',

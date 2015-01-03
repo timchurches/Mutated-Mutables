@@ -74,6 +74,8 @@ extern const uint16_t lut_vco_detune[];
 extern const uint16_t lut_bell[];
 extern const uint16_t lut_fof_envelope[];
 extern const uint16_t lut_env_expo[];
+extern const uint16_t lut_env_linear[];
+extern const uint16_t lut_env_wiggly[];
 extern const int16_t lut_blep[];
 extern const int16_t lut_blowing_jet[];
 extern const uint32_t lut_oscillator_increments[];
@@ -103,7 +105,6 @@ extern const int16_t ws_sine_fold[];
 extern const int16_t ws_tri_fold[];
 extern const uint8_t wt_waves[];
 extern const uint8_t wt_map[];
-extern const uint8_t wt_code[];
 extern const uint16_t chr_characters[];
 #define STR_DUMMY 0  // dummy
 #define LUT_RESONATOR_COEFFICIENT 0
@@ -138,6 +139,10 @@ extern const uint16_t chr_characters[];
 #define LUT_FOF_ENVELOPE_SIZE 1025
 #define LUT_ENV_EXPO 15
 #define LUT_ENV_EXPO_SIZE 257
+#define LUT_ENV_LINEAR 16
+#define LUT_ENV_LINEAR_SIZE 257
+#define LUT_ENV_WIGGLY 17
+#define LUT_ENV_WIGGLY_SIZE 257
 #define LUT_BLEP 0
 #define LUT_BLEP_SIZE 5429
 #define LUT_BLOWING_JET 1
@@ -196,8 +201,6 @@ extern const uint16_t chr_characters[];
 #define WT_WAVES_SIZE 33024
 #define WT_MAP 1
 #define WT_MAP_SIZE 256
-#define WT_CODE 2
-#define WT_CODE_SIZE 1064
 #define CHR_CHARACTERS 0
 #define CHR_CHARACTERS_SIZE 256
 
