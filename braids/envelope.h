@@ -61,8 +61,8 @@ class Envelope {
     target_[ENV_SEGMENT_SUSTAIN] = target_[ENV_SEGMENT_DECAY];
   }
   
-  inline void Trigger(EnvelopeSegment segment) {
-    if (segment == ENV_SEGMENT_DEAD) {
+  inline void Trigger(EnvelopeSegment segment, bool LfoMode) {
+    if (segment == ENV_SEGMENT_DEAD || (segment == ENV_SEGMENT_ATTACK && LfoMode)) {
       value_ = 0;
     }
     a_ = value_;
@@ -76,17 +76,17 @@ class Envelope {
     phase_ += increment;
     // Kickstart the LFO if in LFO mode and not already looping
     if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
-         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK), LfoMode);  
     } 
 
     if (phase_ < increment) {
       value_ = Mix(a_, b_, 65535);
       // This makes the envelope loop if LFO mode selected in META
-      if (LfoMode && segment_ == ENV_SEGMENT_DECAY) {        
-         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
+      if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK), LfoMode);  
       } 
       else { 
-         Trigger(static_cast<EnvelopeSegment>(segment_ + 1));
+         Trigger(static_cast<EnvelopeSegment>(segment_ + 1), LfoMode);
       }
     }
     if (increment_[segment_]) {
@@ -102,16 +102,6 @@ class Envelope {
       else if (EnvType == 3) {
          value_ = Mix(a_, b_, Interpolate824(ws_moderate_overdrive, phase_) + 32766);
       }   
-      // else if (EnvType == 3) {
-      //   // sine LFO mode runs at double rate
-      //   if (segment_ < ENV_SEGMENT_DECAY) {
-      //      value_ = Mix(a_, b_, Interpolate824(wav_sine, phase_) + 32512);
-      //   }
-      //   else
-      //   {
-      //      value_ = Mix(b_, a_, Interpolate824(wav_sine, phase_) + 32512);         
-      //   }
-      // }               
       else if (EnvType == 4) {
          value_ = Mix(a_, b_, Interpolate824(ws_violent_overdrive, phase_) + 32766);
       }   

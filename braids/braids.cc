@@ -443,7 +443,7 @@ void RenderBlock() {
 
   if (trigger_flag) {
     osc.Strike();
-    envelope.Trigger(ENV_SEGMENT_ATTACK);
+    envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 20);
     ui.StepMarquee();
     trigger_flag = false;
   }
