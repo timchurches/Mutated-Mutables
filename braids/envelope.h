@@ -99,6 +99,15 @@ class Envelope {
       else if (EnvType == 2) {
          value_ = Mix(a_, b_, Interpolate824(lut_env_wiggly, phase_));
       }         
+      else if (EnvType == 3) {
+         // sine LFO mode runs at double rate
+         if (segment_ < ENV_SEGMENT_DECAY) {
+            value_ = Mix(a_, b_, Interpolate824(wav_sine, phase_) + 32512);
+         }
+         else {
+            value_ = Mix(b_, a_, Interpolate824(wav_sine, phase_) + 32512);         
+         }
+      }         
     }
     return value_;
   }
