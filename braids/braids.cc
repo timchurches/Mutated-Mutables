@@ -323,17 +323,25 @@ void RenderBlock() {
       // exponential envelope curve
       ad_value = envelope.Render(true, 0);
   }
-  else if (settings.meta_modulation() == 26) {
-      // sine envelope curve
-      ad_value = envelope.Render(true, 3);
-  }    
-  else if (settings.meta_modulation() == 22 || settings.meta_modulation() > 23) {
+  // else if (settings.meta_modulation() == XX) {
+  //     // double-speed sine envelope curve
+  //     ad_value = envelope.Render(true, 3);
+  // }    
+  else if (settings.meta_modulation() == 22 || settings.meta_modulation() > 25) {
       // linear envelope curve
       ad_value = envelope.Render(true, 1);
   }
   else if (settings.meta_modulation() == 23) {
       // wiggly envelope curve
       ad_value = envelope.Render(true, 2);
+  }
+  else if (settings.meta_modulation() == 24) {
+      // sine envelope curve
+      ad_value = envelope.Render(true, 4);
+  }
+  else if (settings.meta_modulation() == 25) {
+      // squareish envelope curve
+      ad_value = envelope.Render(true, 5);
   }
   else {
       // envelope mode, exponential curve
