@@ -300,13 +300,13 @@ void RenderBlock() {
   else if (settings.meta_modulation() == 20) {
     env_d = (env_param * 10) / 100; 
   } 
-  // 21, 22 and 23 also missing because for now we'll use A=D
-  // for exponential curve, triangle and wiggly LFO modes.
-  else if (settings.meta_modulation() == 24) {
+  // 21, 22, 23, 24 and 25 also missing because for now we'll use A=D
+  // for exponential curve, triangle, wiggly, sine and squareish LFO modes.
+  else if (settings.meta_modulation() == 26) {
     // Sawtooth LFO
     env_d =  0; 
   } 
-  else if (settings.meta_modulation() == 25) {
+  else if (settings.meta_modulation() == 27) {
     // Ramp LFO
     env_a =  0; 
   } 
@@ -323,10 +323,6 @@ void RenderBlock() {
       // exponential envelope curve
       ad_value = envelope.Render(true, 0);
   }
-  // else if (settings.meta_modulation() == XX) {
-  //     // double-speed sine envelope curve
-  //     ad_value = envelope.Render(true, 3);
-  // }    
   else if (settings.meta_modulation() == 22 || settings.meta_modulation() > 25) {
       // linear envelope curve
       ad_value = envelope.Render(true, 1);
@@ -337,12 +333,12 @@ void RenderBlock() {
   }
   else if (settings.meta_modulation() == 24) {
       // sine envelope curve
-      ad_value = envelope.Render(true, 4);
-  }
+      ad_value = envelope.Render(true, 3);
+  }    
   else if (settings.meta_modulation() == 25) {
-      // squareish envelope curve
-      ad_value = envelope.Render(true, 5);
-  }
+      // sine envelope curve
+      ad_value = envelope.Render(true, 4);
+  }    
   else {
       // envelope mode, exponential curve
       ad_value = envelope.Render(false, 0);

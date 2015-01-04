@@ -264,9 +264,8 @@ const char* const meta_values[] = {
     "LFOX",  // 21 exponentially-curved triangle
     "LFO^",  // 22 linear triangle
     "LFOw",  // 23 wiggly, using ws_sine_fold (a show about nothing?)
-    "LFOs",  // 24 sine-ish, using ws_moderate_overdrive
-    "LFO\x8C", // 25 squareish, using ws_violent_overdrive
-    // "LFOd",  //  double-speed sine, using wav_sine
+    "LFOs",  //  24 sine-ish, using ws_moderate_overdrive
+    "LFO\x8C", // 25 square-ish, using ws_violent_overdrive
     "LFO\x8F", // 26 saw
     "LFO\x88", // 27 ramp
 };

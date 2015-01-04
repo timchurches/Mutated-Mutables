@@ -99,19 +99,20 @@ class Envelope {
       else if (EnvType == 2) {
          value_ = Mix(a_, b_, Interpolate824(ws_sine_fold, phase_) + 32766);
       }   
+      else if (EnvType == 3) {
+         value_ = Mix(a_, b_, Interpolate824(ws_moderate_overdrive, phase_) + 32766);
+      }   
       // else if (EnvType == 3) {
       //   // sine LFO mode runs at double rate
       //   if (segment_ < ENV_SEGMENT_DECAY) {
       //      value_ = Mix(a_, b_, Interpolate824(wav_sine, phase_) + 32512);
       //   }
-      //   else {
+      //   else
+      //   {
       //      value_ = Mix(b_, a_, Interpolate824(wav_sine, phase_) + 32512);         
       //   }
       // }               
       else if (EnvType == 4) {
-         value_ = Mix(a_, b_, Interpolate824(ws_moderate_overdrive, phase_) + 32766);
-      }   
-      else if (EnvType == 5) {
          value_ = Mix(a_, b_, Interpolate824(ws_violent_overdrive, phase_) + 32766);
       }   
     }
