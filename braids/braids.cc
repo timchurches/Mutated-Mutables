@@ -222,16 +222,16 @@ void RenderBlock() {
   if (settings.meta_modulation() > 1) {
      // scaling this by 32 seems about right for 0-5V modulation range.
      env_param = settings.adc_to_fm(adc.channel(3)) >> 5;
-    // Clip at zero and 255
+    // Clip at zero and 127
      if (env_param < 0) {
          env_param = 0 ;
      }
-     if (env_param > 255) {
-         env_param = 255 ;
+     if (env_param > 127) {
+         env_param = 127 ;
      } 
      // Invert if in LFO mode, so higher CVs create higher LFO frequency.
      if (settings.meta_modulation() > 20) {
-         env_param = 255 - env_param ;
+         env_param = 127 - env_param ;
      }  
   }
   
