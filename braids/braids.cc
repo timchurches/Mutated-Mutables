@@ -323,6 +323,10 @@ void RenderBlock() {
       // exponential envelope curve
       ad_value = envelope.Render(true, 0);
   }
+  else if (settings.meta_modulation() == 26) {
+      // sine envelope curve
+      ad_value = envelope.Render(true, 3);
+  }    
   else if (settings.meta_modulation() == 22 || settings.meta_modulation() > 23) {
       // linear envelope curve
       ad_value = envelope.Render(true, 1);

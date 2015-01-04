@@ -266,6 +266,7 @@ const char* const meta_values[] = {
     "LFOw",
     "LFO\x8F",
     "LFO\x88",
+    "LFOs",
 };
 
 
@@ -277,7 +278,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 25, "META", meta_values },
+  { 0, 26, "META", meta_values },
   { 0, 3, "RANG", pitch_range_values },
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -289,7 +290,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "    ", NULL },  // Placeholder for marquee
-  { 0, 0, "BT3b", NULL },  // Placeholder for version string
+  { 0, 0, "BT3c", NULL },  // Placeholder for version string
 };
 
 /* static */
