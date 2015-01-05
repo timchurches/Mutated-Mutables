@@ -220,8 +220,12 @@ void RenderBlock() {
   // higher LFO frequencies
   int32_t env_param = 0;
   if (settings.meta_modulation() > 1) {
+     // LFO rate or envelope duration now controlled by sample rate setting
+     env_param = settings.data().sample_rate ;
+     // add the external voltage to this.
      // scaling this by 32 seems about right for 0-5V modulation range.
-     env_param = settings.adc_to_fm(adc.channel(3)) >> 5;
+     env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+
     // Clip at zero and 127
      if (env_param < 0) {
          env_param = 0 ;
@@ -467,7 +471,10 @@ void RenderBlock() {
   
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
-  size_t decimation_factor = decimation_factors[settings.data().sample_rate];
+  // We have repurposed the sample rate setting for LFO speed,
+  // so just set it to the maximum value.
+  size_t decimation_factor = decimation_factors[SAMPLE_RATE_96K];
+  // size_t decimation_factor = decimation_factors[settings.data().sample_rate];
   uint16_t bit_mask = bit_reduction_masks[settings.data().resolution];
   // use AD envelope value as gain except in LFO mode, when it is used as 
   // negative gain from full volume.
