@@ -266,8 +266,9 @@ const char* const meta_values[] = {
     "LFOw",  // 23 wiggly, using ws_sine_fold (a show about nothing?)
     "LFOs",  //  24 sine-ish, using ws_moderate_overdrive
     "LFO\x8C", // 25 square-ish, using ws_violent_overdrive
-    "LFO\x8F", // 26 saw
-    "LFO\x88", // 27 ramp
+    "LFOb",    // 26 bowing friction LUT
+    "LFO\x8F", // 27 saw
+    "LFO\x88", // 28 ramp
 };
 
 
@@ -279,7 +280,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 27, "META", meta_values },
+  { 0, 28, "META", meta_values },
   { 0, 3, "RANG", pitch_range_values },
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -291,7 +292,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "    ", NULL },  // Placeholder for marquee
-  { 0, 0, "BT3d", NULL },  // Placeholder for version string
+  { 0, 0, "BT3e", NULL },  // Placeholder for version string
 };
 
 /* static */

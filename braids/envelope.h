@@ -91,19 +91,28 @@ class Envelope {
     }
     if (increment_[segment_]) {
       if (EnvType == 0) {
+        // exponential
          value_ = Mix(a_, b_, Interpolate824(lut_env_expo, phase_));
       }
       else if (EnvType == 1) {
-         value_ = Mix(a_, b_, Interpolate824(lut_env_linear, phase_));
+         // linear
+         value_ = Mix(a_, b_, phase_ >> 16);
       }         
       else if (EnvType == 2) {
+         // wiggly
          value_ = Mix(a_, b_, Interpolate824(ws_sine_fold, phase_) + 32766);
       }   
       else if (EnvType == 3) {
+        // close to a sine
          value_ = Mix(a_, b_, Interpolate824(ws_moderate_overdrive, phase_) + 32766);
       }   
       else if (EnvType == 4) {
+         // bandwidth-limited square (with rounded corners)
          value_ = Mix(a_, b_, Interpolate824(ws_violent_overdrive, phase_) + 32766);
+      }   
+      else if (EnvType == 5) {
+         // bowing friction LUT - this goes from high to low, hence a_ and b_ switched.
+         value_ = Mix(b_, a_, (Interpolate824(lut_bowing_friction, phase_) - 1) << 1);
       }   
     }
     return value_;

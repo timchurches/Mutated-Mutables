@@ -310,5 +310,7 @@ env_expo = 1.0 - numpy.exp(-4 * env_linear)
 # env_wiggly = env_linear + 0.1*numpy.sin(env_linear*numpy.pi*14)
 
 lookup_tables.append(('env_expo', env_expo / env_expo.max() * 65535.0))
-lookup_tables.append(('env_linear', env_linear / env_linear.max() * 65535.0))
+# linear not needed - because - d'oh - the value is just the phase!
+# lookup_tables.append(('env_linear', env_linear / env_linear.max() * 65535.0))
+# use existing folded sine waveshaper table instead of this wiggle
 # lookup_tables.append(('env_wiggly', env_wiggly / env_wiggly.max() * 65535.0))
