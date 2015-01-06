@@ -61,8 +61,13 @@ class Envelope {
     target_[ENV_SEGMENT_SUSTAIN] = target_[ENV_SEGMENT_DECAY];
   }
   
+  // TO-DO: remove LfoMode argument to this method
   inline void Trigger(EnvelopeSegment segment, bool LfoMode) {
-    if (segment == ENV_SEGMENT_DEAD || (segment == ENV_SEGMENT_ATTACK && LfoMode)) {
+    // Resetting phase to zero in LFO mode causes clicks when a trigger is received
+    // if (segment == ENV_SEGMENT_DEAD || (segment == ENV_SEGMENT_ATTACK && LfoMode)) {
+    //   value_ = 0;
+    // }
+    if (segment == ENV_SEGMENT_DEAD ) {
       value_ = 0;
     }
     a_ = value_;
