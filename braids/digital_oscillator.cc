@@ -2084,6 +2084,9 @@ void DigitalOscillator::RenderParticleNoise(
   state_.pno.filter_coefficient[2] = c3;
 }
 
+/* 
+// Disable QPSK model
+
 const int32_t kConstellationQ[] = { 23100, -23100, -23100, 23100 };
 const int32_t kConstellationI[] = { 23100, 23100, -23100, -23100 };
 
@@ -2137,6 +2140,7 @@ void DigitalOscillator::RenderDigitalModulation(
   state_.dmd.symbol_phase = symbol_stream_phase;
   state_.dmd.data_byte = data_byte;
 }
+*/
 
 /*
 // Disable Easter egg model
@@ -2466,7 +2470,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,
-  &DigitalOscillator::RenderDigitalModulation,
+  // &DigitalOscillator::RenderDigitalModulation,
   // &DigitalOscillator::RenderYourAlgo,
 
   // Disabled Easter egg model

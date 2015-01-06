@@ -137,7 +137,7 @@ const char* const algo_values[] = {
     "CLKN",
     "CLOU",
     "PRTC",
-    "QPSK",
+    // "QPSK",
     // "NAME" // For your algorithm
 };
 
@@ -396,7 +396,7 @@ const char* const meta_values[] = {
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
-  { 0, MACRO_OSC_SHAPE_LAST - 2, "WAVE", algo_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
   // { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
   { 0, 127, "RATE", rates_values },
