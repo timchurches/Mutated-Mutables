@@ -410,7 +410,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "FLAT", boolean_values },
   { 0, 1, "DRFT", boolean_values },
   { 0, 1, "SIGN", boolean_values },
-  { 0, 2, "BRIG", brightness_values },
+  // { 0, 2, "BRIG", brightness_values },
+  { 0, 127, "RATC", rates_values }, // re-purposed BRIGHTNESS as color LFO/Env rate
   { 0, 35, "TENV", ad_shape_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
@@ -422,6 +423,7 @@ const SettingMetadata Settings::metadata_[] = {
 const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_SAMPLE_RATE,
+  SETTING_BRIGHTNESS, // re-purposed as Color LFO/ENV rate
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
   SETTING_TRIG_DESTINATION,
@@ -433,7 +435,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_VCO_FLATTEN,
   SETTING_VCO_DRIFT,
   SETTING_SIGNATURE,
-  SETTING_BRIGHTNESS,
   SETTING_RESOLUTION,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,

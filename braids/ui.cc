@@ -258,7 +258,9 @@ void Ui::OnIncrement(const Event& e) {
         int16_t value = settings.GetValue(setting_);
         value = settings.metadata(setting_).Clip(value + e.data);
         settings.SetValue(setting_, value);
-        display_.set_brightness(settings.GetValue(SETTING_BRIGHTNESS) + 1);
+        // SETTING_BRIGHTNESS re-purposed as color LFO speed, so hard-code to max (=2)
+        // display_.set_brightness(settings.GetValue(SETTING_BRIGHTNESS) + 1);
+        display_.set_brightness(3);
       }
       break;
       

@@ -51,6 +51,7 @@ RingBuffer<uint16_t, kAudioBufferSize> audio_samples;
 RingBuffer<uint8_t, kAudioBufferSize> sync_samples;
 MacroOscillator osc;
 Envelope envelope;
+Envelope envelope2; // second envelope/LFO instance for color modulation.
 Adc adc;
 Dac dac;
 DebugPin debug_pin;
@@ -141,6 +142,7 @@ void Init() {
   }
   
   envelope.Init();
+  envelope2.Init();
   ws.Init(GetUniqueId(2));
   jitter_source.Init(GetUniqueId(1));
   sys.StartTimers();
@@ -212,6 +214,7 @@ void RenderBlock() {
   const TrigStrikeSettings& trig_strike = \
       trig_strike_settings[settings.GetValue(SETTING_TRIG_AD_SHAPE)];
   envelope.Update(trig_strike.attack, trig_strike.decay, 0, 0);
+  envelope2.Update(trig_strike.attack, trig_strike.decay, 0, 0);
 
   // Note: all sorts of implicit casts in the following, I think
 
@@ -219,12 +222,15 @@ void RenderBlock() {
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
   int32_t env_param = 0;
+  int32_t env2_param = 0;
   if (settings.meta_modulation() > 1) {
      // LFO rate or envelope duration now controlled by sample rate setting
      env_param = settings.data().sample_rate ;
+     env2_param = settings.GetValue(SETTING_BRIGHTNESS) ;
      // add the external voltage to this.
      // scaling this by 32 seems about right for 0-5V modulation range.
      env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+     env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
 
     // Clip at zero and 127
      if (env_param < 0) {
@@ -233,15 +239,24 @@ void RenderBlock() {
      if (env_param > 127) {
          env_param = 127 ;
      } 
+     if (env2_param < 0) {
+         env2_param = 0 ;
+     }
+     if (env2_param > 127) {
+         env2_param = 127 ;
+     } 
      // Invert if in LFO mode, so higher CVs create higher LFO frequency.
      if (settings.meta_modulation() > 20) {
          env_param = 127 - env_param ;
+         env2_param = 127 - env2_param ;
      }  
   }
   
   // attack and decay parameters, default to FM voltage reading.
   uint16_t env_a = env_param;
   uint16_t env_d = env_param;
+  uint16_t env2_a = env2_param;
+  uint16_t env2_d = env2_param;
 
   // 2 is CV control of attack
 
@@ -310,43 +325,53 @@ void RenderBlock() {
   else if (settings.meta_modulation() == 27) {
     // Sawtooth LFO
     env_d =  0; 
+    env2_d =  0; 
   } 
   else if (settings.meta_modulation() == 28) {
     // Ramp LFO
     env_a =  0; 
+    env2_a =  0; 
   } 
   
   // now set the attack and decay parameters again
   // using the modified attack and decay values
   if (settings.meta_modulation() > 3) {
     envelope.Update(env_a, env_d, 0, 0);  
+    envelope2.Update(env2_a, env2_d, 0, 0);  
   }
 
   // Render envelope in LFO mode, or not
   uint16_t ad_value = 0 ;
+  uint16_t ad2_value = 0 ;
   if (settings.meta_modulation() == 21) {
       // exponential envelope curve
       ad_value = envelope.Render(true, 0);
+      ad2_value = envelope2.Render(true, 0);
   }
   else if (settings.meta_modulation() == 22 || settings.meta_modulation() > 26) {
       // linear envelope curve
       ad_value = envelope.Render(true, 1);
+      ad2_value = envelope2.Render(true, 1);
   }
   else if (settings.meta_modulation() == 23) {
       // wiggly envelope curve
       ad_value = envelope.Render(true, 2);
+      ad2_value = envelope2.Render(true, 2);
   }
   else if (settings.meta_modulation() == 24) {
       // sine envelope curve
       ad_value = envelope.Render(true, 3);
+      ad2_value = envelope2.Render(true, 3);
   }    
   else if (settings.meta_modulation() == 25) {
       // sine envelope curve
       ad_value = envelope.Render(true, 4);
+      ad2_value = envelope2.Render(true, 4);
   }    
   else if (settings.meta_modulation() == 26) {
       // bowing friction envelope curve
       ad_value = envelope.Render(true, 5);
+      ad2_value = envelope2.Render(true, 5);
   }    
   else {
       // envelope mode, exponential curve
@@ -394,7 +419,7 @@ void RenderBlock() {
   }
   // modulate colour
   uint16_t parameter_2 = adc.channel(1) << 3;
-  parameter_2 += static_cast<uint32_t>(ad_value) * ad_color_amount >> 9;
+  parameter_2 += static_cast<uint32_t>(ad2_value) * ad_color_amount >> 9;
   if (parameter_2 > 32767) {
     parameter_2 = 32767;
   }
@@ -453,6 +478,7 @@ void RenderBlock() {
   if (trigger_flag) {
     osc.Strike();
     envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 20);
+    envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 20);
     ui.StepMarquee();
     trigger_flag = false;
   }

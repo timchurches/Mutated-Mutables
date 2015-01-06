@@ -140,7 +140,7 @@ class Envelope {
 
   uint32_t phase_increment_;
   uint32_t phase_;
-
+  
   DISALLOW_COPY_AND_ASSIGN(Envelope);
 };
 
