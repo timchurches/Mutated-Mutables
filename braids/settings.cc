@@ -363,34 +363,34 @@ const char* const brightness_values[] = {
 
 const char* const meta_values[] = { 
     "OFF ", // 0
-    "MODL", // 1
-    "ATTK",
-    "DCAY",
-    "AD02",
-    "AD05",
-    "AD10",
-    "AD15",
-    "AD20",
-    "AD30",
-    "AD40",
-    "AD50",
-    "AD75",
-    "A=D ",
-    "DA90",
-    "DA80",
-    "DA70",
-    "DA60",
-    "DA50",
-    "DA25",
-    "DA10",
-    "LFOX",  // 21 exponentially-curved triangle
-    "LFO^",  // 22 linear triangle
-    "LFOw",  // 23 wiggly, using ws_sine_fold (a show about nothing?)
-    "LFOs",  //  24 sine-ish, using ws_moderate_overdrive
-    "LFO\x8C", // 25 square-ish, using ws_violent_overdrive
-    "LFOb",    // 26 bowing friction LUT
-    "LFO\x8F", // 27 saw
-    "LFO\x88", // 28 ramp
+    "META", // 1
+    // "ATTK",
+    // "DCAY",
+    "AD02", // 2
+    // "AD05",
+    "AD10", // 3
+    // "AD15",
+    "AD20", // 4
+    // "AD30",
+    "AD40", // 5
+    "AD60", // 6
+    "AD80", // 7
+    "A=D ", // 8
+    // "DA90",
+    "DA80", //9
+    // "DA70",
+    "DA60", //10
+    "DA40", //11
+    "DA20", //12
+    "DA10", //13
+    "LFOX",  // 14 was 21 exponentially-curved triangle
+    "LFO^",  // 15 was 22 linear triangle
+    "LFOw",  // 16 was 23 wiggly, using ws_sine_fold (a show about nothing?)
+    "LFOs",  //  17 was 24 sine-ish, using ws_moderate_overdrive
+    "LFO\x8C", // 18 was 25 square-ish, using ws_violent_overdrive
+    "LFOb",    // 19 was 26 bowing friction LUT
+    "LFO\x8F", // 20 was 27 saw
+    "LFO\x88", // 21 was 28 ramp
 };
 
 
@@ -403,7 +403,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 28, "META", meta_values },
+  { 0, 21, "META", meta_values },
   { 0, 3, "RANG", pitch_range_values },
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -411,7 +411,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "DRFT", boolean_values },
   { 0, 1, "SIGN", boolean_values },
   // { 0, 2, "BRIG", brightness_values },
-  { 0, 127, "RATC", rates_values }, // re-purposed BRIGHTNESS as color LFO/Env rate
+  { 0, 127, "CRAT", rates_values }, // re-purposed BRIGHTNESS as color LFO/Env rate
   { 0, 35, "TENV", ad_shape_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
@@ -422,13 +422,13 @@ const SettingMetadata Settings::metadata_[] = {
 /* static */
 const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
-  SETTING_SAMPLE_RATE,
+  SETTING_SAMPLE_RATE, // re-purposed as level/Timbre LFO/ENV rate
   SETTING_BRIGHTNESS, // re-purposed as Color LFO/ENV rate
-  SETTING_TRIG_SOURCE,
-  SETTING_TRIG_DELAY,
   SETTING_TRIG_DESTINATION,
   SETTING_TRIG_AD_SHAPE,
   SETTING_META_MODULATION,
+  SETTING_TRIG_SOURCE,
+  SETTING_TRIG_DELAY,
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
   SETTING_PITCH_QUANTIZER,

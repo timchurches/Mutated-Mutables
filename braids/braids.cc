@@ -246,7 +246,7 @@ void RenderBlock() {
          env2_param = 127 ;
      } 
      // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-     if (settings.meta_modulation() > 20) {
+     if (settings.meta_modulation() > 13) {
          env_param = 127 - env_param ;
          env2_param = 127 - env2_param ;
      }  
@@ -258,76 +258,63 @@ void RenderBlock() {
   uint16_t env2_a = env2_param;
   uint16_t env2_d = env2_param;
 
-  // 2 is CV control of attack
-
-  if (settings.meta_modulation() == 2) {
-    envelope.Update(env_param, trig_strike.decay, 0, 0);
-  }
-    // 3 is CV control of decay
-  else if (settings.meta_modulation() == 3) {
-    envelope.Update(trig_strike.attack, env_param, 0, 0);  
-  } 
-  // The rest are ratios of attack to decay, from A/D = 0.02 
-  // through to A/D=0.75, then A=D, then D/A = 0.75 down to 0.02
+  // These are ratios of attack to decay, from A/D = 0.02 
+  // through to A/D=0.8, then A=D, then D/A = 0.8 down to 0.1
   // as listed in meta_values in settings.cc
-  else if (settings.meta_modulation() == 4) {
+  if (settings.meta_modulation() == 2) {
     env_a = (env_param * 2) / 100; 
+    env2_a = (env2_param * 2) / 100; 
+  } 
+  else if (settings.meta_modulation() == 3) {
+    env_a = (env_param * 10) / 100; 
+    env2_a = (env2_param * 10) / 100; 
+  } 
+  else if (settings.meta_modulation() == 4) {
+    env_a = (env_param * 20) / 100; 
+    env2_a = (env2_param * 20) / 100; 
   } 
   else if (settings.meta_modulation() == 5) {
-    env_a = (env_param * 5) / 100; 
+    env_a = (env_param * 40) / 100; 
+    env2_a = (env2_param * 40) / 100; 
   } 
   else if (settings.meta_modulation() == 6) {
-    env_a = (env_param * 10) / 100; 
+    env_a = (env_param * 60) / 100; 
+    env2_a = (env2_param * 60) / 100; 
   } 
   else if (settings.meta_modulation() == 7) {
-    env_a = (env_param * 15) / 100; 
+    env_a = (env_param * 80) / 100; 
+    env2_a = (env2_param * 80) / 100; 
   } 
-  else if (settings.meta_modulation() == 8) {
-    env_a = (env_param * 20) / 100; 
-  } 
+  // 8 is deliberately missing because env_a already equals env_d
   else if (settings.meta_modulation() == 9) {
-    env_a = (env_param * 30) / 100; 
+    env_d = (env_param * 80) / 100; 
+    env2_d = (env2_param * 80) / 100; 
   } 
   else if (settings.meta_modulation() == 10) {
-    env_a = (env_param * 40) / 100; 
+    env_d = (env_param * 60) / 100; 
+    env2_d = (env2_param * 60) / 100; 
   } 
   else if (settings.meta_modulation() == 11) {
-    env_a = (env_param * 50) / 100; 
+    env_d = (env_param * 40) / 100; 
+    env2_d = (env2_param * 40) / 100; 
   } 
   else if (settings.meta_modulation() == 12) {
-    env_a = (env_param * 75) / 100; 
+    env_d = (env_param * 20) / 100; 
+    env2_d = (env2_param * 20) / 100; 
   } 
-  // 13 is deliberately missing because env_a already equals env_d
-  else if (settings.meta_modulation() == 14) {
-    env_d = (env_param * 90) / 100; 
-  } 
-  else if (settings.meta_modulation() == 15) {
-    env_d = (env_param * 80) / 100; 
-  } 
-  else if (settings.meta_modulation() == 16) {
-    env_d = (env_param * 70) / 100; 
-  } 
-  else if (settings.meta_modulation() == 17) {
-    env_d = (env_param * 60) / 100; 
-  } 
-  else if (settings.meta_modulation() == 18) {
-    env_d = (env_param * 50) / 100; 
-  } 
-  else if (settings.meta_modulation() == 19) {
-    env_d = (env_param * 25) / 100; 
-  } 
-  else if (settings.meta_modulation() == 20) {
+  else if (settings.meta_modulation() == 13) {
     env_d = (env_param * 10) / 100; 
+    env2_d = (env2_param * 10) / 100; 
   } 
-  // 21, 22, 23, 24, 25 and 26 also missing because for now we'll use A=D
+  // 14, 15, 16, 17, 18 and 19 also missing because for now we'll use A=D
   // for exponential curve, triangle, wiggly, sine and squareish
   // and bowing friction LFO modes.
-  else if (settings.meta_modulation() == 27) {
+  else if (settings.meta_modulation() == 20) {
     // Sawtooth LFO
     env_d =  0; 
     env2_d =  0; 
   } 
-  else if (settings.meta_modulation() == 28) {
+  else if (settings.meta_modulation() == 21) {
     // Ramp LFO
     env_a =  0; 
     env2_a =  0; 
@@ -335,7 +322,7 @@ void RenderBlock() {
   
   // now set the attack and decay parameters again
   // using the modified attack and decay values
-  if (settings.meta_modulation() > 3) {
+  if (settings.meta_modulation() > 1) {
     envelope.Update(env_a, env_d, 0, 0);  
     envelope2.Update(env2_a, env2_d, 0, 0);  
   }
@@ -343,32 +330,32 @@ void RenderBlock() {
   // Render envelope in LFO mode, or not
   uint16_t ad_value = 0 ;
   uint16_t ad2_value = 0 ;
-  if (settings.meta_modulation() == 21) {
+  if (settings.meta_modulation() == 14) {
       // exponential envelope curve
       ad_value = envelope.Render(true, 0);
       ad2_value = envelope2.Render(true, 0);
   }
-  else if (settings.meta_modulation() == 22 || settings.meta_modulation() > 26) {
+  else if (settings.meta_modulation() == 15 || settings.meta_modulation() > 19) {
       // linear envelope curve
       ad_value = envelope.Render(true, 1);
       ad2_value = envelope2.Render(true, 1);
   }
-  else if (settings.meta_modulation() == 23) {
+  else if (settings.meta_modulation() == 16) {
       // wiggly envelope curve
       ad_value = envelope.Render(true, 2);
       ad2_value = envelope2.Render(true, 2);
   }
-  else if (settings.meta_modulation() == 24) {
+  else if (settings.meta_modulation() == 17) {
       // sine envelope curve
       ad_value = envelope.Render(true, 3);
       ad2_value = envelope2.Render(true, 3);
   }    
-  else if (settings.meta_modulation() == 25) {
-      // sine envelope curve
+  else if (settings.meta_modulation() == 18) {
+      // square-ish envelope curve
       ad_value = envelope.Render(true, 4);
       ad2_value = envelope2.Render(true, 4);
   }    
-  else if (settings.meta_modulation() == 26) {
+  else if (settings.meta_modulation() == 19) {
       // bowing friction envelope curve
       ad_value = envelope.Render(true, 5);
       ad2_value = envelope2.Render(true, 5);
@@ -477,8 +464,8 @@ void RenderBlock() {
 
   if (trigger_flag) {
     osc.Strike();
-    envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 20);
-    envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 20);
+    envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
+    envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
     ui.StepMarquee();
     trigger_flag = false;
   }
@@ -506,7 +493,7 @@ void RenderBlock() {
   // negative gain from full volume.
   int32_t gain = 0 ;
   if (settings.GetValue(SETTING_TRIG_DESTINATION) & 2) {
-      if (settings.GetValue(SETTING_META_MODULATION) > 20) {
+      if (settings.GetValue(SETTING_META_MODULATION) > 13) {
           gain = 65535 - ((ad_value >> 8) * ad_level_amount) ;
       }
       else {
