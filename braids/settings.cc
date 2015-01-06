@@ -421,7 +421,6 @@ const SettingMetadata Settings::metadata_[] = {
 /* static */
 const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
-  SETTING_RESOLUTION,
   SETTING_SAMPLE_RATE,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
@@ -435,6 +434,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_VCO_DRIFT,
   SETTING_SIGNATURE,
   SETTING_BRIGHTNESS,
+  SETTING_RESOLUTION,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   SETTING_MARQUEE,
