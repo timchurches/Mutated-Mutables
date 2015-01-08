@@ -415,7 +415,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 35, "TENV", ad_shape_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "    ", NULL },  // Placeholder for marquee
+  // { 0, 0, "    ", NULL },  // Placeholder for marquee
   { 0, 0, "BT3f", NULL },  // Placeholder for version string
 };
 
@@ -438,7 +438,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_RESOLUTION,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
-  SETTING_MARQUEE,
+  // SETTING_MARQUEE,
   SETTING_VERSION,
 };
 

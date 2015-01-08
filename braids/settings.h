@@ -150,7 +150,7 @@ enum Setting {
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
-  SETTING_MARQUEE,
+  // SETTING_MARQUEE,
   SETTING_VERSION,
   SETTING_LAST
 };
@@ -252,13 +252,13 @@ class Settings {
     return data_.trig_delay;
   }
   
-  inline const char* marquee_text() const {
-    return data_.marquee_text;
-  }
+  // inline const char* marquee_text() const {
+  //   return data_.marquee_text;
+  // }
   
-  inline char* mutable_marquee_text() {
-    return data_.marquee_text;
-  }
+  // inline char* mutable_marquee_text() {
+  //   return data_.marquee_text;
+  // }
   
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }

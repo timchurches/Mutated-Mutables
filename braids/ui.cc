@@ -110,20 +110,20 @@ void Ui::RefreshDisplay() {
             }
           }
           display_.Print(text);
-        } else if (setting_ == SETTING_MARQUEE) {
-          uint8_t length = strlen(settings.marquee_text());
-          uint8_t padded_length = length + 2 * kDisplayWidth - 4;
-          uint8_t position = ((cv_[0] >> 4) * (padded_length - 1)) >> 8;
-          position += (marquee_step_ % padded_length);
-          position += 1;
-          char text[] = "    ";
-          for (uint8_t i = 0; i < kDisplayWidth; ++i) {
-            uint8_t index = (position + i) % padded_length;
-            if (index >= kDisplayWidth && index < kDisplayWidth + length) {
-              text[i] = settings.marquee_text()[index - kDisplayWidth];
-            }
-          }
-          display_.Print(text);
+        // } else if (setting_ == SETTING_MARQUEE) {
+        //   uint8_t length = strlen(settings.marquee_text());
+        //   uint8_t padded_length = length + 2 * kDisplayWidth - 4;
+        //   uint8_t position = ((cv_[0] >> 4) * (padded_length - 1)) >> 8;
+        //   position += (marquee_step_ % padded_length);
+        //   position += 1;
+        //   char text[] = "    ";
+        //  for (uint8_t i = 0; i < kDisplayWidth; ++i) {
+        //     uint8_t index = (position + i) % padded_length;
+        //     if (index >= kDisplayWidth && index < kDisplayWidth + length) {
+        //       text[i] = settings.marquee_text()[index - kDisplayWidth];
+        //     }
+        //   }
+        //   display_.Print(text);
         } else {
           display_.Print(settings.metadata(setting_).name);
         }
@@ -138,18 +138,18 @@ void Ui::RefreshDisplay() {
       display_.Print(">C4 ");
       break;
       
-    case MODE_MARQUEE_EDITOR:
-      {
-        char text[] = "    ";
-        for (uint8_t i = 0; i < kDisplayWidth; ++i) {
-          if ((marquee_character_ + i) >= kDisplayWidth - 1) {
-            const char* marquee_text = settings.marquee_text();
-            text[i] = marquee_text[marquee_character_ + i - kDisplayWidth + 1];
-          }
-        }
-        display_.Print(text);
-      }
-      break;
+    // case MODE_MARQUEE_EDITOR:
+    //   {
+    //     char text[] = "    ";
+    //     for (uint8_t i = 0; i < kDisplayWidth; ++i) {
+    //       if ((marquee_character_ + i) >= kDisplayWidth - 1) {
+    //         const char* marquee_text = settings.marquee_text();
+    //         text[i] = marquee_text[marquee_character_ + i - kDisplayWidth + 1];
+    //       }
+    //     }
+    //     display_.Print(text);
+    //   }
+    //   break;
 
     default:
       break;
@@ -158,20 +158,20 @@ void Ui::RefreshDisplay() {
 
 void Ui::OnLongClick() {
   switch (mode_) {
-    case MODE_MARQUEE_EDITOR:
-      settings.Save();
-      mode_ = MODE_MENU;
-      break;
+    // case MODE_MARQUEE_EDITOR:
+    //   settings.Save();
+    //   mode_ = MODE_MENU;
+    //   break;
 
     case MODE_MENU:
       if (setting_ == SETTING_CALIBRATION) {
         mode_ = MODE_CALIBRATION_STEP_1;
-      } else if (setting_ == SETTING_MARQUEE) {
-        mode_ = MODE_MARQUEE_EDITOR;
-        marquee_character_ = 0;
-        marquee_dirty_character_ = false;
-        uint8_t length = strlen(settings.marquee_text());
-        settings.mutable_marquee_text()[length] = '\xA0';
+      // } else if (setting_ == SETTING_MARQUEE) {
+      //   mode_ = MODE_MARQUEE_EDITOR;
+      //   marquee_character_ = 0;
+      //   marquee_dirty_character_ = false;
+      //   uint8_t length = strlen(settings.marquee_text());
+      //   settings.mutable_marquee_text()[length] = '\xA0';
       } else if (setting_ == SETTING_VERSION) {
         settings.Reset();
         settings.Save();
@@ -188,28 +188,30 @@ void Ui::OnClick() {
     case MODE_EDIT:
       mode_ = MODE_MENU;
       break;
-      
-    case MODE_MARQUEE_EDITOR:
-      {
-        if (marquee_character_ == 62) {
-          ++marquee_character_;
-          settings.mutable_marquee_text()[marquee_character_] = '\0';
-        } else if (settings.marquee_text()[marquee_character_] == '\xA0') {
-          settings.mutable_marquee_text()[marquee_character_] = '\0';
-        } else {
-          if (marquee_dirty_character_) {
-            settings.mutable_marquee_text()[marquee_character_ + 1] = \
-                settings.marquee_text()[marquee_character_];
-          }
-          ++marquee_character_;
-          marquee_dirty_character_ = false;
-        }
-        if (settings.marquee_text()[marquee_character_] == '\0') {
-          settings.Save();
-          mode_ = MODE_MENU;
-        }
-      }
-      break;
+
+    /*  
+    // case MODE_MARQUEE_EDITOR:
+    //   {
+    //     if (marquee_character_ == 62) {
+    //       ++marquee_character_;
+    //       settings.mutable_marquee_text()[marquee_character_] = '\0';
+    //     } else if (settings.marquee_text()[marquee_character_] == '\xA0') {
+    //       settings.mutable_marquee_text()[marquee_character_] = '\0';
+    //     } else {
+    //       if (marquee_dirty_character_) {
+    //         settings.mutable_marquee_text()[marquee_character_ + 1] = \
+    //             settings.marquee_text()[marquee_character_];
+    //       }
+    //       ++marquee_character_;
+    //       marquee_dirty_character_ = false;
+    //     }
+    //     if (settings.marquee_text()[marquee_character_] == '\0') {
+    //       settings.Save();
+    //       mode_ = MODE_MENU;
+    //     }
+    //   }
+    //   break;
+    */
       
     case MODE_MENU:
       if (setting_ <= SETTING_LAST_EDITABLE_SETTING) {
@@ -239,19 +241,21 @@ void Ui::OnClick() {
 
 void Ui::OnIncrement(const Event& e) {
   switch (mode_) {
-    case MODE_MARQUEE_EDITOR:
-      {
-        char c = settings.marquee_text()[marquee_character_];
-        c += e.data;
-        if (c <= ' ') {
-          c = ' ';
-        } else if (c >= '\xA0') {
-          c = '\xA0';
-        }
-        settings.mutable_marquee_text()[marquee_character_] = c;
-        marquee_dirty_character_ = true;
-      }
-      break;
+    /*
+    // case MODE_MARQUEE_EDITOR:
+    //   {
+    //     char c = settings.marquee_text()[marquee_character_];
+    //     c += e.data;
+    //     if (c <= ' ') {
+    //       c = ' ';
+    //     } else if (c >= '\xA0') {
+    //       c = '\xA0';
+    //     }
+    //     settings.mutable_marquee_text()[marquee_character_] = c;
+    //     marquee_dirty_character_ = true;
+    //   }
+    //   break;
+    */
 
     case MODE_EDIT:
       {
@@ -273,7 +277,7 @@ void Ui::OnIncrement(const Event& e) {
           setting_index_ = SETTING_LAST - 1;
         }
         setting_ = settings.setting_at_index(setting_index_);
-        marquee_step_ = 0;
+        // marquee_step_ = 0;
       }
       break;
       
@@ -308,8 +312,9 @@ void Ui::DoEvents() {
     refresh_display_ = true;
   }
   if (queue_.idle_time() >= 50 &&
-      (setting_ == SETTING_CV_TESTER ||
-      setting_ == SETTING_MARQUEE)) {
+  //     (setting_ == SETTING_CV_TESTER ||
+  //     setting_ == SETTING_MARQUEE)) {
+      (setting_ == SETTING_CV_TESTER)) {
     refresh_display_ = true;
   }
   if (queue_.idle_time() >= 50 &&

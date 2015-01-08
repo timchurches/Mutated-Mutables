@@ -466,7 +466,7 @@ void RenderBlock() {
     osc.Strike();
     envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
     envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
-    ui.StepMarquee();
+    // ui.StepMarquee();
     trigger_flag = false;
   }
   

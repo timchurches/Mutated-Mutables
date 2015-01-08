@@ -45,7 +45,7 @@ enum UiMode {
   MODE_MENU,
   MODE_CALIBRATION_STEP_1,
   MODE_CALIBRATION_STEP_2,
-  MODE_MARQUEE_EDITOR
+  // MODE_MARQUEE_EDITOR
 };
 
 class Ui {
@@ -80,18 +80,18 @@ class Ui {
     cv_[2] = cv_pitch;
     cv_[3] = cv_fm;
   }
+  /*
+  // inline void StepMarquee() {
+  //   marquee_step_++;
+  //   blink_ = true;
+  // }
   
-  inline void StepMarquee() {
-    marquee_step_++;
-    blink_ = true;
-  }
-  
-  inline bool paques() const {
-    return mode_ == MODE_MENU && \
-        setting_ == SETTING_MARQUEE && \
-        settings.paques();
-  }
-  
+  // inline bool paques() const {
+  //   return mode_ == MODE_MENU && \
+  //       setting_ == SETTING_MARQUEE && \
+  //       settings.paques();
+  // }
+  */
   // Overrides oscillator shape display when in meta mode.
   inline void set_meta_shape(MacroOscillatorShape shape) {
     meta_shape_ = shape;
@@ -122,9 +122,9 @@ class Ui {
   int16_t cv_[4];
   
   uint8_t splash_frame_;
-  uint8_t marquee_step_;
-  uint8_t marquee_character_;
-  bool marquee_dirty_character_;
+  // uint8_t marquee_step_;
+  // uint8_t marquee_character_;
+  // bool marquee_dirty_character_;
   bool blink_;
   
   MacroOscillatorShape meta_shape_;
