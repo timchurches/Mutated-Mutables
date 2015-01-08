@@ -65,7 +65,7 @@ const SettingsData kInitSettings = {
   50,
   15401,
   2048,
-  "GREETINGS FROM MUTABLE INSTRUMENTS *EDIT ME*",
+  // "GREETINGS FROM MUTABLE INSTRUMENTS *EDIT ME*",
 };
 
 Storage<0x8020000, 4> storage;
@@ -74,7 +74,7 @@ void Settings::Init() {
   if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
     Reset();
   }
-  CheckPaques();
+  // CheckPaques();
 }
 
 void Settings::Reset() {
@@ -83,14 +83,16 @@ void Settings::Reset() {
 
 void Settings::Save() {
   storage.ParsimoniousSave(data_, &version_token_);
-  CheckPaques();
+  // CheckPaques();
 }
 
-void Settings::CheckPaques() {
+/*
+// void Settings::CheckPaques() {
   // Disable ability to invoke Easter egg mode
   // paques_ = !strcmp(data_.marquee_text, "49");
-  paques_ = false;
-}
+//   paques_ = false;
+// }
+*/
 
 const char* const boolean_values[] = { "OFF ", "ON  " };
 
@@ -404,7 +406,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
   { 0, 21, "META", meta_values },
-  { 0, 3, "RANG", pitch_range_values },
+  { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
   { 0, 1, "FLAT", boolean_values },
