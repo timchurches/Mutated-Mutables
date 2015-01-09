@@ -151,13 +151,15 @@ enum Setting {
   SETTING_MOD2_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD2_AD_RATIO,
-  // SETTING_LAST_EDITABLE_SETTING = SETTING_TRIG_AD_SHAPE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_AD_RATIO,
+  SETTING_MOD1_MODE,
+  SETTING_MOD2_MODE,
+  SETTING_MOD1_RATE,
+  SETTING_MOD2_RATE,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_RATE,
   
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
-  // SETTING_MARQUEE,
   SETTING_VERSION,
   SETTING_LAST
 };
@@ -182,15 +184,15 @@ struct SettingsData {
   uint8_t mod2_shape;
   uint8_t mod1_depth;
   uint8_t mod2_depth;
-  // uint8_t padding[3];
   uint8_t mod1_ad_ratio;
   uint8_t mod2_ad_ratio;
-  
+  uint8_t mod1_mode;
+  uint8_t mod2_mode;
+  uint8_t mod1_rate;
+  uint8_t mod2_rate;  
   int32_t pitch_cv_offset;
   int32_t pitch_cv_scale;
   int32_t fm_cv_offset;
-  
-  // char marquee_text[64];
 };
 
 struct SettingMetadata {
@@ -265,7 +267,6 @@ class Settings {
     return data_.trig_delay;
   }
 
-// TO-DO: check whether these are actually needed!
   inline uint8_t mod1_shape() const {
     return data_.mod1_shape;
   }
@@ -289,15 +290,22 @@ class Settings {
   inline uint8_t mod2_ad_ratio() const {
     return data_.mod2_ad_ratio;
   }
-// end TO-DO
   
-  // inline const char* marquee_text() const {
-  //   return data_.marquee_text;
-  // }
-  
-  // inline char* mutable_marquee_text() {
-  //   return data_.marquee_text;
-  // }
+    inline uint8_t mod1_mode() const {
+    return data_.mod1_mode;
+  }
+
+  inline uint8_t mod2_mode() const {
+    return data_.mod2_mode;
+  }
+
+    inline uint8_t mod1_rate() const {
+    return data_.mod1_rate;
+  }
+
+  inline uint8_t mod2_rate() const {
+    return data_.mod2_rate;
+  }
   
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }
@@ -349,10 +357,6 @@ class Settings {
     return fm_adc_code;
   }
 
-  // inline bool paques() const {
-  //   return paques_;
-  // }
-  
   static const SettingMetadata& metadata(Setting setting) {
     return metadata_[setting];
   }
@@ -362,12 +366,10 @@ class Settings {
   }
   
  private:
-  // void CheckPaques();
 
   SettingsData data_;
   
   uint16_t version_token_;
-  // bool paques_;
   
   static const SettingMetadata metadata_[SETTING_LAST];
   static const Setting settings_order_[SETTING_LAST];

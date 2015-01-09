@@ -32,45 +32,37 @@
 
 #include "stmlib/system/storage.h"
 
-// Easter egg disable, murmurhash3 not required.
-// #include "stmlib/utils/murmurhash3.h"
-
 namespace braids {
 
 using namespace stmlib;
 
 const SettingsData kInitSettings = {
-  MACRO_OSC_SHAPE_CSAW,
-  
-  RESOLUTION_16_BIT,
-  6, // now the LFO speed/env duration, but make the default the same as sample rate
-  
-  0,  // Trig destination
-  false,  // Trig source
-  1,  // Trig delay
-  false,  // Meta modulation
-  
-  PITCH_RANGE_EXTERNAL,
-  2,
-  PITCH_QUANTIZATION_OFF,
-  false,
-  false,
-  false,
-  
-  2,
-  0,
-  0,
-  0,
-  0,
-  0,
-  10, // <- MOD1_AD_RATIO
-  10, 
-  // { 0, 0, 0 },
-  
-  50,
-  15401,
-  2048,
-  // "GREETINGS FROM MUTABLE INSTRUMENTS *EDIT ME*",
+  MACRO_OSC_SHAPE_CSAW, // shape
+  RESOLUTION_16_BIT,    // resolution
+  SAMPLE_RATE_96K,      // sample_rate
+  0,                    // trig_destination
+  false,                // auto_trig (Trig source)
+  1,                    // trig_delay
+  false,                // meta_modulation
+  PITCH_RANGE_EXTERNAL, // pitch_range
+  2,                    // pitch_octave
+  PITCH_QUANTIZATION_OFF, //pitch_quantization
+  false,                // vco_flatten
+  false,                // vco_drift
+  false,                // signature
+  2,                    // brightness
+  0,                    // trig_ad_shape
+  0,                    // mod1_shape
+  0,                    // mod2_shape
+  0,                    // mod1_depth
+  0,                    // mod2_depth
+  10,                   // mod1_ad_ratio
+  10,                   // mod2_ad_ratio
+  20,                   // mod1_rate
+  20,                   // mod2_rate  
+  50,                   // pitch_cv_offset
+  15401,                // pitch_cv_scale
+  2048,                 // fm_cv_offset
 };
 
 Storage<0x8020000, 4> storage;
@@ -79,7 +71,6 @@ void Settings::Init() {
   if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
     Reset();
   }
-  // CheckPaques();
 }
 
 void Settings::Reset() {
@@ -88,16 +79,7 @@ void Settings::Reset() {
 
 void Settings::Save() {
   storage.ParsimoniousSave(data_, &version_token_);
-  // CheckPaques();
 }
-
-/*
-// void Settings::CheckPaques() {
-  // Disable ability to invoke Easter egg mode
-  // paques_ = !strcmp(data_.marquee_text, "49");
-//   paques_ = false;
-// }
-*/
 
 const char* const boolean_values[] = { "OFF ", "ON  " };
 
@@ -322,35 +304,6 @@ const char* const ad_shape_values[] = {
     "SLOW",
     "WOMP",
     "YIFF",
-    /*
-    // "M005",
-    // "M010",
-    // "M020",
-    // "M030",
-    // "M040",
-    // "M050",
-    // "M060",
-    // "M070",
-    // "M080",
-    // "M090",
-    // "M100",
-    // "M110",
-    // "M120",
-    // "M130",    
-    // "M140",    
-    // "M150",    
-    // "M160",    
-    // "M170",    
-    // "M180",    
-    // "M190",    
-    // "M200",    
-    // "M210",    
-    // "M220",    
-    // "M230",    
-    // "M240",    
-    // "M250",    
-    // "M255",  
-    */  
 };
 
 const char* const mod_depth_values[] = {
@@ -400,38 +353,9 @@ const char* const brightness_values[] = {
 };
 
 const char* const meta_values[] = { 
-    "OFF ", // 0
+    "FREQ", // 0
     "META", // 1
-    // "ATTK",
-    // "DCAY",
-    "AD02", // 2
-    // "AD05",
-    "AD10", // 3
-    // "AD15",
-    "AD20", // 4
-    // "AD30",
-    "AD40", // 5
-    "AD60", // 6
-    "AD80", // 7
-    "A=D ", // 8
-    // "DA90",
-    "DA80", //9
-    // "DA70",
-    "DA60", //10
-    "DA40", //11
-    "DA20", //12
-    "DA10", //13
-    "LFO ",  // 14 is LFO mode
-    /*
-    // "LFOX",  // 14 was 21 exponentially-curved triangle
-    // "LFO^",  // 15 was 22 linear triangle
-    // "LFOw",  // 16 was 23 wiggly, using ws_sine_fold (a show about nothing?)
-    // "LFOs",  //  17 was 24 sine-ish, using ws_moderate_overdrive
-    // "LFO\x8C", // 18 was 25 square-ish, using ws_violent_overdrive
-    // "LFOb",    // 19 was 26 bowing friction LUT
-    // "LFO\x8F", // 20 was 27 saw
-    // "LFO\x88", // 21 was 28 ramp
-    */
+    "RATE", // 2
 };
 
 const char* const ad_ratio_values[] = { 
@@ -467,24 +391,28 @@ const char* const mod_shape_values[] = {
     "BOWF",  // 5 bowing friction LUT
 };
 
+const char* const mod_mode_values[] = { 
+    "OFF ",  // 0 
+    "ENV ",  // 1 
+    "LFO ",  // 2 
+};
+
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
-  // { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
-  { 0, 127, "RATE", rates_values },
+  { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
   { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 14, "META", meta_values },
+  { 0, 2, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
   { 0, 1, "FLAT", boolean_values },
   { 0, 1, "DRFT", boolean_values },
   { 0, 1, "SIGN", boolean_values },
-  // { 0, 2, "BRIG", brightness_values },
-  { 0, 127, "CRAT", rates_values }, // re-purposed BRIGHTNESS as color LFO/Env rate
+  { 0, 2, "BRIG", brightness_values },
   { 0, 8, "TENV", ad_shape_values },
   { 0, 5, "SHP1", mod_shape_values },
   { 0, 5, "SHP2", mod_shape_values },
@@ -492,17 +420,20 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 25, "DEP2", mod_depth_values },
   { 0, 20, "A:D1", ad_ratio_values },
   { 0, 20, "A:D2", ad_ratio_values },
+  { 0, 2, "MOD1", mod_mode_values },
+  { 0, 2, "MOD2", mod_mode_values },
+  { 0, 127, "RAT1", rates_values },
+  { 0, 127, "RAT2", rates_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  // { 0, 0, "    ", NULL },  // Placeholder for marquee
-  { 0, 0, "BT3f", NULL },  // Placeholder for version string
+  { 0, 0, "BT3g", NULL },  // Placeholder for version string
 };
 
 /* static */
 const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
-  SETTING_SAMPLE_RATE, // re-purposed as level/Timbre LFO/ENV rate
-  SETTING_BRIGHTNESS, // re-purposed as Color LFO/ENV rate
+  SETTING_SAMPLE_RATE, 
+  SETTING_BRIGHTNESS, 
   SETTING_TRIG_DESTINATION,
   SETTING_TRIG_AD_SHAPE,
   SETTING_META_MODULATION,
@@ -521,9 +452,12 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD2_AD_RATIO,
+  SETTING_MOD1_MODE,
+  SETTING_MOD2_MODE,
+  SETTING_MOD1_RATE,
+  SETTING_MOD2_RATE,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
-  // SETTING_MARQUEE,
   SETTING_VERSION,
 };
 

@@ -216,22 +216,17 @@ void RenderBlock() {
   envelope.Update(trig_strike.attack, trig_strike.decay, 0, 0);
   envelope2.Update(trig_strike.attack, trig_strike.decay, 0, 0);
 
-  // Note: all sorts of implicit casts in the following, I think
-
-  // use FM CV data for env params if meta mode is set for envelopes or LFO modes
+  // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
-  int32_t env_param = 0;
-  int32_t env2_param = 0;
-  if (settings.meta_modulation() > 1) {
-     // LFO rate or envelope duration now controlled by sample rate setting
-     env_param = settings.data().sample_rate ;
-     env2_param = settings.GetValue(SETTING_BRIGHTNESS) ;
+  uint16_t env_param = 0;
+  uint16_t env_a = 0;
+  uint16_t env_d = 0;
+  if (settings.mod1_mode()) {
+     env_param = static_cast<uint16_t>(settings.mod1_rate()) ;
      // add the external voltage to this.
      // scaling this by 32 seems about right for 0-5V modulation range.
      env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
-     env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
-
     // Clip at zero and 127
      if (env_param < 0) {
          env_param = 0 ;
@@ -239,6 +234,42 @@ void RenderBlock() {
      if (env_param > 127) {
          env_param = 127 ;
      } 
+     // Invert if in LFO mode, so higher CVs create higher LFO frequency.
+     if (settings.mod1_mode() == 2) {
+         env_param = 127 - env_param ;
+     }  
+     // attack and decay parameters, default to FM voltage reading.
+     env_a = env_param;
+     env_d = env_param;
+     // These are ratios of attack to decay, from A/D = 0.02 
+     // through to A/D=0.9, then A=D, then D/A = 0.9 down to 0.02
+     // as listed in ad_ratio_values in settings.cc
+     if (settings.mod1_ad_ratio() == 0) {
+       env_a = (env_param * 2) / 100; 
+     } 
+     else if (settings.mod1_ad_ratio() > 0 && settings.mod1_ad_ratio() < 10) {
+       env_a = (env_param * 10 * settings.mod1_ad_ratio()) / 100; 
+     } 
+     else if (settings.mod1_ad_ratio() > 10 && settings.mod1_ad_ratio() < 20) {
+       env_d = (env_param * 10 * (20 - settings.mod1_ad_ratio())) / 100; 
+     } 
+     else if (settings.mod1_ad_ratio() == 20) {
+       env_d = (env_param * 2) / 100; 
+     } 
+     // now set the attack and decay parameters again
+     // using the modified attack and decay values
+     envelope.Update(env_a, env_d, 0, 0);  
+  }
+  // TO-DO: instead of repeating code, use an array for env params and a loop!
+  uint16_t env2_param = 0;
+  uint16_t env2_a = 0;
+  uint16_t env2_d = 0;
+  if (settings.mod2_mode()) {
+     // LFO rate or envelope duration now controlled by sample rate setting
+     env2_param = static_cast<uint16_t>(settings.mod2_rate()) ;
+     // add the external voltage to this.
+     // scaling this by 32 seems about right for 0-5V modulation range.
+     env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
      if (env2_param < 0) {
          env2_param = 0 ;
      }
@@ -246,98 +277,49 @@ void RenderBlock() {
          env2_param = 127 ;
      } 
      // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-     if (settings.meta_modulation() > 13) {
-         env_param = 127 - env_param ;
+     if (settings.mod2_mode() == 2) {
          env2_param = 127 - env2_param ;
      }  
-  }
-  
-  // attack and decay parameters, default to FM voltage reading.
-  uint16_t env_a = env_param;
-  uint16_t env_d = env_param;
-  uint16_t env2_a = env2_param;
-  uint16_t env2_d = env2_param;
-
-  // These are ratios of attack to decay, from A/D = 0.02 
-  // through to A/D=0.9, then A=D, then D/A = 0.9 down to 0.02
-  // as listed in ad_ratio_values in settings.cc
-  if (settings.mod1_ad_ratio() == 0) {
-    env_a = (env_param * 2) / 100; 
-  } 
-  else if (settings.mod1_ad_ratio() > 0 && settings.mod1_ad_ratio() < 10) {
-    env_a = (env_param * 10 * settings.mod1_ad_ratio()) / 100; 
-  } 
-  else if (settings.mod1_ad_ratio() > 10 && settings.mod1_ad_ratio() < 20) {
-    env_d = (env_param * 10 * (20 - settings.mod1_ad_ratio())) / 100; 
-  } 
-  else if (settings.mod1_ad_ratio() == 20) {
-    env_d = (env_param * 2) / 100; 
-  } 
-  // Repeat for envelope2
-  if (settings.mod2_ad_ratio() == 0) {
-    env2_a = (env2_param * 2) / 100; 
-  } 
-  else if (settings.mod2_ad_ratio() > 0 && settings.mod2_ad_ratio() < 10) {
-    env2_a = (env2_param * 10 * settings.mod2_ad_ratio()) / 100; 
-  } 
-  else if (settings.mod2_ad_ratio() > 10 && settings.mod2_ad_ratio() < 20) {
-    env2_d = (env2_param * 10 * (20 - settings.mod2_ad_ratio())) / 100; 
-  } 
-  else if (settings.mod2_ad_ratio() == 20) {
-    env2_d = (env2_param * 2) / 100; 
-  } 
-  
-  // now set the attack and decay parameters again
-  // using the modified attack and decay values
-  if (settings.meta_modulation() > 1) {
-    envelope.Update(env_a, env_d, 0, 0);  
-    envelope2.Update(env2_a, env2_d, 0, 0);  
+     env2_a = env2_param;
+     env2_d = env2_param;
+     // Repeat for envelope2
+     if (settings.mod2_ad_ratio() == 0) {
+        env2_a = (env2_param * 2) / 100; 
+     } 
+     else if (settings.mod2_ad_ratio() > 0 && settings.mod2_ad_ratio() < 10) {
+       env2_a = (env2_param * 10 * settings.mod2_ad_ratio()) / 100; 
+     } 
+     else if (settings.mod2_ad_ratio() > 10 && settings.mod2_ad_ratio() < 20) {
+       env2_d = (env2_param * 10 * (20 - settings.mod2_ad_ratio())) / 100; 
+     } 
+     else if (settings.mod2_ad_ratio() == 20) {
+       env2_d = (env2_param * 2) / 100; 
+     }     
+     // now set the attack and decay parameters again
+     // using the modified attack and decay values
+     envelope2.Update(env2_a, env2_d, 0, 0);  
   }
 
   // Render envelope in LFO mode, or not
   uint16_t ad_value = 0 ;
   uint16_t ad2_value = 0 ;
-  if (settings.meta_modulation() == 14) {
+  if (settings.mod1_mode() == 2) {
+      // LFO mode
       ad_value = envelope.Render(true, settings.mod1_shape());
+  }
+  else if (settings.mod1_mode() == 1){
+      // envelope mode
+      ad_value = envelope.Render(false, settings.mod1_shape());
+  }
+  if (settings.mod2_mode() == 2) {
+      // LFO mode
       ad2_value = envelope2.Render(true, settings.mod2_shape());
   }
-  /*
-  // if (settings.meta_modulation() == 14) {
-  //     // exponential envelope curve
-  //     ad_value = envelope.Render(true, 0);
-  //     ad2_value = envelope2.Render(true, 0);
-  // }
-  // else if (settings.meta_modulation() == 15 || settings.meta_modulation() > 19) {
-  //     // linear envelope curve
-  //     ad_value = envelope.Render(true, 1);
-  //     ad2_value = envelope2.Render(true, 1);
-  // }
-  // else if (settings.meta_modulation() == 16) {
-  //     // wiggly envelope curve
-  //     ad_value = envelope.Render(true, 2);
-  //     ad2_value = envelope2.Render(true, 2);
-  // }
-  // else if (settings.meta_modulation() == 17) {
-  //     // sine envelope curve
-  //     ad_value = envelope.Render(true, 3);
-  //     ad2_value = envelope2.Render(true, 3);
-  // }    
-  // else if (settings.meta_modulation() == 18) {
-  //     // square-ish envelope curve
-  //     ad_value = envelope.Render(true, 4);
-  //     ad2_value = envelope2.Render(true, 4);
-  // }    
-  // else if (settings.meta_modulation() == 19) {
-  //     // bowing friction envelope curve
-  //     ad_value = envelope.Render(true, 5);
-  //     ad2_value = envelope2.Render(true, 5);
-  // }   
-  */ 
-  else {
-      // envelope mode, exponential curve
-      ad_value = envelope.Render(false, settings.mod1_shape());
+  else if (settings.mod2_mode() == 1) {
+      // envelope mode
       ad2_value = envelope2.Render(false, settings.mod2_shape());
   }
+
   // uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
   //     ? trig_strike.amount
   //     : 0;
@@ -446,8 +428,8 @@ void RenderBlock() {
   if (trigger_flag) {
     osc.Strike();
     // TO-DO: use .meta_modulation() method here - why not?
-    envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
-    envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
+    envelope.Trigger(ENV_SEGMENT_ATTACK, settings.mod1_mode() == 2);
+    envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.mod2_mode() == 2);
     // ui.StepMarquee();
     trigger_flag = false;
   }
@@ -475,11 +457,11 @@ void RenderBlock() {
   // negative gain from full volume.
   int32_t gain = 0 ;
   if (settings.GetValue(SETTING_TRIG_DESTINATION) & 2) {
-      if (settings.GetValue(SETTING_META_MODULATION) > 13) {
-          gain = 65535 - ((ad_value >> 8) * ad_level_amount) ;
+      if (settings.mod2_mode() == 2) {
+          gain = 65535 - ((ad2_value >> 8) * ad_level_amount) ;
       }
       else {
-          gain = ad_value ;
+          gain = ad2_value ;
       }
    }
    else {
