@@ -372,14 +372,21 @@ void RenderBlock() {
       // envelope mode, exponential curve
       ad_value = envelope.Render(false, 0);
   }
+  // uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
+  //     ? trig_strike.amount
+  //     : 0;
   uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
-      ? trig_strike.amount
+      ? settings.mod1_depth()
       : 0;
   // added Color as an envelope destination
+  // uint8_t ad_color_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 4
+  //     ? trig_strike.amount
+  //     : 0;
   uint8_t ad_color_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 4
-      ? trig_strike.amount
+      ? settings.mod2_depth()
       : 0;
   // not really needed 
+  // TO-DO: modify this as for timbre and color above
   uint8_t ad_level_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 2
       ? trig_strike.amount
       : 255;

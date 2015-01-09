@@ -147,8 +147,10 @@ enum Setting {
   SETTING_TRIG_AD_SHAPE,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_SHAPE,
+  SETTING_MOD1_DEPTH,
+  SETTING_MOD2_DEPTH,
   // SETTING_LAST_EDITABLE_SETTING = SETTING_TRIG_AD_SHAPE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_SHAPE,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_DEPTH,
   
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
@@ -176,7 +178,10 @@ struct SettingsData {
   uint8_t trig_ad_shape;
   uint8_t mod1_shape;
   uint8_t mod2_shape;
-  uint8_t padding[3];
+  uint8_t mod1_depth;
+  uint8_t mod2_depth;
+  // uint8_t padding[3];
+  uint8_t padding;
   
   int32_t pitch_cv_offset;
   int32_t pitch_cv_scale;
@@ -264,6 +269,14 @@ class Settings {
 
   inline uint8_t mod2_shape() const {
     return data_.mod2_shape;
+  }
+
+  inline uint8_t mod1_depth() const {
+    return data_.mod1_depth * 10;
+  }
+
+  inline uint8_t mod2_depth() const {
+    return data_.mod2_depth * 10;
   }
 // end TO-DO
   
