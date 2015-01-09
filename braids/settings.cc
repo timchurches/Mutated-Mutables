@@ -59,8 +59,9 @@ const SettingsData kInitSettings = {
   
   2,
   0,
-  
-  { 0, 0, 0, 0, 0 },
+  0,
+  0,
+  { 0, 0, 0 },
   
   50,
   15401,
@@ -385,16 +386,27 @@ const char* const meta_values[] = {
     "DA40", //11
     "DA20", //12
     "DA10", //13
-    "LFOX",  // 14 was 21 exponentially-curved triangle
-    "LFO^",  // 15 was 22 linear triangle
-    "LFOw",  // 16 was 23 wiggly, using ws_sine_fold (a show about nothing?)
-    "LFOs",  //  17 was 24 sine-ish, using ws_moderate_overdrive
-    "LFO\x8C", // 18 was 25 square-ish, using ws_violent_overdrive
-    "LFOb",    // 19 was 26 bowing friction LUT
-    "LFO\x8F", // 20 was 27 saw
-    "LFO\x88", // 21 was 28 ramp
+    "LFO ",  // 14 is LFO mode
+    /*
+    // "LFOX",  // 14 was 21 exponentially-curved triangle
+    // "LFO^",  // 15 was 22 linear triangle
+    // "LFOw",  // 16 was 23 wiggly, using ws_sine_fold (a show about nothing?)
+    // "LFOs",  //  17 was 24 sine-ish, using ws_moderate_overdrive
+    // "LFO\x8C", // 18 was 25 square-ish, using ws_violent_overdrive
+    // "LFOb",    // 19 was 26 bowing friction LUT
+    // "LFO\x8F", // 20 was 27 saw
+    // "LFO\x88", // 21 was 28 ramp
+    */
 };
 
+const char* const mod_shape_values[] = { 
+    "EXPO",  // 0 exponentially-curved triangle
+    "LINR",  // 1 linear triangle
+    "WIGL",  // 2 wiggly, using ws_sine_fold (a show about nothing?)
+    "SINE",  // 3 sine-ish, using ws_moderate_overdrive
+    "SQRE",  // 4 square-ish, using ws_violent_overdrive
+    "BOWF",  // 5 bowing friction LUT
+};
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
@@ -405,7 +417,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 21, "META", meta_values },
+  { 0, 14, "META", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -415,6 +427,8 @@ const SettingMetadata Settings::metadata_[] = {
   // { 0, 2, "BRIG", brightness_values },
   { 0, 127, "CRAT", rates_values }, // re-purposed BRIGHTNESS as color LFO/Env rate
   { 0, 35, "TENV", ad_shape_values },
+  { 0, 5, "SHP1", mod_shape_values },
+  { 0, 5, "SHP2", mod_shape_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   // { 0, 0, "    ", NULL },  // Placeholder for marquee
@@ -438,6 +452,8 @@ const Setting Settings::settings_order_[] = {
   SETTING_VCO_DRIFT,
   SETTING_SIGNATURE,
   SETTING_RESOLUTION,
+  SETTING_MOD1_SHAPE,
+  SETTING_MOD2_SHAPE,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   // SETTING_MARQUEE,

@@ -145,7 +145,10 @@ enum Setting {
   SETTING_SIGNATURE,
   SETTING_BRIGHTNESS,
   SETTING_TRIG_AD_SHAPE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_TRIG_AD_SHAPE,
+  SETTING_MOD1_SHAPE,
+  SETTING_MOD2_SHAPE,
+  // SETTING_LAST_EDITABLE_SETTING = SETTING_TRIG_AD_SHAPE,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_SHAPE,
   
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
@@ -171,7 +174,9 @@ struct SettingsData {
   uint8_t signature;
   uint8_t brightness;
   uint8_t trig_ad_shape;
-  uint8_t padding[5];
+  uint8_t mod1_shape;
+  uint8_t mod2_shape;
+  uint8_t padding[3];
   
   int32_t pitch_cv_offset;
   int32_t pitch_cv_scale;
@@ -251,6 +256,16 @@ class Settings {
   inline uint8_t trig_delay() const {
     return data_.trig_delay;
   }
+
+// TO-DO: check whether these are actually needed!
+  inline uint8_t mod1_shape() const {
+    return data_.mod1_shape;
+  }
+
+  inline uint8_t mod2_shape() const {
+    return data_.mod2_shape;
+  }
+// end TO-DO
   
   // inline const char* marquee_text() const {
   //   return data_.marquee_text;

@@ -309,16 +309,18 @@ void RenderBlock() {
   // 14, 15, 16, 17, 18 and 19 also missing because for now we'll use A=D
   // for exponential curve, triangle, wiggly, sine and squareish
   // and bowing friction LFO modes.
-  else if (settings.meta_modulation() == 20) {
-    // Sawtooth LFO
-    env_d =  0; 
-    env2_d =  0; 
-  } 
-  else if (settings.meta_modulation() == 21) {
-    // Ramp LFO
-    env_a =  0; 
-    env2_a =  0; 
-  } 
+  /*
+  // else if (settings.meta_modulation() == 20) {
+  //   // Sawtooth LFO
+  //   env_d =  0; 
+  //   env2_d =  0; 
+  // } 
+  // else if (settings.meta_modulation() == 21) {
+  //   // Ramp LFO
+  //   env_a =  0; 
+  //   env2_a =  0; 
+  // } 
+  */
   
   // now set the attack and decay parameters again
   // using the modified attack and decay values
@@ -331,35 +333,41 @@ void RenderBlock() {
   uint16_t ad_value = 0 ;
   uint16_t ad2_value = 0 ;
   if (settings.meta_modulation() == 14) {
-      // exponential envelope curve
-      ad_value = envelope.Render(true, 0);
-      ad2_value = envelope2.Render(true, 0);
+      ad_value = envelope.Render(true, settings.mod1_shape());
+      ad2_value = envelope2.Render(true, settings.mod2_shape());
   }
-  else if (settings.meta_modulation() == 15 || settings.meta_modulation() > 19) {
-      // linear envelope curve
-      ad_value = envelope.Render(true, 1);
-      ad2_value = envelope2.Render(true, 1);
-  }
-  else if (settings.meta_modulation() == 16) {
-      // wiggly envelope curve
-      ad_value = envelope.Render(true, 2);
-      ad2_value = envelope2.Render(true, 2);
-  }
-  else if (settings.meta_modulation() == 17) {
-      // sine envelope curve
-      ad_value = envelope.Render(true, 3);
-      ad2_value = envelope2.Render(true, 3);
-  }    
-  else if (settings.meta_modulation() == 18) {
-      // square-ish envelope curve
-      ad_value = envelope.Render(true, 4);
-      ad2_value = envelope2.Render(true, 4);
-  }    
-  else if (settings.meta_modulation() == 19) {
-      // bowing friction envelope curve
-      ad_value = envelope.Render(true, 5);
-      ad2_value = envelope2.Render(true, 5);
-  }    
+  /*
+  // if (settings.meta_modulation() == 14) {
+  //     // exponential envelope curve
+  //     ad_value = envelope.Render(true, 0);
+  //     ad2_value = envelope2.Render(true, 0);
+  // }
+  // else if (settings.meta_modulation() == 15 || settings.meta_modulation() > 19) {
+  //     // linear envelope curve
+  //     ad_value = envelope.Render(true, 1);
+  //     ad2_value = envelope2.Render(true, 1);
+  // }
+  // else if (settings.meta_modulation() == 16) {
+  //     // wiggly envelope curve
+  //     ad_value = envelope.Render(true, 2);
+  //     ad2_value = envelope2.Render(true, 2);
+  // }
+  // else if (settings.meta_modulation() == 17) {
+  //     // sine envelope curve
+  //     ad_value = envelope.Render(true, 3);
+  //     ad2_value = envelope2.Render(true, 3);
+  // }    
+  // else if (settings.meta_modulation() == 18) {
+  //     // square-ish envelope curve
+  //     ad_value = envelope.Render(true, 4);
+  //     ad2_value = envelope2.Render(true, 4);
+  // }    
+  // else if (settings.meta_modulation() == 19) {
+  //     // bowing friction envelope curve
+  //     ad_value = envelope.Render(true, 5);
+  //     ad2_value = envelope2.Render(true, 5);
+  // }   
+  */ 
   else {
       // envelope mode, exponential curve
       ad_value = envelope.Render(false, 0);
@@ -464,6 +472,7 @@ void RenderBlock() {
 
   if (trigger_flag) {
     osc.Strike();
+    // TO-DO: use .meta_modulation() method here - why not?
     envelope.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
     envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.GetValue(SETTING_META_MODULATION) > 13);
     // ui.StepMarquee();
