@@ -259,68 +259,33 @@ void RenderBlock() {
   uint16_t env2_d = env2_param;
 
   // These are ratios of attack to decay, from A/D = 0.02 
-  // through to A/D=0.8, then A=D, then D/A = 0.8 down to 0.1
-  // as listed in meta_values in settings.cc
-  if (settings.meta_modulation() == 2) {
+  // through to A/D=0.9, then A=D, then D/A = 0.9 down to 0.02
+  // as listed in ad_ratio_values in settings.cc
+  if (settings.mod1_ad_ratio() == 0) {
     env_a = (env_param * 2) / 100; 
+  } 
+  else if (settings.mod1_ad_ratio() > 0 && settings.mod1_ad_ratio() < 10) {
+    env_a = (env_param * 10 * settings.mod1_ad_ratio()) / 100; 
+  } 
+  else if (settings.mod1_ad_ratio() > 10 && settings.mod1_ad_ratio() < 20) {
+    env_d = (env_param * 10 * (20 - settings.mod1_ad_ratio())) / 100; 
+  } 
+  else if (settings.mod1_ad_ratio() == 20) {
+    env_d = (env_param * 2) / 100; 
+  } 
+  // Repeat for envelope2
+  if (settings.mod2_ad_ratio() == 0) {
     env2_a = (env2_param * 2) / 100; 
   } 
-  else if (settings.meta_modulation() == 3) {
-    env_a = (env_param * 10) / 100; 
-    env2_a = (env2_param * 10) / 100; 
+  else if (settings.mod2_ad_ratio() > 0 && settings.mod2_ad_ratio() < 10) {
+    env2_a = (env2_param * 10 * settings.mod2_ad_ratio()) / 100; 
   } 
-  else if (settings.meta_modulation() == 4) {
-    env_a = (env_param * 20) / 100; 
-    env2_a = (env2_param * 20) / 100; 
+  else if (settings.mod2_ad_ratio() > 10 && settings.mod2_ad_ratio() < 20) {
+    env2_d = (env2_param * 10 * (20 - settings.mod2_ad_ratio())) / 100; 
   } 
-  else if (settings.meta_modulation() == 5) {
-    env_a = (env_param * 40) / 100; 
-    env2_a = (env2_param * 40) / 100; 
+  else if (settings.mod2_ad_ratio() == 20) {
+    env2_d = (env2_param * 2) / 100; 
   } 
-  else if (settings.meta_modulation() == 6) {
-    env_a = (env_param * 60) / 100; 
-    env2_a = (env2_param * 60) / 100; 
-  } 
-  else if (settings.meta_modulation() == 7) {
-    env_a = (env_param * 80) / 100; 
-    env2_a = (env2_param * 80) / 100; 
-  } 
-  // 8 is deliberately missing because env_a already equals env_d
-  else if (settings.meta_modulation() == 9) {
-    env_d = (env_param * 80) / 100; 
-    env2_d = (env2_param * 80) / 100; 
-  } 
-  else if (settings.meta_modulation() == 10) {
-    env_d = (env_param * 60) / 100; 
-    env2_d = (env2_param * 60) / 100; 
-  } 
-  else if (settings.meta_modulation() == 11) {
-    env_d = (env_param * 40) / 100; 
-    env2_d = (env2_param * 40) / 100; 
-  } 
-  else if (settings.meta_modulation() == 12) {
-    env_d = (env_param * 20) / 100; 
-    env2_d = (env2_param * 20) / 100; 
-  } 
-  else if (settings.meta_modulation() == 13) {
-    env_d = (env_param * 10) / 100; 
-    env2_d = (env2_param * 10) / 100; 
-  } 
-  // 14, 15, 16, 17, 18 and 19 also missing because for now we'll use A=D
-  // for exponential curve, triangle, wiggly, sine and squareish
-  // and bowing friction LFO modes.
-  /*
-  // else if (settings.meta_modulation() == 20) {
-  //   // Sawtooth LFO
-  //   env_d =  0; 
-  //   env2_d =  0; 
-  // } 
-  // else if (settings.meta_modulation() == 21) {
-  //   // Ramp LFO
-  //   env_a =  0; 
-  //   env2_a =  0; 
-  // } 
-  */
   
   // now set the attack and decay parameters again
   // using the modified attack and decay values
@@ -370,7 +335,8 @@ void RenderBlock() {
   */ 
   else {
       // envelope mode, exponential curve
-      ad_value = envelope.Render(false, 0);
+      ad_value = envelope.Render(false, settings.mod1_shape());
+      ad2_value = envelope2.Render(false, settings.mod2_shape());
   }
   // uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
   //     ? trig_strike.amount

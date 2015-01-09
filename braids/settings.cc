@@ -63,7 +63,8 @@ const SettingsData kInitSettings = {
   0,
   0,
   0,
-  0, // <-padding
+  10, // <- MOD1_AD_RATIO
+  10, 
   // { 0, 0, 0 },
   
   50,
@@ -433,6 +434,30 @@ const char* const meta_values[] = {
     */
 };
 
+const char* const ad_ratio_values[] = { 
+    "0.02", // 0
+    "0.10", // 1
+    "0.20", // 2
+    "0.30", // 3
+    "0.40", // 4
+    "0.50", // 5
+    "0.60", // 6
+    "0.70", // 7
+    "0.80", // 8
+    "0.90", // 9
+    "1.00", // 10
+    "1.11", // 11
+    "1.25", // 12
+    "1.43", // 13
+    "1.66", // 14
+    "2.00", // 15
+    "2.50", // 16
+    "3.33", // 17
+    "5.00", // 18
+    "10.0", // 19
+    "50.0", // 20
+};
+
 const char* const mod_shape_values[] = { 
     "EXPO",  // 0 exponentially-curved triangle
     "LINR",  // 1 linear triangle
@@ -465,6 +490,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 5, "SHP2", mod_shape_values },
   { 0, 25, "DEP1", mod_depth_values },
   { 0, 25, "DEP2", mod_depth_values },
+  { 0, 20, "A:D1", ad_ratio_values },
+  { 0, 20, "A:D2", ad_ratio_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   // { 0, 0, "    ", NULL },  // Placeholder for marquee
@@ -492,6 +519,8 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_SHAPE,
   SETTING_MOD1_DEPTH,
   SETTING_MOD2_DEPTH,
+  SETTING_MOD1_AD_RATIO,
+  SETTING_MOD2_AD_RATIO,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   // SETTING_MARQUEE,
