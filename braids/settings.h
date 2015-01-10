@@ -147,20 +147,22 @@ enum Setting {
   // SETTING_TRIG_AD_SHAPE,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_SHAPE,
-  SETTING_MOD3_SHAPE,
+  // SETTING_MOD3_SHAPE,
   SETTING_MOD1_DEPTH,
   SETTING_MOD2_DEPTH,
-  SETTING_MOD3_DEPTH,
+  // SETTING_MOD3_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD2_AD_RATIO,
-  SETTING_MOD3_AD_RATIO,
+  // SETTING_MOD3_AD_RATIO,
   SETTING_MOD1_MODE,
   SETTING_MOD2_MODE,
-  SETTING_MOD3_MODE,
+  // SETTING_MOD3_MODE,
   SETTING_MOD1_RATE,
   SETTING_MOD2_RATE,
-  SETTING_MOD3_RATE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD3_RATE,
+  // SETTING_MOD3_RATE,
+  SETTING_MOD1_DESTINATION,
+  SETTING_MOD2_DESTINATION,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_DESTINATION,
   
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
@@ -187,19 +189,21 @@ struct SettingsData {
   // uint8_t trig_ad_shape; //TO-DO: remove 
   uint8_t mod1_shape;
   uint8_t mod2_shape;
-  uint8_t mod3_shape;
+  // uint8_t mod3_shape;
   uint8_t mod1_depth;
   uint8_t mod2_depth;
-  uint8_t mod3_depth;
+  // uint8_t mod3_depth;
   uint8_t mod1_ad_ratio;
   uint8_t mod2_ad_ratio;
-  uint8_t mod3_ad_ratio;
+  // uint8_t mod3_ad_ratio;
   uint8_t mod1_mode;
   uint8_t mod2_mode;
-  uint8_t mod3_mode;
+  // uint8_t mod3_mode;
   uint8_t mod1_rate;
   uint8_t mod2_rate;  
-  uint8_t mod3_rate;  
+  // uint8_t mod3_rate;  
+  uint8_t mod1_destination;
+  uint8_t mod2_destination;  
   int32_t pitch_cv_offset;
   int32_t pitch_cv_scale;
   int32_t fm_cv_offset;
@@ -285,9 +289,9 @@ class Settings {
     return data_.mod2_shape;
   }
 
-  inline uint8_t mod3_shape() const {
-    return data_.mod3_shape;
-  }
+  // inline uint8_t mod3_shape() const {
+  //   return data_.mod3_shape;
+  // }
 
   inline uint8_t mod1_depth() const {
     return data_.mod1_depth * 10;
@@ -297,9 +301,9 @@ class Settings {
     return data_.mod2_depth * 10;
   }
 
-  inline uint8_t mod3_depth() const {
-    return data_.mod3_depth * 10;
-  }
+  // inline uint8_t mod3_depth() const {
+  //   return data_.mod3_depth * 10;
+  // }
   
     inline uint8_t mod1_ad_ratio() const {
     return data_.mod1_ad_ratio;
@@ -309,9 +313,9 @@ class Settings {
     return data_.mod2_ad_ratio;
   }
 
-  inline uint8_t mod3_ad_ratio() const {
-    return data_.mod3_ad_ratio;
-  }
+  // inline uint8_t mod3_ad_ratio() const {
+  //   return data_.mod3_ad_ratio;
+  // }
   
     inline uint8_t mod1_mode() const {
     return data_.mod1_mode;
@@ -321,11 +325,11 @@ class Settings {
     return data_.mod2_mode;
   }
 
-  inline uint8_t mod3_mode() const {
-    return data_.mod3_mode;
-  }
+  // inline uint8_t mod3_mode() const {
+  //   return data_.mod3_mode;
+  // }
 
-    inline uint8_t mod1_rate() const {
+  inline uint8_t mod1_rate() const {
     return data_.mod1_rate;
   }
 
@@ -333,8 +337,16 @@ class Settings {
     return data_.mod2_rate;
   }
 
-  inline uint8_t mod3_rate() const {
-    return data_.mod3_rate;
+  // inline uint8_t mod3_rate() const {
+  //   return data_.mod3_rate;
+  // }
+
+  inline uint8_t mod1_destination() const {
+    return data_.mod1_destination;
+  }
+
+  inline uint8_t mod2_destination() const {
+    return data_.mod2_destination;
   }
   
   inline const SettingsData& data() const { return data_; }
