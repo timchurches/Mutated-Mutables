@@ -223,7 +223,7 @@ void RenderBlock() {
   uint16_t env_a = 0;
   uint16_t env_d = 0;
   if (settings.mod1_mode()) {
-     env_param = static_cast<uint16_t>(settings.mod1_rate()) ;
+     env_param = uint16_t (settings.mod1_rate()) ;
      // add the external voltage to this.
      // scaling this by 32 seems about right for 0-5V modulation range.
      env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
@@ -266,7 +266,7 @@ void RenderBlock() {
   uint16_t env2_d = 0;
   if (settings.mod2_mode()) {
      // LFO rate or envelope duration now controlled by sample rate setting
-     env2_param = static_cast<uint16_t>(settings.mod2_rate()) ;
+     env2_param = uint16_t (settings.mod2_rate()) ;
      // add the external voltage to this.
      // scaling this by 32 seems about right for 0-5V modulation range.
      env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
