@@ -58,6 +58,8 @@ const SettingsData kInitSettings = {
   0,                    // mod2_depth
   10,                   // mod1_ad_ratio
   10,                   // mod2_ad_ratio
+  0,                    // mod1_mode
+  0,                    // mod2_mode  
   20,                   // mod1_rate
   20,                   // mod2_rate  
   50,                   // pitch_cv_offset
@@ -138,8 +140,17 @@ const char* const bits_values[] = {
     "8BIT",
     "12B ",
     "16B " };
-    
+
 const char* const rates_values[] = {
+    "4KHZ",
+    "8KHZ",
+    "16K ",
+    "24K ",
+    "32K ",
+    "48K ",
+    "96K " };
+    
+const char* const mod_rate_values[] = {
     "   0",
     "   1",
     "   2",
@@ -422,8 +433,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 20, "A:D2", ad_ratio_values },
   { 0, 2, "MOD1", mod_mode_values },
   { 0, 2, "MOD2", mod_mode_values },
-  { 0, 127, "RAT1", rates_values },
-  { 0, 127, "RAT2", rates_values },
+  { 0, 127, "RAT1", mod_rate_values },
+  { 0, 127, "RAT2", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3f", NULL },  // Placeholder for version string
