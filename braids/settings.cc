@@ -40,7 +40,7 @@ const SettingsData kInitSettings = {
   MACRO_OSC_SHAPE_CSAW, // shape
   RESOLUTION_16_BIT,    // resolution
   SAMPLE_RATE_96K,      // sample_rate
-  0,                    // trig_destination
+  // 0,                    // trig_destination
   false,                // auto_trig (Trig source)
   1,                    // trig_delay
   false,                // meta_modulation
@@ -51,17 +51,22 @@ const SettingsData kInitSettings = {
   false,                // vco_drift
   false,                // signature
   2,                    // brightness
-  0,                    // trig_ad_shape
+  // 0,                    // trig_ad_shape
   0,                    // mod1_shape
   0,                    // mod2_shape
+  0,                    // mod3_shape  
   0,                    // mod1_depth
   0,                    // mod2_depth
+  0,                    // mod3_depth  
   10,                   // mod1_ad_ratio
   10,                   // mod2_ad_ratio
+  10,                   // mod3_ad_ratio
   0,                    // mod1_mode
   0,                    // mod2_mode  
+  0,                    // mod3_mode  
   20,                   // mod1_rate
   20,                   // mod2_rate  
+  20,                   // mod3_rate    
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -305,17 +310,19 @@ const char* const trig_delay_values[] = {
     "4ms "
 };
 
-const char* const ad_shape_values[] = {
-    "TT  ",
-    "PIK ",
-    "PING",
-    "TONG",
-    "BONG",
-    "LONG",
-    "SLOW",
-    "WOMP",
-    "YIFF",
-};
+/*
+// const char* const ad_shape_values[] = {
+//     "TT  ",
+//     "PIK ",
+//     "PING",
+//     "TONG",
+//     "BONG",
+//     "LONG",
+//     "SLOW",
+//     "WOMP",
+//     "YIFF",
+// };
+*/
 
 const char* const mod_depth_values[] = {
     "   0",
@@ -346,16 +353,18 @@ const char* const mod_depth_values[] = {
     " 250",    
 };
 
-const char* const trig_destination_values[] = {
-    "SYNC",
-    "TIMB",
-    "LEVL",
-    "T+L ",
-    "COLR",
-    "T+C ",
-    "L+C ",
-    "ALL "
-};
+/*
+// const char* const trig_destination_values[] = {
+//     "SYNC",
+//     "TIMB",
+//     "LEVL",
+//     "T+L ",
+//     "COLR",
+//     "T+C ",
+//     "L+C ",
+//     "ALL "
+// };
+*/
 
 const char* const brightness_values[] = {
     "\xff   ",
@@ -413,7 +422,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
   { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
-  { 0, 7, "TDST", trig_destination_values },
+  // { 0, 7, "TDST", trig_destination_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
   { 0, 2, "FMCV", meta_values },
@@ -424,17 +433,22 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "DRFT", boolean_values },
   { 0, 1, "SIGN", boolean_values },
   { 0, 2, "BRIG", brightness_values },
-  { 0, 8, "TENV", ad_shape_values },
+  // { 0, 8, "TENV", ad_shape_values },
   { 0, 5, "SHP1", mod_shape_values },
   { 0, 5, "SHP2", mod_shape_values },
+  { 0, 5, "SHP3", mod_shape_values },
   { 0, 25, "DEP1", mod_depth_values },
   { 0, 25, "DEP2", mod_depth_values },
+  { 0, 25, "DEP3", mod_depth_values },
   { 0, 20, "A:D1", ad_ratio_values },
   { 0, 20, "A:D2", ad_ratio_values },
+  { 0, 20, "A:D3", ad_ratio_values },
   { 0, 2, "MOD1", mod_mode_values },
   { 0, 2, "MOD2", mod_mode_values },
+  { 0, 2, "MOD3", mod_mode_values },
   { 0, 127, "RAT1", mod_rate_values },
   { 0, 127, "RAT2", mod_rate_values },
+  { 0, 127, "RAT3", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3f", NULL },  // Placeholder for version string
@@ -445,8 +459,8 @@ const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_SAMPLE_RATE, 
   SETTING_BRIGHTNESS, 
-  SETTING_TRIG_DESTINATION,
-  SETTING_TRIG_AD_SHAPE,
+  // SETTING_TRIG_DESTINATION,
+  // SETTING_TRIG_AD_SHAPE,
   SETTING_META_MODULATION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
@@ -459,14 +473,19 @@ const Setting Settings::settings_order_[] = {
   SETTING_RESOLUTION,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_SHAPE,
+  SETTING_MOD3_SHAPE,
   SETTING_MOD1_DEPTH,
   SETTING_MOD2_DEPTH,
+  SETTING_MOD3_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD2_AD_RATIO,
+  SETTING_MOD3_AD_RATIO,
   SETTING_MOD1_MODE,
   SETTING_MOD2_MODE,
+  SETTING_MOD3_MODE,
   SETTING_MOD1_RATE,
   SETTING_MOD2_RATE,
+  SETTING_MOD3_RATE,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   SETTING_VERSION,

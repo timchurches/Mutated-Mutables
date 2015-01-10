@@ -50,8 +50,9 @@ const uint16_t kAudioBlockSize = 24;
 RingBuffer<uint16_t, kAudioBufferSize> audio_samples;
 RingBuffer<uint8_t, kAudioBufferSize> sync_samples;
 MacroOscillator osc;
-Envelope envelope;
+Envelope envelope;  // first envelope/LFO for timbre modulation.
 Envelope envelope2; // second envelope/LFO instance for color modulation.
+Envelope envelope3; // third envelope/LFO instance for level modulation.
 Adc adc;
 Dac dac;
 DebugPin debug_pin;
@@ -143,6 +144,7 @@ void Init() {
   
   envelope.Init();
   envelope2.Init();
+  envelope3.Init();
   ws.Init(GetUniqueId(2));
   jitter_source.Init(GetUniqueId(1));
   sys.StartTimers();
@@ -159,50 +161,54 @@ const uint16_t bit_reduction_masks[] = {
 
 const uint16_t decimation_factors[] = { 24, 12, 6, 4, 3, 2, 1 };
 
-struct TrigStrikeSettings {
-  uint8_t attack;
-  uint8_t decay;
-  uint8_t amount;
-};
+/*
+// struct TrigStrikeSettings {
+//   uint8_t attack;
+//   uint8_t decay;
+//   uint8_t amount;
+// };
+*/
 
-const TrigStrikeSettings trig_strike_settings[] = {
-  { 0, 30, 30 },
-  { 0, 40, 60 },
-  { 0, 50, 90 },
-  { 0, 60, 110 },
-  { 0, 70, 90 },
-  { 0, 90, 80 },
-  { 60, 100, 70 },
-  { 40, 72, 60 },
-  { 34, 60, 20 },
-  { 0, 90,  5 },
-  { 0, 90, 10 },
-  { 0, 90, 20 },
-  { 0, 90, 30 },
-  { 0, 90, 40 },
-  { 0, 90, 50 },
-  { 0, 90, 60 },
-  { 0, 90, 70 },
-  { 0, 90, 80 },
-  { 0, 90, 90 },
-  { 0, 90, 100 },
-  { 0, 90, 110 },
-  { 0, 90, 120 },
-  { 0, 90, 130 },
-  { 0, 90, 140 },
-  { 0, 90, 150 },
-  { 0, 90, 160 },
-  { 0, 90, 170 },
-  { 0, 90, 180 },
-  { 0, 90, 190 },
-  { 0, 90, 200 },
-  { 0, 90, 210 },
-  { 0, 90, 220 },
-  { 0, 90, 230 },
-  { 0, 90, 240 },
-  { 0, 90, 250 },
-  { 0, 90, 255 },
-};
+/*
+// const TrigStrikeSettings trig_strike_settings[] = {
+//   { 0, 30, 30 },
+//   { 0, 40, 60 },
+//   { 0, 50, 90 },
+//   { 0, 60, 110 },
+//   { 0, 70, 90 },
+//   { 0, 90, 80 },
+//   { 60, 100, 70 },
+//   { 40, 72, 60 },
+//   { 34, 60, 20 },
+//   { 0, 90,  5 },
+//   { 0, 90, 10 },
+//   { 0, 90, 20 },
+//   { 0, 90, 30 },
+//   { 0, 90, 40 },
+//   { 0, 90, 50 },
+//   { 0, 90, 60 },
+//   { 0, 90, 70 },
+//   { 0, 90, 80 },
+//   { 0, 90, 90 },
+//   { 0, 90, 100 },
+//   { 0, 90, 110 },
+//   { 0, 90, 120 },
+//   { 0, 90, 130 },
+//   { 0, 90, 140 },
+//   { 0, 90, 150 },
+//   { 0, 90, 160 },
+//   { 0, 90, 170 },
+//   { 0, 90, 180 },
+//   { 0, 90, 190 },
+//   { 0, 90, 200 },
+//   { 0, 90, 210 },
+//   { 0, 90, 220 },
+//   { 0, 90, 230 },
+//   { 0, 90, 240 },
+//   { 0, 90, 250 },
+//   { 0, 90, 255 },
+// };
+*/
 
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
@@ -211,10 +217,15 @@ void RenderBlock() {
 
   //debug_pin.High();
   
-  const TrigStrikeSettings& trig_strike = \
-      trig_strike_settings[settings.GetValue(SETTING_TRIG_AD_SHAPE)];
-  envelope.Update(trig_strike.attack, trig_strike.decay, 0, 0);
-  envelope2.Update(trig_strike.attack, trig_strike.decay, 0, 0);
+  /*
+  // TO-DO: remove trigger strike setting
+  // const TrigStrikeSettings& trig_strike = \
+  //    trig_strike_settings[settings.GetValue(SETTING_TRIG_AD_SHAPE)];
+  // These initial settings probably unnecessary - see the envelope Init method.
+  */
+  envelope.Update(0, 70, 0, 0);
+  envelope2.Update(0, 70, 0, 0);
+  envelope3.Update(0, 70, 0, 0);
 
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
@@ -299,10 +310,51 @@ void RenderBlock() {
      // using the modified attack and decay values
      envelope2.Update(env2_a, env2_d, 0, 0);  
   }
+  // Again for envelope3 - really need to re-factor this!
+  uint16_t env3_param = 0;
+  uint16_t env3_a = 0;
+  uint16_t env3_d = 0;
+  if (settings.mod3_mode()) {
+     // LFO rate or envelope duration now controlled by sample rate setting
+     env3_param = uint16_t (settings.mod3_rate()) ;
+     // add the external voltage to this.
+     // scaling this by 32 seems about right for 0-5V modulation range.
+     env3_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+     if (env3_param < 0) {
+         env3_param = 0 ;
+     }
+     if (env3_param > 127) {
+         env3_param = 127 ;
+     } 
+     // Invert if in LFO mode, so higher CVs create higher LFO frequency.
+     if (settings.mod3_mode() == 2) {
+         env3_param = 127 - env3_param ;
+     }  
+     env3_a = env3_param;
+     env3_d = env3_param;
+     // Repeat for envelope3
+     if (settings.mod3_ad_ratio() == 0) {
+        env3_a = (env3_param * 2) / 100; 
+     } 
+     else if (settings.mod3_ad_ratio() > 0 && settings.mod3_ad_ratio() < 10) {
+       env2_a = (env3_param * 10 * settings.mod3_ad_ratio()) / 100; 
+     } 
+     else if (settings.mod3_ad_ratio() > 10 && settings.mod3_ad_ratio() < 20) {
+       env2_d = (env3_param * 10 * (20 - settings.mod3_ad_ratio())) / 100; 
+     } 
+     else if (settings.mod3_ad_ratio() == 20) {
+       env3_d = (env3_param * 2) / 100; 
+     }     
+     // now set the attack and decay parameters again
+     // using the modified attack and decay values
+     envelope3.Update(env3_a, env3_d, 0, 0);  
+  }
 
   // Render envelope in LFO mode, or not
   uint16_t ad_value = 0 ;
   uint16_t ad2_value = 0 ;
+  uint16_t ad3_value = 0 ;
+  // envelope 1
   if (settings.mod1_mode() == 2) {
       // LFO mode
       ad_value = envelope.Render(true, settings.mod1_shape());
@@ -311,6 +363,7 @@ void RenderBlock() {
       // envelope mode
       ad_value = envelope.Render(false, settings.mod1_shape());
   }
+  // envelope 2
   if (settings.mod2_mode() == 2) {
       // LFO mode
       ad2_value = envelope2.Render(true, settings.mod2_shape());
@@ -319,24 +372,35 @@ void RenderBlock() {
       // envelope mode
       ad2_value = envelope2.Render(false, settings.mod2_shape());
   }
+  // envelope 3
+  if (settings.mod3_mode() == 2) {
+      // LFO mode
+      ad3_value = envelope3.Render(true, settings.mod3_shape());
+  }
+  else if (settings.mod3_mode() == 1) {
+      // envelope mode
+      ad3_value = envelope3.Render(false, settings.mod3_shape());
+  }
 
   // uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
   //     ? trig_strike.amount
   //     : 0;
-  uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
+  uint8_t ad_timbre_amount = settings.mod1_mode()
       ? settings.mod1_depth()
       : 0;
   // added Color as an envelope destination
   // uint8_t ad_color_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 4
   //     ? trig_strike.amount
   //     : 0;
-  uint8_t ad_color_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 4
+  uint8_t ad_color_amount = settings.mod2_mode()
       ? settings.mod2_depth()
       : 0;
-  // not really needed 
   // TO-DO: modify this as for timbre and color above
-  uint8_t ad_level_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 2
-      ? trig_strike.amount
+  // uint8_t ad_level_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 2
+  //     ? trig_strike.amount
+  //     : 255;
+  uint8_t ad_level_amount = settings.mod3_mode()
+      ? settings.mod3_mode() == 1 ? 255 : settings.mod3_depth()
       : 255;
    
   // meta_modulation no longer a boolean  
@@ -430,17 +494,19 @@ void RenderBlock() {
     // TO-DO: use .meta_modulation() method here - why not?
     envelope.Trigger(ENV_SEGMENT_ATTACK, settings.mod1_mode() == 2);
     envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.mod2_mode() == 2);
+    envelope3.Trigger(ENV_SEGMENT_ATTACK, settings.mod3_mode() == 2);
     // ui.StepMarquee();
     trigger_flag = false;
   }
   
-  uint8_t destination = settings.GetValue(SETTING_TRIG_DESTINATION);
-  if (destination != 1) {
+  // uint8_t destination = settings.GetValue(SETTING_TRIG_DESTINATION);
+  // if (destination != 1) {
+  if (!settings.mod1_mode() && !settings.mod2_mode() && !settings.mod3_mode()) {
     for (size_t i = 0; i < kAudioBlockSize; ++i) {
       sync_buffer[i] = sync_samples.ImmediateRead();
     }
   } else {
-    // Disable hardsync when the shaping envelopes are used.
+    // Disable hardsync when any of the shaping envelopes are used.
     memset(sync_buffer, 0, sizeof(sync_buffer));
   }
 
@@ -456,12 +522,12 @@ void RenderBlock() {
   // use AD envelope value as gain except in LFO mode, when it is used as 
   // negative gain from full volume.
   int32_t gain = 0 ;
-  if (settings.GetValue(SETTING_TRIG_DESTINATION) & 2) {
-      if (settings.mod2_mode() == 2) {
-          gain = 65535 - ((ad2_value >> 8) * ad_level_amount) ;
+  if (settings.mod3_mode()) {
+      if (settings.mod3_mode() == 2) {
+          gain = 65535 - ((ad3_value >> 8) * ad_level_amount) ;
       }
       else {
-          gain = ad2_value ;
+          gain = ad3_value ;
       }
    }
    else {
