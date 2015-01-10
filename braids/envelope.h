@@ -61,12 +61,7 @@ class Envelope {
     target_[ENV_SEGMENT_SUSTAIN] = target_[ENV_SEGMENT_DECAY];
   }
   
-  // TO-DO: remove LfoMode argument to this method
-  inline void Trigger(EnvelopeSegment segment, bool LfoMode) {
-    // Resetting phase to zero in LFO mode causes clicks when a trigger is received
-    // if (segment == ENV_SEGMENT_DEAD || (segment == ENV_SEGMENT_ATTACK && LfoMode)) {
-    //   value_ = 0;
-    // }
+  inline void Trigger(EnvelopeSegment segment) {
     if (segment == ENV_SEGMENT_DEAD ) {
       value_ = 0;
     }
@@ -81,17 +76,17 @@ class Envelope {
     phase_ += increment;
     // Kickstart the LFO if in LFO mode and not already looping
     if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
-         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK), LfoMode);  
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
     } 
 
     if (phase_ < increment) {
       value_ = Mix(a_, b_, 65535);
       // This makes the envelope loop if LFO mode selected in META
       if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
-         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK), LfoMode);  
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
       } 
       else { 
-         Trigger(static_cast<EnvelopeSegment>(segment_ + 1), LfoMode);
+         Trigger(static_cast<EnvelopeSegment>(segment_ + 1));
       }
     }
     if (increment_[segment_]) {

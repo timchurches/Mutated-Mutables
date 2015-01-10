@@ -357,7 +357,10 @@ void RenderBlock() {
   uint16_t ad2_value = 0 ;
   // uint16_t ad3_value = 0 ;
   // envelope 1
-  if (settings.mod1_mode() == 2) {
+  // NB: Fugly override to prevent LFO mode when WTx4 model is selected
+  // if (settings.mod1_mode() == 2 && 
+  //     settings.MacroOscillatorShape() != MACRO_OSC_SHAPE_WAVE_PARAPHONIC) {
+  if (settings.mod1_mode() == 2) { 
       // LFO mode
       ad_value = envelope.Render(true, settings.mod1_shape());
   }
@@ -366,7 +369,10 @@ void RenderBlock() {
       ad_value = envelope.Render(false, settings.mod1_shape());
   }
   // envelope 2
-  if (settings.mod2_mode() == 2) {
+  // NB: Fugly override to prevent LFO mode when WTx4 model is selected
+  // if (settings.mod2_mode() == 2 &&
+  //     settings.MacroOscillatorShape() != MACRO_OSC_SHAPE_WAVE_PARAPHONIC) {
+  if (settings.mod2_mode() == 2) { 
       // LFO mode
       ad2_value = envelope2.Render(true, settings.mod2_shape());
   }
@@ -557,8 +563,8 @@ void RenderBlock() {
   if (trigger_flag) {
     osc.Strike();
     // TO-DO: use .meta_modulation() method here - why not?
-    envelope.Trigger(ENV_SEGMENT_ATTACK, settings.mod1_mode() == 2);
-    envelope2.Trigger(ENV_SEGMENT_ATTACK, settings.mod2_mode() == 2);
+    envelope.Trigger(ENV_SEGMENT_ATTACK);
+    envelope2.Trigger(ENV_SEGMENT_ATTACK);
     // envelope3.Trigger(ENV_SEGMENT_ATTACK, settings.mod3_mode() == 2);
     // ui.StepMarquee();
     trigger_flag = false;
