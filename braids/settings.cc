@@ -426,7 +426,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "RAT2", rates_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3g", NULL },  // Placeholder for version string
+  { 0, 0, "BT3f", NULL },  // Placeholder for version string
 };
 
 /* static */
