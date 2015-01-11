@@ -255,9 +255,6 @@ void RenderBlock() {
   uint8_t modulator1_destination = settings.mod1_destination();
   uint8_t modulator1_shape = settings.mod1_shape();
   uint16_t ad_value = 0 ;
-  // NB: Fugly override to prevent LFO mode when WTx4 model is selected
-  // if (modulator1_mode == 2 && 
-  //     settings.MacroOscillatorShape() != MACRO_OSC_SHAPE_WAVE_PARAPHONIC) {
   if (modulator1_mode == 2) { 
       // LFO mode
       ad_value = envelope.Render(true, modulator1_shape);
@@ -270,9 +267,6 @@ void RenderBlock() {
   uint8_t modulator2_destination = settings.mod2_destination();
   uint8_t modulator2_shape = settings.mod2_shape();
   uint16_t ad2_value = 0 ;
-  // NB: Fugly override to prevent LFO mode when WTx4 model is selected
-  // if (settings.mod2_mode() == 2 &&
-  //     settings.MacroOscillatorShape() != MACRO_OSC_SHAPE_WAVE_PARAPHONIC) {
   if (modulator2_mode == 2) { 
       // LFO mode
       ad2_value = envelope2.Render(true, modulator2_shape);
@@ -282,6 +276,7 @@ void RenderBlock() {
       ad2_value = envelope2.Render(false, modulator2_shape);
   }
 
+  // timbre modulation amount - sum the two modulators
   uint8_t modulator1_depth = settings.mod1_depth();
   uint8_t modulator2_depth = settings.mod2_depth();
   uint16_t ad_timbre_amount=0;
@@ -295,7 +290,7 @@ void RenderBlock() {
      ad_timbre_amount = 255 ;
   }
       
-  // added Color as an envelope destination
+  // color modulation amount
   uint16_t ad_color_amount=0;
   if (modulator1_mode && (modulator1_destination & 4)) {
       ad_color_amount = modulator1_depth ;
@@ -307,6 +302,7 @@ void RenderBlock() {
      ad_color_amount = 255 ;
   }
 
+  // level modulation amount
   uint16_t ad_level_amount=255;
   if (modulator1_mode == 2 && (modulator1_destination & 2)) {
       ad_level_amount = modulator1_depth ;
@@ -436,9 +432,11 @@ void RenderBlock() {
     trigger_flag = false;
   }
   
-  // uint8_t destination = settings.GetValue(SETTING_TRIG_DESTINATION);
-  // if (destination != 1) {
-  if ((modulator1_mode < 2) && (modulator2_mode < 2)) {
+  // Enable hardsync only if level is a modulator destination when in envelope mode
+  // or if both modulators are off
+  if ((modulator1_mode == 1 && modulator1_desitination & 2) ||
+      (modulator2_mode == 1 && modulator2_desitination & 2) ||
+      (!modudlator1_mode && !modulator2_mode)) {
     for (size_t i = 0; i < kAudioBlockSize; ++i) {
       sync_buffer[i] = sync_samples.ImmediateRead();
     }
@@ -448,9 +446,8 @@ void RenderBlock() {
   }
 
   osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
-  
-  // use AD envelope value as gain except in LFO mode, when it is used as 
-  // negative gain from full volume.
+
+  // sum the envelope/LFO levels  
   uint32_t lad_value=0;
   if (modulator1_destination & 2) {
       lad_value = adv1;
@@ -462,12 +459,15 @@ void RenderBlock() {
       lad_value = 65535;
   }
  
+  // use AD envelope value as gain except in LFO mode, when it is used as 
+  // negative gain from full volume.
   int32_t gain = 65535 ;
-  if (modulator1_mode == 1 || modulator2_mode == 1) {
-        gain = lad_value ;
-  }
-  else if (modulator1_mode == 2 || modulator2_mode == 2) {
+  if (modulator1_destination & 2 || modulator2_destination & 2) {
+     if (modulator1_mode == 2 && modulator2_mode == 2) {
        gain = 65535 - ((lad_value >> 8) * ad_level_amount) ;
+     } else {
+        gain = lad_value ;
+     }
   }
   
   // Copy to DAC buffer with sample rate and bit reduction applied.

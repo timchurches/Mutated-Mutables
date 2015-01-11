@@ -164,7 +164,7 @@ enum Setting {
 struct SettingsData {
   uint8_t shape;
   uint8_t resolution;
-  uint8_t sample_rate;
+  uint8_t sample_rate ; 
   uint8_t auto_trig;
   uint8_t trig_delay;
   uint8_t meta_modulation;
