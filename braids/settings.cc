@@ -391,8 +391,8 @@ const char* const mod_shape_values[] = {
     "BOWF",  // 5 bowing friction LUT
     "RNDE",  // 6 random target, exponent easing to it
     "RNDL",  // 7 random target, linear easing to it
-    "RANS",  // 8 random target, rounded square-ish easing to it 
-    "RAND",  // 9 random value, may cause clicks due to sudden jumps
+    "RNDS",  // 8 random target, rounded square-ish easing to it 
+    "RNDM",  // 9 random value, may cause clicks due to sudden jumps
 };
 
 const char* const mod_mode_values[] = { 
@@ -430,7 +430,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "DST2", mod_destination_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3g", NULL },  // Placeholder for version string
+  { 0, 0, "BT3h", NULL },  // Placeholder for version string
 };
 
 /* static */
