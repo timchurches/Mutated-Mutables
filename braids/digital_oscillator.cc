@@ -2084,135 +2084,6 @@ void DigitalOscillator::RenderParticleNoise(
   state_.pno.filter_coefficient[2] = c3;
 }
 
-/* 
-// Disable QPSK model
-
-const int32_t kConstellationQ[] = { 23100, -23100, -23100, 23100 };
-const int32_t kConstellationI[] = { 23100, 23100, -23100, -23100 };
-
-void DigitalOscillator::RenderDigitalModulation(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  uint32_t phase = phase_;
-  uint32_t increment = phase_increment_;
-  
-  uint32_t symbol_stream_phase = state_.dmd.symbol_phase;
-  uint32_t symbol_stream_phase_increment = ComputePhaseIncrement(
-      pitch_ - 1536 + ((parameter_[0] - 32767) >> 3));
-  uint8_t data_byte = state_.dmd.data_byte;
-  
-  if (strike_) {
-    state_.dmd.symbol_count = 0;
-    strike_ = false;
-  }
-  
-  while (size--) {
-    phase += increment;
-    symbol_stream_phase += symbol_stream_phase_increment;
-    if (symbol_stream_phase < symbol_stream_phase_increment) {
-      ++state_.dmd.symbol_count;
-      if (!(state_.dmd.symbol_count & 3)) {
-        if (state_.dmd.symbol_count >= (64 + 4 * 256)) {
-          state_.dmd.symbol_count = 0;
-        }
-        if (state_.dmd.symbol_count < 32) {
-          data_byte = 0x00;
-        } else if (state_.dmd.symbol_count < 48) {
-          data_byte = 0x99;
-        } else if (state_.dmd.symbol_count < 64) {
-          data_byte = 0xcc;
-        } else {
-          state_.dmd.filter_state = (state_.dmd.filter_state * 3 + \
-              static_cast<int32_t>(parameter_[1])) >> 2;
-          data_byte = state_.dmd.filter_state >> 7;
-        }
-      } else {
-        data_byte >>= 2;
-      }
-    }
-    int16_t i = Interpolate824(wav_sine, phase);
-    int16_t q = Interpolate824(wav_sine, phase + (1 << 30));
-    *buffer++ = (kConstellationQ[data_byte & 3] * q >> 15) + \
-        (kConstellationI[data_byte & 3] * i >> 15);
-  }
-  phase_ = phase;
-  state_.dmd.symbol_phase = symbol_stream_phase;
-  state_.dmd.data_byte = data_byte;
-}
-*/
-
-/*
-// Disable Easter egg model
-void DigitalOscillator::RenderQuestionMark(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  ClockedNoiseState* state = &state_.clk;
-  
-  if (strike_) {
-    state->rng_state = 0;
-    state->cycle_phase = 0;
-    state->sample = 10;
-    state->cycle_phase_increment = -1;
-    state->seed = 32767;
-    strike_ = false;
-  }
-  
-  uint32_t phase = phase_;
-  uint32_t increment = phase_increment_;
-  uint32_t dit_duration = 3600 + ((32767 - parameter_[0]) >> 2);
-  int32_t noise_threshold = 1024 + (parameter_[1] >> 3);
-  while (size--) {
-    phase += increment;
-    int32_t sample;
-    if (state->rng_state) {
-      sample = (Interpolate824(wav_sine, phase) * 3) >> 2;
-    } else {
-      sample = 0;
-    }
-    if (++state->cycle_phase > dit_duration) {
-      --state->sample;
-      if (state->sample == 0) {
-        ++state->cycle_phase_increment;
-        state->rng_state = !state->rng_state;
-
-        size_t address = state->cycle_phase_increment >> 2;
-        size_t shift = (state->cycle_phase_increment & 0x3) << 1;
-        state->sample = (2 << ((wt_code[address] >> shift) & 3)) - 1;
-        if (state->sample == 15) {
-          state->sample = 100;
-          state->rng_state = 0;
-          state->cycle_phase_increment = - 1;
-        }
-        phase = 1L << 30;
-      }
-      state->cycle_phase = 0;
-    }
-    state->seed += Random::GetSample() >> 2;
-    int32_t noise_intensity = state->seed >> 8;
-    if (noise_intensity < 0) {
-      noise_intensity = -noise_intensity;
-    }
-    if (noise_intensity < noise_threshold) {
-      noise_intensity = noise_threshold;
-    }
-    if (noise_intensity > 16000) {
-      noise_intensity = 16000;
-    }
-    int32_t noise = (Random::GetSample() * noise_intensity >> 15);
-    noise = noise * wav_sine[(phase >> 22) & 0xff] >> 15;
-    sample += noise;
-    CLIP(sample);
-    int32_t distorted = sample * sample >> 14;
-    sample += distorted * parameter_[1] >> 15;
-    CLIP(sample);
-    *buffer++ = sample;
-  }
-  phase_ = phase;
-}
-*/
-
 void DigitalOscillator::RenderKick(
     const uint8_t* sync,
     int16_t* buffer,
@@ -2470,11 +2341,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,
-  // &DigitalOscillator::RenderDigitalModulation,
   // &DigitalOscillator::RenderYourAlgo,
-
-  // Disabled Easter egg model
-  // &DigitalOscillator::RenderQuestionMark
 };
 
 }  // namespace braids

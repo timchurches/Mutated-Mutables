@@ -161,55 +161,6 @@ const uint16_t bit_reduction_masks[] = {
 
 const uint16_t decimation_factors[] = { 24, 12, 6, 4, 3, 2, 1 };
 
-/*
-// struct TrigStrikeSettings {
-//   uint8_t attack;
-//   uint8_t decay;
-//   uint8_t amount;
-// };
-*/
-
-/*
-// const TrigStrikeSettings trig_strike_settings[] = {
-//   { 0, 30, 30 },
-//   { 0, 40, 60 },
-//   { 0, 50, 90 },
-//   { 0, 60, 110 },
-//   { 0, 70, 90 },
-//   { 0, 90, 80 },
-//   { 60, 100, 70 },
-//   { 40, 72, 60 },
-//   { 34, 60, 20 },
-//   { 0, 90,  5 },
-//   { 0, 90, 10 },
-//   { 0, 90, 20 },
-//   { 0, 90, 30 },
-//   { 0, 90, 40 },
-//   { 0, 90, 50 },
-//   { 0, 90, 60 },
-//   { 0, 90, 70 },
-//   { 0, 90, 80 },
-//   { 0, 90, 90 },
-//   { 0, 90, 100 },
-//   { 0, 90, 110 },
-//   { 0, 90, 120 },
-//   { 0, 90, 130 },
-//   { 0, 90, 140 },
-//   { 0, 90, 150 },
-//   { 0, 90, 160 },
-//   { 0, 90, 170 },
-//   { 0, 90, 180 },
-//   { 0, 90, 190 },
-//   { 0, 90, 200 },
-//   { 0, 90, 210 },
-//   { 0, 90, 220 },
-//   { 0, 90, 230 },
-//   { 0, 90, 240 },
-//   { 0, 90, 250 },
-//   { 0, 90, 255 },
-// };
-*/
-
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static int32_t previous_pitch = 0;
@@ -217,16 +168,6 @@ void RenderBlock() {
 
   //debug_pin.High();
   
-  /*
-  // TO-DO: remove trigger strike setting
-  // const TrigStrikeSettings& trig_strike = \
-  //    trig_strike_settings[settings.GetValue(SETTING_TRIG_AD_SHAPE)];
-  // These initial settings probably unnecessary - see the envelope Init method.
-  */
-  envelope.Update(0, 70, 0, 0);
-  envelope2.Update(0, 70, 0, 0);
-  // envelope3.Update(0, 70, 0, 0);
-
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
@@ -310,52 +251,10 @@ void RenderBlock() {
      // using the modified attack and decay values
      envelope2.Update(env2_a, env2_d, 0, 0);  
   }
-  /*
-  // // Again for envelope3 - really need to re-factor this!
-  // uint16_t env3_param = 0;
-  // uint16_t env3_a = 0;
-  // uint16_t env3_d = 0;
-  // if (settings.mod3_mode()) {
-  //    // LFO rate or envelope duration now controlled by sample rate setting
-  //    env3_param = uint16_t (settings.mod3_rate()) ;
-  //    // add the external voltage to this.
-  //    // scaling this by 32 seems about right for 0-5V modulation range.
-  //    env3_param += settings.adc_to_fm(adc.channel(3)) >> 5;
-  //    if (env3_param < 0) {
-  //        env3_param = 0 ;
-  //    }
-  //    if (env3_param > 127) {
-  //        env3_param = 127 ;
-  //    } 
-  //    // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  //    if (settings.mod3_mode() == 2) {
-  //        env3_param = 127 - env3_param ;
-  //    }  
-  //    env3_a = env3_param;
-  //    env3_d = env3_param;
-  //    // Repeat for envelope3
-  //    if (settings.mod3_ad_ratio() == 0) {
-  //       env3_a = (env3_param * 2) / 100; 
-  //    } 
-  //    else if (settings.mod3_ad_ratio() > 0 && settings.mod3_ad_ratio() < 10) {
-  //      env2_a = (env3_param * 10 * settings.mod3_ad_ratio()) / 100; 
-  //    } 
-  //    else if (settings.mod3_ad_ratio() > 10 && settings.mod3_ad_ratio() < 20) {
-  //      env2_d = (env3_param * 10 * (20 - settings.mod3_ad_ratio())) / 100; 
-  //    } 
-  //    else if (settings.mod3_ad_ratio() == 20) {
-  //      env3_d = (env3_param * 2) / 100; 
-  //    }     
-  //    // now set the attack and decay parameters again
-  //    // using the modified attack and decay values
-  //    envelope3.Update(env3_a, env3_d, 0, 0);  
-  // }
-  */
   
   // Render envelope in LFO mode, or not
   uint16_t ad_value = 0 ;
   uint16_t ad2_value = 0 ;
-  // uint16_t ad3_value = 0 ;
   // envelope 1
   // NB: Fugly override to prevent LFO mode when WTx4 model is selected
   // if (settings.mod1_mode() == 2 && 
@@ -380,24 +279,7 @@ void RenderBlock() {
       // envelope mode
       ad2_value = envelope2.Render(false, settings.mod2_shape());
   }
-  /*
-  // // envelope 3
-  // if (settings.mod3_mode() == 2) {
-  //     // LFO mode
-  //     ad3_value = envelope3.Render(true, settings.mod3_shape());
-  // }
-  // else if (settings.mod3_mode() == 1) {
-  //     // envelope mode
-  //     ad3_value = envelope3.Render(false, settings.mod3_shape());
-  // }
 
-  // uint8_t ad_timbre_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 1
-  //     ? trig_strike.amount
-  //     : 0;
-  // uint8_t ad_timbre_amount = settings.mod1_mode()
-  //     ? settings.mod1_depth()
-  //     : 0;
-  */
   uint16_t ad_timbre_amount=0;
   if (settings.mod1_mode() && (settings.mod1_destination() & 1)) {
       ad_timbre_amount = settings.mod1_depth() ;
@@ -409,15 +291,7 @@ void RenderBlock() {
      ad_timbre_amount = 255 ;
   }
       
-  /*
   // added Color as an envelope destination
-  // uint8_t ad_color_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 4
-  //     ? trig_strike.amount
-  //     : 0;
-  // uint8_t ad_color_amount = settings.mod2_mode()
-  //     ? settings.mod2_depth()
-  //     : 0;
-  */
   uint16_t ad_color_amount=0;
   if (settings.mod1_mode() && (settings.mod1_destination() & 4)) {
       ad_color_amount = settings.mod1_depth() ;
@@ -429,16 +303,6 @@ void RenderBlock() {
      ad_color_amount = 255 ;
   }
 
-
-  /*
-  // TO-DO: modify this as for timbre and color above
-  // uint8_t ad_level_amount = settings.GetValue(SETTING_TRIG_DESTINATION) & 2
-  //     ? trig_strike.amount
-  //     : 255;
-  // uint8_t ad_level_amount = settings.mod3_mode()
-  //     ? settings.mod3_mode() == 1 ? 255 : settings.mod3_depth()
-  //     : 255;
-  */
   uint16_t ad_level_amount=255;
   if (settings.mod1_mode() == 2 && (settings.mod1_destination() & 2)) {
       ad_level_amount = settings.mod1_depth() ;

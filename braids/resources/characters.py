@@ -154,8 +154,8 @@ characters = {
   # LRDU arrow
   '\x84': 'jkl',
   '\x85': 'gpn',
-  '\x86': 'ghj',
-  '\x87': 'nml',
+  '\x86': 'ghjm',
+  '\x87': 'nmlh',
   
   # Waveforms
   '\x88': 'njbc',  # Saw

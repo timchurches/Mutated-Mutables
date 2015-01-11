@@ -83,9 +83,6 @@ enum MacroOscillatorShape {
   MACRO_OSC_SHAPE_GRANULAR_CLOUD,
   MACRO_OSC_SHAPE_PARTICLE_NOISE,
   
-  // MACRO_OSC_SHAPE_DIGITAL_MODULATION,
-
-  // MACRO_OSC_SHAPE_QUESTION_MARK,
   // MACRO_OSC_SHAPE_YOUR_ALGO
 
   MACRO_OSC_SHAPE_LAST,
@@ -133,7 +130,6 @@ enum Setting {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_RESOLUTION,
   SETTING_SAMPLE_RATE,
-  // SETTING_TRIG_DESTINATION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
   SETTING_META_MODULATION,
@@ -144,22 +140,16 @@ enum Setting {
   SETTING_VCO_DRIFT,
   SETTING_SIGNATURE,
   SETTING_BRIGHTNESS,
-  // SETTING_TRIG_AD_SHAPE,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_SHAPE,
-  // SETTING_MOD3_SHAPE,
   SETTING_MOD1_DEPTH,
   SETTING_MOD2_DEPTH,
-  // SETTING_MOD3_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD2_AD_RATIO,
-  // SETTING_MOD3_AD_RATIO,
   SETTING_MOD1_MODE,
   SETTING_MOD2_MODE,
-  // SETTING_MOD3_MODE,
   SETTING_MOD1_RATE,
   SETTING_MOD2_RATE,
-  // SETTING_MOD3_RATE,
   SETTING_MOD1_DESTINATION,
   SETTING_MOD2_DESTINATION,
   SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_DESTINATION,
@@ -175,7 +165,6 @@ struct SettingsData {
   uint8_t shape;
   uint8_t resolution;
   uint8_t sample_rate;
-  // uint8_t trig_destination; // TO-DO: to be removed
   uint8_t auto_trig;
   uint8_t trig_delay;
   uint8_t meta_modulation;
@@ -186,22 +175,16 @@ struct SettingsData {
   uint8_t vco_drift;
   uint8_t signature;
   uint8_t brightness;
-  // uint8_t trig_ad_shape; //TO-DO: remove 
   uint8_t mod1_shape;
   uint8_t mod2_shape;
-  // uint8_t mod3_shape;
   uint8_t mod1_depth;
   uint8_t mod2_depth;
-  // uint8_t mod3_depth;
   uint8_t mod1_ad_ratio;
   uint8_t mod2_ad_ratio;
-  // uint8_t mod3_ad_ratio;
   uint8_t mod1_mode;
   uint8_t mod2_mode;
-  // uint8_t mod3_mode;
   uint8_t mod1_rate;
   uint8_t mod2_rate;  
-  // uint8_t mod3_rate;  
   uint8_t mod1_destination;
   uint8_t mod2_destination;  
   int32_t pitch_cv_offset;
@@ -289,10 +272,6 @@ class Settings {
     return data_.mod2_shape;
   }
 
-  // inline uint8_t mod3_shape() const {
-  //   return data_.mod3_shape;
-  // }
-
   inline uint8_t mod1_depth() const {
     return data_.mod1_depth * 10;
   }
@@ -301,10 +280,6 @@ class Settings {
     return data_.mod2_depth * 10;
   }
 
-  // inline uint8_t mod3_depth() const {
-  //   return data_.mod3_depth * 10;
-  // }
-  
     inline uint8_t mod1_ad_ratio() const {
     return data_.mod1_ad_ratio;
   }
@@ -313,10 +288,6 @@ class Settings {
     return data_.mod2_ad_ratio;
   }
 
-  // inline uint8_t mod3_ad_ratio() const {
-  //   return data_.mod3_ad_ratio;
-  // }
-  
     inline uint8_t mod1_mode() const {
     return data_.mod1_mode;
   }
@@ -325,10 +296,6 @@ class Settings {
     return data_.mod2_mode;
   }
 
-  // inline uint8_t mod3_mode() const {
-  //   return data_.mod3_mode;
-  // }
-
   inline uint8_t mod1_rate() const {
     return data_.mod1_rate;
   }
@@ -336,10 +303,6 @@ class Settings {
   inline uint8_t mod2_rate() const {
     return data_.mod2_rate;
   }
-
-  // inline uint8_t mod3_rate() const {
-  //   return data_.mod3_rate;
-  // }
 
   inline uint8_t mod1_destination() const {
     return data_.mod1_destination;

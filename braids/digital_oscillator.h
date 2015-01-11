@@ -87,7 +87,6 @@ enum DigitalOscillatorShape {
   OSC_SHAPE_GRANULAR_CLOUD,
   OSC_SHAPE_PARTICLE_NOISE,
 
-  // OSC_SHAPE_DIGITAL_MODULATION,
   OSC_SHAPE_KICK,
   OSC_SHAPE_SNARE,
   OSC_SHAPE_HAT,
@@ -193,16 +192,6 @@ struct SvfState {
   int32_t bp;
   int32_t lp;
 };
-
-/*
-// QPSK model disabled
-struct DigitalModulationState {
-  uint32_t symbol_phase;
-  uint16_t symbol_count;
-  int32_t filter_state;
-  uint8_t data_byte;
-};
-*/
 
 struct ClockedNoiseState {
   uint32_t cycle_phase;
@@ -320,7 +309,6 @@ class DigitalOscillator {
   void RenderGranularCloud(const uint8_t*, int16_t*, uint8_t);
   void RenderParticleNoise(const uint8_t*, int16_t*, uint8_t);
   
-  // void RenderDigitalModulation(const uint8_t*, int16_t*, uint8_t);
   void RenderKick(const uint8_t*, int16_t*, uint8_t);
   void RenderSnare(const uint8_t*, int16_t*, uint8_t);
   void RenderCymbal(const uint8_t*, int16_t*, uint8_t);
