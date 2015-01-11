@@ -354,6 +354,8 @@ const char* const meta_values[] = {
     "FREQ", // 0
     "META", // 1
     "RATE", // 2
+    "RAT1", // 3
+    "RAT2", // 4
 };
 
 const char* const ad_ratio_values[] = { 
@@ -402,7 +404,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 2, "FMCV", meta_values },
+  { 0, 4, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },

@@ -167,6 +167,8 @@ void RenderBlock() {
   static int32_t previous_shape = 0;
 
   //debug_pin.High();
+
+  uint8_t meta_mod = settings.meta_modulation();
   
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
@@ -177,7 +179,9 @@ void RenderBlock() {
   uint8_t modulator1_mode = settings.mod1_mode();
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
-  env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+  if (meta_mod == 2 || meta_mod == 3) {
+     env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+  }
   // Clip at zero and 127
   if (env_param < 0) {
  	 env_param = 0 ;
@@ -219,7 +223,9 @@ void RenderBlock() {
   uint8_t modulator2_mode = settings.mod2_mode();
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
-  env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+  if (meta_mod == 2 || meta_mod == 4) {
+     env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+  }
   if (env2_param < 0) { 
  	 env2_param = 0 ;
   }
@@ -315,7 +321,6 @@ void RenderBlock() {
   }
    
   // meta_modulation no longer a boolean  
-  uint8_t meta_mod = settings.meta_modulation();
   if (meta_mod == 1) {
     int32_t shape = adc.channel(3);
     shape -= settings.data().fm_cv_offset;
