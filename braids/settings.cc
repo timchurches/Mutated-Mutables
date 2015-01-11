@@ -39,7 +39,7 @@ using namespace stmlib;
 const SettingsData kInitSettings = {
   MACRO_OSC_SHAPE_CSAW, // shape
   RESOLUTION_16_BIT,    // resolution
-  SAMPLE_RATE_96K,      // sample_rate // to be removed - no longer used
+  true,                 // rate_inversion
   false,                // auto_trig (Trig source)
   1,                    // trig_delay
   false,                // meta_modulation
@@ -405,7 +405,7 @@ const char* const mod_mode_values[] = {
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
-  { 0, SAMPLE_RATE_LAST - 1, "RATE", rates_values },
+  { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
   { 0, 4, "FMCV", meta_values },
@@ -430,7 +430,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "DST2", mod_destination_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3h", NULL },  // Placeholder for version string
+  { 0, 0, "BT3k", NULL },  // Placeholder for version string
 };
 
 /* static */
@@ -454,7 +454,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
   SETTING_PITCH_QUANTIZER,
-  SETTING_SAMPLE_RATE, 
+  SETTING_RATE_INVERSION, 
   SETTING_RESOLUTION,
   SETTING_VCO_FLATTEN,
   SETTING_VCO_DRIFT,

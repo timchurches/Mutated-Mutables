@@ -154,7 +154,6 @@ void Ui::OnClick() {
   switch (mode_) {
     case MODE_EDIT:
       mode_ = MODE_MENU;
-      RefreshDisplay();
       break;
 
     case MODE_MENU:

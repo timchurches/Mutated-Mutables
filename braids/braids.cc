@@ -190,7 +190,7 @@ void RenderBlock() {
 	 env_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  if (modulator1_mode == 2) {
+  if (modulator1_mode == 2 && settings.rate_inversion()) {
 	 env_param = 127 - env_param ;
   }  
   // attack and decay parameters, default to FM voltage reading.
@@ -233,7 +233,7 @@ void RenderBlock() {
  	 env2_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  if (modulator2_mode == 2) { 
+  if (modulator2_mode == 2 && settings.rate_inversion()) { 
 	 env2_param = 127 - env2_param ;
   }  
   env2_a = env2_param;

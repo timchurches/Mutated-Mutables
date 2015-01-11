@@ -100,16 +100,18 @@ enum Resolution {
   RESOLUTION_LAST
 };
 
-enum SampleRate {
-  SAMPLE_RATE_4K,
-  SAMPLE_RATE_8K,
-  SAMPLE_RATE_16K,
-  SAMPLE_RATE_24k,
-  SAMPLE_RATE_32k,
-  SAMPLE_RATE_48K,
-  SAMPLE_RATE_96K,
-  SAMPLE_RATE_LAST
-};
+/*
+// enum SampleRate {
+//   SAMPLE_RATE_4K,
+//   SAMPLE_RATE_8K,
+//   SAMPLE_RATE_16K,
+//   SAMPLE_RATE_24k,
+//   SAMPLE_RATE_32k,
+//   SAMPLE_RATE_48K,
+//   SAMPLE_RATE_96K,
+//   SAMPLE_RATE_LAST
+// };
+*/
 
 enum PitchQuantization {
   PITCH_QUANTIZATION_OFF,
@@ -129,7 +131,7 @@ enum PitchRange {
 enum Setting {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_RESOLUTION,
-  SETTING_SAMPLE_RATE,
+  SETTING_RATE_INVERSION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
   SETTING_META_MODULATION,
@@ -164,7 +166,7 @@ enum Setting {
 struct SettingsData {
   uint8_t shape;
   uint8_t resolution;
-  uint8_t sample_rate ; 
+  uint8_t rate_inversion ; 
   uint8_t auto_trig;
   uint8_t trig_delay;
   uint8_t meta_modulation;
@@ -236,8 +238,8 @@ class Settings {
     return static_cast<Resolution>(data_.resolution);
   }
   
-  inline SampleRate sample_rate() const {
-    return static_cast<SampleRate>(data_.sample_rate);
+  inline bool rate_inversion() const {
+    return data_.rate_inversion;
   }
   
   inline PitchQuantization pitch_quantization() const {
