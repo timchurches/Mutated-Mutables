@@ -252,7 +252,7 @@ void RenderBlock() {
   // Render envelope in LFO mode, or not
   // envelope 1
   uint8_t modulator1_mode = settings.mod1_mode();
-  unint8_t modulator1_destination = settings.mod1_destination();
+  uint8_t modulator1_destination = settings.mod1_destination();
   uint16_t ad_value = 0 ;
   // NB: Fugly override to prevent LFO mode when WTx4 model is selected
   // if (modulator1_mode == 2 && 
@@ -267,7 +267,7 @@ void RenderBlock() {
   }
   // envelope 2
   uint8_t modulator2_mode = settings.mod2_mode();
-  unint8_t modulator2_destination = settings.mod2_destination();
+  uint8_t modulator2_destination = settings.mod2_destination();
   uint16_t ad2_value = 0 ;
   // NB: Fugly override to prevent LFO mode when WTx4 model is selected
   // if (settings.mod2_mode() == 2 &&
