@@ -174,7 +174,7 @@ void RenderBlock() {
   uint16_t env_param = uint16_t (settings.mod1_rate());
   uint16_t env_a = 0;
   uint16_t env_d = 0;
-  // env_param = uint16_t (settings.mod1_rate()) ;
+  uint8_t modulator1_mode = settings.mod1_mode();
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
@@ -186,7 +186,7 @@ void RenderBlock() {
 	 env_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  if (settings.mod1_mode() == 2) {
+  if (modulator1_mode == 2) {
 	 env_param = 127 - env_param ;
   }  
   // attack and decay parameters, default to FM voltage reading.
@@ -211,11 +211,12 @@ void RenderBlock() {
   // now set the attack and decay parameters again
   // using the modified attack and decay values
   envelope.Update(env_a, env_d, 0, 0);  
+
   // TO-DO: instead of repeating code, use an array for env params and a loop!
   uint16_t env2_param = uint16_t (settings.mod2_rate());
   uint16_t env2_a = 0;
   uint16_t env2_d = 0;
-  // env2_param = uint16_t (settings.mod2_rate()) ;
+  uint8_t modulator2_mode = settings.mod2_mode();
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
@@ -226,7 +227,7 @@ void RenderBlock() {
  	 env2_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  if (settings.mod2_mode() == 2) { 
+  if (modulator2_mode == 2) { 
 	 env2_param = 127 - env2_param ;
   }  
   env2_a = env2_param;
@@ -251,42 +252,44 @@ void RenderBlock() {
   
   // Render envelope in LFO mode, or not
   // envelope 1
-  uint8_t modulator1_mode = settings.mod1_mode();
   uint8_t modulator1_destination = settings.mod1_destination();
+  uint8_t modulator1_shape = settings.mod1_shape();
   uint16_t ad_value = 0 ;
   // NB: Fugly override to prevent LFO mode when WTx4 model is selected
   // if (modulator1_mode == 2 && 
   //     settings.MacroOscillatorShape() != MACRO_OSC_SHAPE_WAVE_PARAPHONIC) {
   if (modulator1_mode == 2) { 
       // LFO mode
-      ad_value = envelope.Render(true, settings.mod1_shape());
+      ad_value = envelope.Render(true, modulator1_shape);
   }
   else if (modulator1_mode == 1){
       // envelope mode
-      ad_value = envelope.Render(false, settings.mod1_shape());
+      ad_value = envelope.Render(false, modulator1_shape);
   }
   // envelope 2
-  uint8_t modulator2_mode = settings.mod2_mode();
   uint8_t modulator2_destination = settings.mod2_destination();
+  uint8_t modulator2_shape = settings.mod2_shape();
   uint16_t ad2_value = 0 ;
   // NB: Fugly override to prevent LFO mode when WTx4 model is selected
   // if (settings.mod2_mode() == 2 &&
   //     settings.MacroOscillatorShape() != MACRO_OSC_SHAPE_WAVE_PARAPHONIC) {
-  if (settings.mod2_mode() == 2) { 
+  if (modulator2_mode == 2) { 
       // LFO mode
-      ad2_value = envelope2.Render(true, settings.mod2_shape());
+      ad2_value = envelope2.Render(true, modulator2_shape);
   }
-  else if (settings.mod2_mode() == 1) {
+  else if (modulator2_mode == 1) {
       // envelope mode
-      ad2_value = envelope2.Render(false, settings.mod2_shape());
+      ad2_value = envelope2.Render(false, modulator2_shape);
   }
 
+  uint8_t modulator1_depth = settings.mod1_depth();
+  uint8_t modulator2_depth = settings.mod2_depth();
   uint16_t ad_timbre_amount=0;
   if (modulator1_mode && (modulator1_destination & 1)) {
-      ad_timbre_amount = settings.mod1_depth() ;
+      ad_timbre_amount = modulator1_depth ;
   } 
   if (modulator2_mode && (modulator2_destination & 1)) {
-      ad_timbre_amount += settings.mod2_depth() ;
+      ad_timbre_amount += modulator2_depth ;
   } 
   if (ad_timbre_amount > 255) {
      ad_timbre_amount = 255 ;
@@ -295,10 +298,10 @@ void RenderBlock() {
   // added Color as an envelope destination
   uint16_t ad_color_amount=0;
   if (modulator1_mode && (modulator1_destination & 4)) {
-      ad_color_amount = settings.mod1_depth() ;
+      ad_color_amount = modulator1_depth ;
   } 
   if (modulator2_mode && (modulator2_destination & 4)) {
-      ad_color_amount += settings.mod2_depth() ;
+      ad_color_amount += modulator2_depth ;
   } 
   if (ad_color_amount > 255) {
      ad_color_amount = 255 ;
@@ -306,17 +309,18 @@ void RenderBlock() {
 
   uint16_t ad_level_amount=255;
   if (modulator1_mode == 2 && (modulator1_destination & 2)) {
-      ad_level_amount = settings.mod1_depth() ;
+      ad_level_amount = modulator1_depth ;
   } 
   if (modulator2_mode == 2 && (modulator2_destination & 2)) {
-      ad_level_amount += settings.mod2_depth() ;
+      ad_level_amount += modulator2_depth ;
   } 
   if (ad_level_amount > 255) {
      ad_level_amount = 255 ;
   }
    
   // meta_modulation no longer a boolean  
-  if (settings.meta_modulation() == 1) {
+  uint8_t meta_mod = settings.meta_modulation();
+  if (meta_mod == 1) {
     int32_t shape = adc.channel(3);
     shape -= settings.data().fm_cv_offset;
     if (shape > previous_shape + 2 || shape < previous_shape - 2) {
@@ -392,7 +396,7 @@ void RenderBlock() {
   } else if (settings.pitch_quantization() == PITCH_QUANTIZATION_SEMITONE) {
     pitch = (pitch + 64) & 0xffffff80;
   }
-  if (settings.meta_modulation() == 0) {
+  if (meta_mod == 0) {
     pitch += settings.adc_to_fm(adc.channel(3));
   }
   pitch += internal_adc.value() >> 8;
@@ -445,10 +449,6 @@ void RenderBlock() {
 
   osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
   
-  // Copy to DAC buffer with sample rate and bit reduction applied.
-  int16_t sample = 0;
-  size_t decimation_factor = decimation_factors[settings.data().sample_rate];
-  uint16_t bit_mask = bit_reduction_masks[settings.data().resolution];
   // use AD envelope value as gain except in LFO mode, when it is used as 
   // negative gain from full volume.
   uint32_t lad_value=0;
@@ -462,27 +462,31 @@ void RenderBlock() {
       lad_value = 65535;
   }
  
-  int32_t gain = 0 ;
-  if (modulator1_mode || modulator2_mode) {
-      if (modulator1_mode == 1 || modulator2_mode == 1) {
-          gain = lad_value ;
-      }
-      else {
-          gain = 65535 - ((lad_value >> 8) * ad_level_amount) ;
-      }
-   }
-   else {
-      gain = 65535;
-   }
-  for (size_t i = 0; i < kAudioBlockSize; ++i) {
-    if ((i % decimation_factor) == 0) {
-      sample = render_buffer[i] & bit_mask;
-      if (settings.signature()) {
-        sample = ws.Transform(sample);
-      }
-    }
-    sample = static_cast<int32_t>(sample) * gain >> 16;
-    audio_samples.Overwrite(sample + 32768);
+  int32_t gain = 65535 ;
+  if (modulator1_mode == 1 || modulator2_mode == 1) {
+        gain = lad_value ;
+  }
+  else if (modulator1_mode == 2 || modulator2_mode == 2) {
+       gain = 65535 - ((lad_value >> 8) * ad_level_amount) ;
+  }
+  
+  // Copy to DAC buffer with sample rate and bit reduction applied.
+  int16_t sample = 0;
+  uint16_t bit_mask = bit_reduction_masks[settings.data().resolution];
+  // sacrifice code size for performance by avoiding unnecessary computations
+  if (settings.signature()) {
+     for (size_t i = 0; i < kAudioBlockSize; ++i) {
+       sample = render_buffer[i] & bit_mask;
+       sample = ws.Transform(sample);
+       sample = static_cast<int32_t>(sample) * gain >> 16;
+       audio_samples.Overwrite(sample + 32768);
+     }
+  } else {
+     for (size_t i = 0; i < kAudioBlockSize; ++i) {
+       sample = render_buffer[i] & bit_mask;
+       sample = static_cast<int32_t>(sample) * gain >> 16;
+       audio_samples.Overwrite(sample + 32768);
+     }
   }
   // debug_pin.Low();
 }

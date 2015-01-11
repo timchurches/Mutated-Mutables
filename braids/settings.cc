@@ -39,7 +39,7 @@ using namespace stmlib;
 const SettingsData kInitSettings = {
   MACRO_OSC_SHAPE_CSAW, // shape
   RESOLUTION_16_BIT,    // resolution
-  SAMPLE_RATE_96K,      // sample_rate
+  SAMPLE_RATE_96K,      // sample_rate // to be removed - no longer used
   false,                // auto_trig (Trig source)
   1,                    // trig_delay
   false,                // meta_modulation
