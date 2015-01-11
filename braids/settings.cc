@@ -389,6 +389,10 @@ const char* const mod_shape_values[] = {
     "SINE",  // 3 sine-ish, using ws_moderate_overdrive
     "SQRE",  // 4 square-ish, using ws_violent_overdrive
     "BOWF",  // 5 bowing friction LUT
+    "RNDE",  // 6 random target, exponent easing to it
+    "RNDL",  // 7 random target, linear easing to it
+    "RANS",  // 8 random target, rounded square-ish easing to it 
+    "RAND",  // 9 random value, may cause clicks due to sudden jumps
 };
 
 const char* const mod_mode_values[] = { 
@@ -412,8 +416,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "DRFT", boolean_values },
   { 0, 1, "SIGN", boolean_values },
   { 0, 2, "BRIG", brightness_values },
-  { 0, 5, "SHP1", mod_shape_values },
-  { 0, 5, "SHP2", mod_shape_values },
+  { 0, 9, "SHP1", mod_shape_values },
+  { 0, 9, "SHP2", mod_shape_values },
   { 0, 25, "DEP1", mod_depth_values },
   { 0, 25, "DEP2", mod_depth_values },
   { 0, 20, "\x87\x86 1", ad_ratio_values },

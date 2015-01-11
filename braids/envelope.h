@@ -20,6 +20,8 @@
 
 #include "stmlib/utils/dsp.h"
 
+#include "stmlib/utils/random.h"
+
 #include "braids/resources.h"
 
 namespace braids {
@@ -113,6 +115,33 @@ class Envelope {
       else if (EnvType == 5) {
          // bowing friction LUT - this goes from high to low, hence a_ and b_ switched.
          value_ = Mix(b_, a_, (Interpolate824(lut_bowing_friction, phase_) - 1) << 1);
+      }   
+      else if (EnvType == 6) {
+         // Random target, exponential easing
+        if (phase_ == 0) {
+            b_ = Random::GetWord();
+        }
+        value_ = Mix(a_, b_, Interpolate824(lut_env_expo, phase_));
+      }         
+      else if (EnvType == 7) {
+         // Random target, linear easing
+        if (phase_ == 0) {
+            b_ = Random::GetWord();
+        }
+        value_ = Mix(a_, b_, phase_ >> 16);
+      }         
+      else if (EnvType == 8) {
+         // Random target, square-ish easing
+        if (phase_ == 0) {
+            b_ = Random::GetWord();
+        }
+        value_ = Mix(a_, b_, Interpolate824(ws_violent_overdrive, phase_) + 32766);
+      }         
+      else if (EnvType == 9) {
+         // Jump to a random value for the entire phase cycle - causes clicks...
+         if (phase_ == 0) {
+            value_ = Random::GetWord();
+         }
       }   
     }
     return value_;
