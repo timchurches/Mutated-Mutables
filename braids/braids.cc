@@ -434,9 +434,9 @@ void RenderBlock() {
   
   // Enable hardsync only if level is a modulator destination when in envelope mode
   // or if both modulators are off
-  if ((modulator1_mode == 1 && modulator1_desitination & 2) ||
-      (modulator2_mode == 1 && modulator2_desitination & 2) ||
-      (!modudlator1_mode && !modulator2_mode)) {
+  if ((modulator1_mode == 1 && modulator1_destination & 2) ||
+      (modulator2_mode == 1 && modulator2_destination & 2) ||
+      (!modulator1_mode && !modulator2_mode)) {
     for (size_t i = 0; i < kAudioBlockSize; ++i) {
       sync_buffer[i] = sync_samples.ImmediateRead();
     }
