@@ -180,11 +180,10 @@ struct SettingsData {
   uint8_t mod2_rate;  
   uint8_t mod1_destination;
   uint8_t mod2_destination;
+  uint8_t padding[3];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
-  uint8_t padding[58]; 
-  uint8_t magic; // magic number in byte 96 - should store ascii "B" for Bees-in-Trees
 };
 
 struct SettingMetadata {
