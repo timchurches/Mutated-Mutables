@@ -1,6 +1,10 @@
-// Copyright 2012 Olivier Gillet.
+// Copyright 2012 Olivier Gillet, 2015 Tim Churches
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
+// Modifications: Tim Churches (tim.churches@gmail.com)
+// Modifications may be determined by examining the differences between the last commit 
+// by Olivier Gillet (pichenettes) and the HEAD commit at 
+// https://github.com/timchurches/Mutated-Mutables/tree/master/braids 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -135,24 +139,14 @@ const char* const algo_values[] = {
 };
 
 const char* const bits_values[] = {
-    "2BIT",
-    "3BIT",
-    "4BIT",
-    "6BIT",
-    "8BIT",
-    "12B ",
-    "16B " };
-
-/*
-// const char* const rates_values[] = {
-//     "4KHZ",
-//     "8KHZ",
-//     "16K ",
-//     "24K ",
-//     "32K ",
-//     "48K ",
-//    "96K " };
-*/
+    "2BIT", // 0
+    "3BIT", // 1
+    "4BIT", // 2
+    "6BIT", // 3
+    "8BIT", // 4
+    "12B ", // 5
+    "16B ", // 6
+};
   
 const char* const mod_rate_values[] = {
     "   0",
@@ -339,14 +333,14 @@ const char* const mod_depth_values[] = {
 };
 
 const char* const mod_destination_values[] = {
-    "NONE",
-    "TIMB",
-    "LEVL",
-    "T+L ",
-    "COLR",
-    "T+C ",
-    "L+C ",
-    "ALL "
+    "NONE", // 0
+    "TIMB", // 1
+    "LEVL", // 2
+    "T+L ", // 3
+    "COLR", // 4
+    "T+C ", // 5
+    "L+C ", // 6
+    "TLC ", // 7
 };
 
 const char* const brightness_values[] = {
@@ -361,6 +355,7 @@ const char* const meta_values[] = {
     "RATE", // 2
     "RAT1", // 3
     "RAT2", // 4
+    "BITS", // 5
 };
 
 const char* const ad_ratio_values[] = { 
@@ -413,7 +408,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 4, "FMCV", meta_values },
+  { 0, 5, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -435,7 +430,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "DST2", mod_destination_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3k", NULL },  // Placeholder for version string
+  { 0, 0, "BT3m", NULL },  // Placeholder for version string
 };
 
 /* static */

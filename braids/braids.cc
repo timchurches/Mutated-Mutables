@@ -1,6 +1,10 @@
-// Copyright 2012 Olivier Gillet.
+// Copyright 2012 Olivier Gillet, 2015 Tim Churches
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
+// Modifications: Tim Churches (tim.churches@gmail.com)
+// Modifications may be determined by examining the differences between the last commit 
+// by Olivier Gillet (pichenettes) and the HEAD commit at 
+// https://github.com/timchurches/Mutated-Mutables/tree/master/braids 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,9 +54,8 @@ const uint16_t kAudioBlockSize = 24;
 RingBuffer<uint16_t, kAudioBufferSize> audio_samples;
 RingBuffer<uint8_t, kAudioBufferSize> sync_samples;
 MacroOscillator osc;
-Envelope envelope;  // first envelope/LFO for timbre modulation.
-Envelope envelope2; // second envelope/LFO instance for color modulation.
-// Envelope envelope3; // third envelope/LFO instance for level modulation.
+Envelope envelope;  // first envelope/LFO 
+Envelope envelope2; // second envelope/LFO 
 Adc adc;
 Dac dac;
 DebugPin debug_pin;
@@ -144,7 +147,6 @@ void Init() {
   
   envelope.Init();
   envelope2.Init();
-  // envelope3.Init();
   ws.Init(GetUniqueId(2));
   jitter_source.Init(GetUniqueId(1));
   sys.StartTimers();
@@ -185,8 +187,7 @@ void RenderBlock() {
   // Clip at zero and 127
   if (env_param < 0) {
  	 env_param = 0 ;
-  }
-  if (env_param > 127) {
+  } else if (env_param > 127) {
 	 env_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
@@ -228,8 +229,7 @@ void RenderBlock() {
   }
   if (env2_param < 0) { 
  	 env2_param = 0 ;
-  }
-  if (env2_param > 127) {
+  } else if (env2_param > 127) {
  	 env2_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
@@ -319,7 +319,7 @@ void RenderBlock() {
   if (ad_level_amount > 255) {
      ad_level_amount = 255 ;
   }
-   
+
   // meta_modulation no longer a boolean  
   if (meta_mod == 1) {
     int32_t shape = adc.channel(3);
@@ -474,10 +474,21 @@ void RenderBlock() {
         gain = lad_value ;
      }
   }
-  
+
+  // Voltage control of bit crushing
+  uint8_t bits_setting = settings.resolution();
+  if (meta_mod == 5) {
+     bits_setting -= settings.adc_to_fm(adc.channel(3)) >> 9;
+     if (bits_setting < 0) {
+	    bits_setting = 0 ;
+     } else if (bits_setting > 6) {
+        bits_setting = 6;
+     }
+  }
+ 
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
-  uint16_t bit_mask = bit_reduction_masks[settings.data().resolution];
+  uint16_t bit_mask = bit_reduction_masks[bits_setting];
   // sacrifice code size for performance by avoiding unnecessary computations
   if (settings.signature()) {
      for (size_t i = 0; i < kAudioBlockSize; ++i) {
