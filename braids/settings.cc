@@ -66,11 +66,11 @@ const SettingsData kInitSettings = {
   20,                   // mod2_rate  
   0,                    // mod1_destination
   0,                    // mod2_destination 
-  // 58 bytes of padding
-  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
+  // 58 bytes of padding
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
   66,                   // magic byte = 66 for ascii B for Bees-in-Trees
 };
 

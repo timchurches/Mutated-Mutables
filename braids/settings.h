@@ -104,19 +104,6 @@ enum Resolution {
   RESOLUTION_LAST
 };
 
-/*
-// enum SampleRate {
-//   SAMPLE_RATE_4K,
-//   SAMPLE_RATE_8K,
-//   SAMPLE_RATE_16K,
-//   SAMPLE_RATE_24k,
-//   SAMPLE_RATE_32k,
-//   SAMPLE_RATE_48K,
-//   SAMPLE_RATE_96K,
-//   SAMPLE_RATE_LAST
-// };
-*/
-
 enum PitchQuantization {
   PITCH_QUANTIZATION_OFF,
   PITCH_QUANTIZATION_QUARTER_TONE,
@@ -193,10 +180,10 @@ struct SettingsData {
   uint8_t mod2_rate;  
   uint8_t mod1_destination;
   uint8_t mod2_destination;
-  uint8_t padding[58]; // bytes 26 to 83
-  int32_t pitch_cv_offset; // 84 to 87
-  int32_t pitch_cv_scale; // 88 to 91
-  int32_t fm_cv_offset; // 92 to 95
+  int32_t pitch_cv_offset; 
+  int32_t pitch_cv_scale; 
+  int32_t fm_cv_offset; 
+  uint8_t padding[58]; 
   uint8_t magic; // magic number in byte 96 - should store ascii "B" for Bees-in-Trees
 };
 
