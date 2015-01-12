@@ -62,9 +62,12 @@ const SettingsData kInitSettings = {
   20,                   // mod2_rate  
   0,                    // mod1_destination
   0,                    // mod2_destination 
+  // 58 bytes of padding
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
+  66,                   // magic byte = 66 for ascii B for Bees-in-Trees
 };
 
 Storage<0x8020000, 4> storage;
@@ -140,15 +143,17 @@ const char* const bits_values[] = {
     "12B ",
     "16B " };
 
-const char* const rates_values[] = {
-    "4KHZ",
-    "8KHZ",
-    "16K ",
-    "24K ",
-    "32K ",
-    "48K ",
-    "96K " };
-    
+/*
+// const char* const rates_values[] = {
+//     "4KHZ",
+//     "8KHZ",
+//     "16K ",
+//     "24K ",
+//     "32K ",
+//     "48K ",
+//    "96K " };
+*/
+  
 const char* const mod_rate_values[] = {
     "   0",
     "   1",
