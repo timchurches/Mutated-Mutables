@@ -161,8 +161,6 @@ const uint16_t bit_reduction_masks[] = {
     0xfff0,
     0xffff };
 
-const uint16_t decimation_factors[] = { 24, 12, 6, 4, 3, 2, 1 };
-
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static int32_t previous_pitch = 0;
@@ -478,7 +476,7 @@ void RenderBlock() {
   // Voltage control of bit crushing
   uint8_t bits_setting = settings.resolution();
   if (meta_mod == 5) {
-     bits_setting -= settings.adc_to_fm(adc.channel(3)) >> 9;
+     bits_setting -= uint8_t (settings.adc_to_fm(adc.channel(3)) >> 9);
      if (bits_setting < 0) {
 	    bits_setting = 0 ;
      } else if (bits_setting > 6) {

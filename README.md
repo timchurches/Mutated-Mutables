@@ -5,9 +5,9 @@ Various enhancements, experiments and outright hacks of Mutable Instruments firm
 
 This repository is a copy of the Mutable Instruments GitHub repository at https://github.com/pichenettes/eurorack
 
-So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3k, the source code for which is in the braids/ directory here. 
+So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3m, the source code for which is in the braids/ directory here. 
 
-Bees-in-Trees v3k enhancements
+Bees-in-Trees v3m enhancements
 =============================
 
 * Instead of a single internal envelope, there are now two internal modulators, MOD1 and MOD2. The MOD1 and MOD2 menu settings allow each internal modulator to be turned off (OFF), put in envelope mode (ENV), or in LFO mode (LFO).
@@ -38,7 +38,7 @@ Bees-in-Trees v3k enhancements
   * RATE, in which voltage on the FM input sets the duration of the envelope segments, or the frequency of the LFOs - thus providing voltage-controlled envelopes and/or LFOs, with the FM voltage affecting the duration/speed of both internal modulators;
   * RAT1 is the same except the FM voltage only affects modulator 1;
   * RAT2 is also the same but the FM voltage only affects modulator 2. Note that for the rate settings, the voltage on the FM input is added to the RAT1 and RAT2 values for each each modulator, thus a base LFO speed or envelope duration can be set using RAT1 and RAT2, and that can then be modified by voltage on the FM input.
-  * BITS provides voltage control over bit crushing, as set by the BITS menu.
+  * HACK provides voltage control over bit crushing, as set by the BITS menu.
 * LFO range has been enabled in the range (RANG) menu. This LFO range was always present in the Braids source code, but its selection was disabled. The LFO range seems to go down to about 1Hz or so - thus it doesn't make Braids into a proper LFO, but it is low enough for many LFO modulation duties. Braids certainly produces a lot more interesting LFO waveforms than your average voltage-controlled LFO, And of course the two internal LFOs can still modulate Braids while its range is set to LFO - thus you have two LFOs inside your LFO. 
 * TSRC, TDLY, OCTV, QNTZ, BITS, FLAT, DRFT, SIGN, BRIG, CAL. and CV testing menu choices are unchanged and function exactly as they do in the official Braids firmware.
 
