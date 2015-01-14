@@ -50,9 +50,9 @@ const SettingsData kInitSettings = {
   PITCH_RANGE_EXTERNAL, // pitch_range
   2,                    // pitch_octave
   PITCH_QUANTIZATION_OFF, //pitch_quantization
-  false,                // vco_flatten
-  false,                // vco_drift
-  false,                // signature
+  // false,                // vco_flatten
+  0,                    // vco_drift - value was false
+  // false,                // signature
   2,                    // brightness
   0,                    // mod1_shape
   0,                    // mod2_shape
@@ -66,7 +66,7 @@ const SettingsData kInitSettings = {
   20,                   // mod2_rate  
   0,                    // mod1_destination
   0,                    // mod2_destination 
-  { 0, 0, 0 },          // padding
+  { 0, 0, 0, 0, 0 },          // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -355,7 +355,7 @@ const char* const meta_values[] = {
     "RATE", // 2
     "RAT1", // 3
     "RAT2", // 4
-    "HACK", // 5
+    "BIT\x86", // 5
 };
 
 const char* const ad_ratio_values[] = { 
@@ -401,6 +401,25 @@ const char* const mod_mode_values[] = {
     "LFO",  // 2 
 };
 
+const char* const vco_drift_values[] = {
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+}
+
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
@@ -412,9 +431,9 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
-  { 0, 1, "FLAT", boolean_values },
-  { 0, 1, "DRFT", boolean_values },
-  { 0, 1, "SIGN", boolean_values },
+  // { 0, 1, "FLAT", boolean_values },
+  { 0, 15, "DRFT", vco_drift_values },
+  // { 0, 1, "SIGN", boolean_values },
   { 0, 2, "BRIG", brightness_values },
   { 0, 9, "SHP1", mod_shape_values },
   { 0, 9, "SHP2", mod_shape_values },
@@ -456,9 +475,9 @@ const Setting Settings::settings_order_[] = {
   SETTING_PITCH_QUANTIZER,
   SETTING_RATE_INVERSION, 
   SETTING_RESOLUTION,
-  SETTING_VCO_FLATTEN,
+  // SETTING_VCO_FLATTEN,
   SETTING_VCO_DRIFT,
-  SETTING_SIGNATURE,
+  // SETTING_SIGNATURE,
   SETTING_BRIGHTNESS, 
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,

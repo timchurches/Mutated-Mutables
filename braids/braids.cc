@@ -211,6 +211,7 @@ void RenderBlock() {
   else if (modulator1_ad_ratio == 20) {
     env_d = (env_param * 2) / 100; 
   } 
+  
   // now set the attack and decay parameters again
   // using the modified attack and decay values
   envelope.Update(env_a, env_d, 0, 0);  
@@ -410,7 +411,8 @@ void RenderBlock() {
   
   if (settings.vco_drift()) {
     int16_t jitter = jitter_source.Render(adc.channel(1) << 3);
-    pitch += (jitter >> 8);
+    // jitter depth now settable.
+    pitch += (jitter >> 8) * settings.vco_drift() ;
   }
 
   if (pitch > 32767) {
@@ -419,12 +421,15 @@ void RenderBlock() {
     pitch = 0;
   }
   
-  if (settings.vco_flatten()) {
-    if (pitch > 16383) {
-      pitch = 16383;
-    }
-    pitch = Interpolate88(lut_vco_detune, pitch << 2);
-  }
+  /*
+  // Disable VCO flattening
+  // if (settings.vco_flatten()) {
+  //   if (pitch > 16383) {
+  //     pitch = 16383;
+  //   }
+  //   pitch = Interpolate88(lut_vco_detune, pitch << 2);
+  // }
+  */
 
   osc.set_pitch(pitch + settings.pitch_transposition());
 
@@ -487,21 +492,26 @@ void RenderBlock() {
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
   uint16_t bit_mask = bit_reduction_masks[bits_setting];
+  
+  /*
+  // Disable signature
   // sacrifice code size for performance by avoiding unnecessary computations
-  if (settings.signature()) {
+  // if (settings.signature()) {
+  //    for (size_t i = 0; i < kAudioBlockSize; ++i) {
+  //      sample = render_buffer[i] & bit_mask;
+  //      sample = ws.Transform(sample);
+  //      sample = static_cast<int32_t>(sample) * gain >> 16;
+  //      audio_samples.Overwrite(sample + 32768);
+  //    }
+  // } else {
+  */
+
      for (size_t i = 0; i < kAudioBlockSize; ++i) {
        sample = render_buffer[i] & bit_mask;
-       sample = ws.Transform(sample);
        sample = static_cast<int32_t>(sample) * gain >> 16;
        audio_samples.Overwrite(sample + 32768);
      }
-  } else {
-     for (size_t i = 0; i < kAudioBlockSize; ++i) {
-       sample = render_buffer[i] & bit_mask;
-       sample = static_cast<int32_t>(sample) * gain >> 16;
-       audio_samples.Overwrite(sample + 32768);
-     }
-  }
+  // } // disable signature
   // debug_pin.Low();
 }
 
