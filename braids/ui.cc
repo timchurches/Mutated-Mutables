@@ -142,11 +142,7 @@ void Ui::OnLongClick() {
       } else if (setting_ == SETTING_VERSION) {
         settings.Reset();
         settings.Save();
-      } else {
-        // long click should take you back to oscillator shape selection mode
-        setting_ = SETTING_OSCILLATOR_SHAPE;
-        mode_ = MODE_EDIT;
-      }
+      } 
       break;
     
     default:

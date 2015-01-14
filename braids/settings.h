@@ -129,9 +129,7 @@ enum Setting {
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
   SETTING_PITCH_QUANTIZER,
-  // SETTING_VCO_FLATTEN,
   SETTING_VCO_DRIFT,
-  // SETTING_SIGNATURE,
   SETTING_BRIGHTNESS,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_SHAPE,
@@ -164,9 +162,7 @@ struct SettingsData {
   uint8_t pitch_range;
   uint8_t pitch_octave;
   uint8_t pitch_quantization;
-  // uint8_t vco_flatten;
   uint8_t vco_drift;
-  // uint8_t signature;
   uint8_t brightness;
   uint8_t mod1_shape;
   uint8_t mod2_shape;
@@ -240,18 +236,9 @@ class Settings {
     return static_cast<PitchQuantization>(data_.pitch_quantization);
   }
 
-  // inline bool vco_flatten() const {
-  //   return data_.vco_flatten;
-  // }
-
-  // inline bool vco_drift() const {
   inline uint8_t vco_drift() const {
     return data_.vco_drift;
   }
-
-  // inline bool signature() const {
-  //   return data_.signature;
-  // }
 
   inline uint8_t meta_modulation() const {
     return data_.meta_modulation;

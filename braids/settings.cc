@@ -50,9 +50,7 @@ const SettingsData kInitSettings = {
   PITCH_RANGE_EXTERNAL, // pitch_range
   2,                    // pitch_octave
   PITCH_QUANTIZATION_OFF, //pitch_quantization
-  // false,                // vco_flatten
-  0,                    // vco_drift - value was false
-  // false,                // signature
+  0,                    // vco_drift 
   2,                    // brightness
   0,                    // mod1_shape
   0,                    // mod2_shape
@@ -402,7 +400,7 @@ const char* const mod_mode_values[] = {
 };
 
 const char* const vco_drift_values[] = {
-    "0",
+    "OFF",
     "1",
     "2",
     "3",
@@ -418,7 +416,7 @@ const char* const vco_drift_values[] = {
     "13",
     "14",
     "15",
-}
+};
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
@@ -431,9 +429,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
-  // { 0, 1, "FLAT", boolean_values },
   { 0, 15, "DRFT", vco_drift_values },
-  // { 0, 1, "SIGN", boolean_values },
   { 0, 2, "BRIG", brightness_values },
   { 0, 9, "SHP1", mod_shape_values },
   { 0, 9, "SHP2", mod_shape_values },
@@ -449,7 +445,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "DST2", mod_destination_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3m", NULL },  // Placeholder for version string
+  { 0, 0, "BT3n", NULL },  // Placeholder for version string
 };
 
 /* static */
@@ -475,9 +471,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_PITCH_QUANTIZER,
   SETTING_RATE_INVERSION, 
   SETTING_RESOLUTION,
-  // SETTING_VCO_FLATTEN,
   SETTING_VCO_DRIFT,
-  // SETTING_SIGNATURE,
   SETTING_BRIGHTNESS, 
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,

@@ -240,36 +240,6 @@ lookup_tables.append(
 
 
 """----------------------------------------------------------------------------
-Simulates VCO detuning
-----------------------------------------------------------------------------"""
-# Disabled
-#
-# modified_pitch = []
-#
-# for i in xrange(257):
-#   frequency = 440 * 2 ** ((i / 2.0 - 69) / 12.0)
-#  
-#   # Simulates an offset current in the integrator.
-#   frequency -= 0.6
-#  
-#   # Simulates the integrator cap reset time.
-#   time = 1 / frequency
-#   time += 9e-6
-#   frequency = 1 / time
-#  
-#   midi_pitch = 128 * (69 + 12 * numpy.log2(frequency / 440.0))
-#   midi_pitch = max(midi_pitch, 0)
-#   modified_pitch.append(midi_pitch)
-#
-# modified_pitch = numpy.array(modified_pitch)
-# modified_pitch += (60 << 7) - modified_pitch[120]
-#
-# lookup_tables.append(
-#     ('vco_detune', modified_pitch)
-# )
-
-
-"""----------------------------------------------------------------------------
 Bell envelopes for VOSIM and FOF
 ----------------------------------------------------------------------------"""
 

@@ -421,16 +421,6 @@ void RenderBlock() {
     pitch = 0;
   }
   
-  /*
-  // Disable VCO flattening
-  // if (settings.vco_flatten()) {
-  //   if (pitch > 16383) {
-  //     pitch = 16383;
-  //   }
-  //   pitch = Interpolate88(lut_vco_detune, pitch << 2);
-  // }
-  */
-
   osc.set_pitch(pitch + settings.pitch_transposition());
 
   if (trigger_flag) {
@@ -492,26 +482,11 @@ void RenderBlock() {
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
   uint16_t bit_mask = bit_reduction_masks[bits_setting];
-  
-  /*
-  // Disable signature
-  // sacrifice code size for performance by avoiding unnecessary computations
-  // if (settings.signature()) {
-  //    for (size_t i = 0; i < kAudioBlockSize; ++i) {
-  //      sample = render_buffer[i] & bit_mask;
-  //      sample = ws.Transform(sample);
-  //      sample = static_cast<int32_t>(sample) * gain >> 16;
-  //      audio_samples.Overwrite(sample + 32768);
-  //    }
-  // } else {
-  */
-
-     for (size_t i = 0; i < kAudioBlockSize; ++i) {
-       sample = render_buffer[i] & bit_mask;
-       sample = static_cast<int32_t>(sample) * gain >> 16;
-       audio_samples.Overwrite(sample + 32768);
-     }
-  // } // disable signature
+  for (size_t i = 0; i < kAudioBlockSize; ++i) {
+    sample = render_buffer[i] & bit_mask;
+    sample = static_cast<int32_t>(sample) * gain >> 16;
+    audio_samples.Overwrite(sample + 32768);
+  }
   // debug_pin.Low();
 }
 
