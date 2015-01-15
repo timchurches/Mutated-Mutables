@@ -41,7 +41,7 @@
 #include "braids/drivers/system.h"
 #include "braids/envelope.h"
 #include "braids/macro_oscillator.h"
-#include "braids/signature_waveshaper.h"
+// #include "braids/signature_waveshaper.h"
 #include "braids/vco_jitter_source.h"
 #include "braids/ui.h"
 
@@ -61,7 +61,7 @@ Dac dac;
 DebugPin debug_pin;
 GateInput gate_input;
 InternalAdc internal_adc;
-SignatureWaveshaper ws;
+// SignatureWaveshaper ws;
 System sys;
 VcoJitterSource jitter_source;
 Ui ui;
@@ -147,7 +147,7 @@ void Init() {
   
   envelope.Init();
   envelope2.Init();
-  ws.Init(GetUniqueId(2));
+  // ws.Init(GetUniqueId(2));
   jitter_source.Init(GetUniqueId(1));
   sys.StartTimers();
 }
@@ -212,7 +212,7 @@ void RenderBlock() {
     env_d = (env_param * 2) / 100; 
   } 
   
-  // now set the attack and decay parameters again
+  // now set the attack and decay parameters 
   // using the modified attack and decay values
   envelope.Update(env_a, env_d, 0, 0);  
 
@@ -251,13 +251,12 @@ void RenderBlock() {
   else if (modulator2_ad_ratio == 20) {
     env2_d = (env2_param * 2) / 100; 
   }     
-  // now set the attack and decay parameters again
+  // now set the attack and decay parameters 
   // using the modified attack and decay values
   envelope2.Update(env2_a, env2_d, 0, 0);  
   
   // Render envelope in LFO mode, or not
   // envelope 1
-  uint8_t modulator1_destination = settings.mod1_destination();
   uint8_t modulator1_shape = settings.mod1_shape();
   uint16_t ad_value = 0 ;
   if (modulator1_mode == 2) { 
@@ -269,7 +268,6 @@ void RenderBlock() {
       ad_value = envelope.Render(false, modulator1_shape);
   }
   // envelope 2
-  uint8_t modulator2_destination = settings.mod2_destination();
   uint8_t modulator2_shape = settings.mod2_shape();
   uint16_t ad2_value = 0 ;
   if (modulator2_mode == 2) { 
@@ -281,43 +279,24 @@ void RenderBlock() {
       ad2_value = envelope2.Render(false, modulator2_shape);
   }
 
-  // timbre modulation amount - sum the two modulators
-  uint8_t modulator1_depth = settings.mod1_depth();
-  uint8_t modulator2_depth = settings.mod2_depth();
-  uint16_t ad_timbre_amount=0;
-  if (modulator1_mode && (modulator1_destination & 1)) {
-      ad_timbre_amount = modulator1_depth ;
-  } 
-  if (modulator2_mode && (modulator2_destination & 1)) {
-      ad_timbre_amount += modulator2_depth ;
-  } 
-  if (ad_timbre_amount > 255) {
-     ad_timbre_amount = 255 ;
-  }
-      
-  // color modulation amount
-  uint16_t ad_color_amount=0;
-  if (modulator1_mode && (modulator1_destination & 4)) {
-      ad_color_amount = modulator1_depth ;
-  } 
-  if (modulator2_mode && (modulator2_destination & 4)) {
-      ad_color_amount += modulator2_depth ;
-  } 
-  if (ad_color_amount > 255) {
-     ad_color_amount = 255 ;
+  // modulate timbre
+  uint16_t parameter_1 = adc.channel(0) << 3;
+  parameter_1 += ad_value * settings.mod1_timbre_depth() >> 9;
+  parameter_1 += ad2_value * settings.mod2_timbre_depth() >> 9;
+  if (parameter_1 > 32767) {
+    parameter_1 = 32767;
   }
 
-  // level modulation amount
-  uint16_t ad_level_amount=255;
-  if (modulator1_mode == 2 && (modulator1_destination & 2)) {
-      ad_level_amount = modulator1_depth ;
-  } 
-  if (modulator2_mode == 2 && (modulator2_destination & 2)) {
-      ad_level_amount += modulator2_depth ;
-  } 
-  if (ad_level_amount > 255) {
-     ad_level_amount = 255 ;
+  // modulate colour
+  uint16_t parameter_2 = adc.channel(1) << 3;
+  parameter_2 += ad_value * settings.mod1_color_depth() >> 9;
+  parameter_2 += ad2_value * settings.mod2_color_depth() >> 9;
+  if (parameter_1 > 32767) {
+    parameter_1 = 32767;
   }
+
+  // set the timbre and color parameters on the oscillator
+  osc.set_parameters(parameter_1, parameter_2);
 
   // meta_modulation no longer a boolean  
   if (meta_mod == 1) {
@@ -341,43 +320,6 @@ void RenderBlock() {
   } else {
     osc.set_shape(settings.shape());
   }
-  // modulate timbre
-  uint16_t parameter_1 = adc.channel(0) << 3;
-  // Need to up-cast the envelope values because we will be summing them 
-  // and we want to clip them at 65535, rather than having the sum overflow. 
-  uint32_t adv1 = static_cast<uint32_t>(ad_value);
-  uint32_t adv2 = static_cast<uint32_t>(ad2_value);
-  uint32_t tad_value=0;
-  uint32_t cad_value=0;
-  if (modulator1_destination & 1) {
-      tad_value = adv1;
-  }
-  if (modulator2_destination & 1) {
-      tad_value += adv2;
-  }
-  if (tad_value > 65535) {
-      tad_value = 65535;
-  }
-  parameter_1 += tad_value * ad_timbre_amount >> 9;
-  if (parameter_1 > 32767) {
-    parameter_1 = 32767;
-  }
-  // modulate colour
-  uint16_t parameter_2 = adc.channel(1) << 3;
-  if (modulator1_destination & 4) {
-      cad_value = adv1;
-  }
-  if (modulator2_destination & 4) {
-      cad_value += adv2;
-  }
-  if (cad_value > 65535) {
-      cad_value = 65535;
-  }
-  parameter_2 += cad_value * ad_color_amount >> 9;
-  if (parameter_2 > 32767) {
-    parameter_2 = 32767;
-  }
-  osc.set_parameters(parameter_1, parameter_2);
     
   // Apply hysteresis to ADC reading to prevent a single bit error to move
   // the quantized pitch up and down the quantization boundary.
@@ -432,8 +374,10 @@ void RenderBlock() {
   
   // Enable hardsync only if level is a modulator destination when in envelope mode
   // or if both modulators are off
-  if ((modulator1_mode == 1 && modulator1_destination & 2) ||
-      (modulator2_mode == 1 && modulator2_destination & 2) ||
+  uint8_t mod1_level_depth = settings.mod1_level_depth();
+  uint8_t mod2_level_depth = settings.mod2_level_depth();
+  if ((modulator1_mode == 1 && mod1_level_depth) ||
+      (modulator2_mode == 1 && mod2_level_depth) ||
       (!modulator1_mode && !modulator2_mode)) {
     for (size_t i = 0; i < kAudioBlockSize; ++i) {
       sync_buffer[i] = sync_samples.ImmediateRead();
@@ -445,29 +389,19 @@ void RenderBlock() {
 
   osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
 
-  // sum the envelope/LFO levels  
-  uint32_t lad_value=0;
-  if (modulator1_destination & 2) {
-      lad_value = adv1;
-  }
-  if (modulator2_destination & 2) {
-      lad_value += adv2;
-  }
-  if (lad_value > 65535) {
-      lad_value = 65535;
-  }
- 
-  // use AD envelope value as gain except in LFO mode, when it is used as 
-  // negative gain from full volume.
-  int32_t gain = 65535 ;
-  if (modulator1_destination & 2 || modulator2_destination & 2) {
-     if (modulator1_mode == 2 && modulator2_mode == 2) {
-       gain = 65535 - ((lad_value >> 8) * ad_level_amount) ;
-     } else {
-        gain = lad_value ;
-     }
-  }
+  // gain is a weighted sum of the envelope/LFO levels  
+  // TO-DO: implement level offset when in LFO mode
+  int32_t gain = 65535;
+  if (modulator1_mode || modulator2_mode) {
+     gain = 0;
+  } 
 
+  gain += (ad_value >> 8) * settings.mod1_level_depth();
+  gain += (ad2_value >> 8) * settings.mod2_level_depth();
+  if (gain > 65535) {
+      gain = 65535;
+  }
+   
   // Voltage control of bit crushing
   uint8_t bits_setting = settings.resolution();
   if (meta_mod == 5) {

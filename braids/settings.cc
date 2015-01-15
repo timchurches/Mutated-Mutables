@@ -54,17 +54,19 @@ const SettingsData kInitSettings = {
   2,                    // brightness
   0,                    // mod1_shape
   0,                    // mod2_shape
-  0,                    // mod1_depth
-  0,                    // mod2_depth
+  0,                    // mod1_timbre_depth
+  0,                    // mod2_timbre_depth
   10,                   // mod1_ad_ratio
   10,                   // mod2_ad_ratio
   0,                    // mod1_mode
   0,                    // mod2_mode  
   20,                   // mod1_rate
   20,                   // mod2_rate  
-  0,                    // mod1_destination
-  0,                    // mod2_destination 
-  { 0, 0, 0, 0, 0 },          // padding
+  0,                    // mod1_color_depth
+  0,                    // mod2_color_depth
+  0,                    // mod1_level_depth
+  0,                    // mod2_level_depth   
+  { 0, 0, 0 },          // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -330,17 +332,6 @@ const char* const mod_depth_values[] = {
     "250",    
 };
 
-const char* const mod_destination_values[] = {
-    "NONE", // 0
-    "TIMB", // 1
-    "LEVL", // 2
-    "T+L", // 3
-    "COLR", // 4
-    "T+C", // 5
-    "L+C", // 6
-    "TLC", // 7
-};
-
 const char* const brightness_values[] = {
     "\xff   ",
     "\xff\xff  ",
@@ -433,19 +424,21 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 2, "BRIG", brightness_values },
   { 0, 9, "SHP1", mod_shape_values },
   { 0, 9, "SHP2", mod_shape_values },
-  { 0, 25, "DEP1", mod_depth_values },
-  { 0, 25, "DEP2", mod_depth_values },
+  { 0, 25, "M1>T", mod_depth_values },
+  { 0, 25, "M2>T", mod_depth_values },
   { 0, 20, "\x87\x86 1", ad_ratio_values },
   { 0, 20, "\x87\x86 2", ad_ratio_values },
   { 0, 2, "MOD1", mod_mode_values },
   { 0, 2, "MOD2", mod_mode_values },
   { 0, 127, "RAT1", mod_rate_values },
   { 0, 127, "RAT2", mod_rate_values },
-  { 0, 7, "DST1", mod_destination_values },
-  { 0, 7, "DST2", mod_destination_values },
+  { 0, 25, "M1>C", mod_depth_values },
+  { 0, 25, "M2>C", mod_depth_values },
+  { 0, 25, "M1>L", mod_depth_values },
+  { 0, 25, "M2>L", mod_depth_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3n", NULL },  // Placeholder for version string
+  { 0, 0, "BT3p", NULL },  // Placeholder for version string
 };
 
 /* static */
@@ -453,14 +446,16 @@ const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_MOD1_MODE,
   SETTING_MOD1_RATE,
-  SETTING_MOD1_DESTINATION,
-  SETTING_MOD1_DEPTH,
+  SETTING_MOD1_TIMBRE_DEPTH,
+  SETTING_MOD1_COLOR_DEPTH,
+  SETTING_MOD1_LEVEL_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_MODE,
   SETTING_MOD2_RATE,
-  SETTING_MOD2_DESTINATION,
-  SETTING_MOD2_DEPTH,
+  SETTING_MOD2_TIMBRE_DEPTH,
+  SETTING_MOD2_COLOR_DEPTH,
+  SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_AD_RATIO,
   SETTING_MOD2_SHAPE,
   SETTING_META_MODULATION,
