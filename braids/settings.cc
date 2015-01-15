@@ -66,7 +66,8 @@ const SettingsData kInitSettings = {
   0,                    // mod2_color_depth
   0,                    // mod1_level_depth
   0,                    // mod2_level_depth   
-  { 0, 0, 0 },          // padding
+  0,                    // level_offset
+  { 0, 0 },             // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -436,6 +437,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 25, "M2>C", mod_depth_values },
   { 0, 25, "M1>L", mod_depth_values },
   { 0, 25, "M2>L", mod_depth_values },
+  { 0, 25, "LOFF", mod_depth_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3p", NULL },  // Placeholder for version string
@@ -458,6 +460,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_AD_RATIO,
   SETTING_MOD2_SHAPE,
+  SETTING_LEVEL_OFFSET,
   SETTING_META_MODULATION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,

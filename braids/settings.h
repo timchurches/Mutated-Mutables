@@ -133,19 +133,20 @@ enum Setting {
   SETTING_BRIGHTNESS,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_SHAPE,
-  SETTING_MOD1_TIMBRE_DEPTH, // was SETTING_MOD1_DEPTH
-  SETTING_MOD2_TIMBRE_DEPTH, // was SETTING_MOD2_DEPTH
+  SETTING_MOD1_TIMBRE_DEPTH, 
+  SETTING_MOD2_TIMBRE_DEPTH, 
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD2_AD_RATIO,
   SETTING_MOD1_MODE,
   SETTING_MOD2_MODE,
   SETTING_MOD1_RATE,
   SETTING_MOD2_RATE,
-  SETTING_MOD1_COLOR_DEPTH, // was SETTING_MOD1_DESTINATION
-  SETTING_MOD2_COLOR_DEPTH, // was SETTING_MOD2_DESTINATION
+  SETTING_MOD1_COLOR_DEPTH, 
+  SETTING_MOD2_COLOR_DEPTH, 
   SETTING_MOD1_LEVEL_DEPTH, 
   SETTING_MOD2_LEVEL_DEPTH, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_LEVEL_DEPTH,
+  SETTING_LEVEL_OFFSET, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_LEVEL_OFFSET,
   
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
@@ -168,19 +169,20 @@ struct SettingsData {
   uint8_t brightness;
   uint8_t mod1_shape;
   uint8_t mod2_shape;
-  uint8_t mod1_timbre_depth; // was mod1_depth;
-  uint8_t mod2_timbre_depth;  // was mod2_depth;
+  uint8_t mod1_timbre_depth; 
+  uint8_t mod2_timbre_depth;  
   uint8_t mod1_ad_ratio;
   uint8_t mod2_ad_ratio;
   uint8_t mod1_mode;
   uint8_t mod2_mode;
   uint8_t mod1_rate;
   uint8_t mod2_rate;  
-  uint8_t mod1_color_depth; // was mod1_destination
-  uint8_t mod2_color_depth; // was mod2_destination
-  uint8_t mod1_level_depth; // was mod1_destination
-  uint8_t mod2_level_depth; // was mod2_destination
-  uint8_t padding[3];
+  uint8_t mod1_color_depth; 
+  uint8_t mod2_color_depth; 
+  uint8_t mod1_level_depth; 
+  uint8_t mod2_level_depth; 
+  uint8_t level_offset; 
+  uint8_t padding[2];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -260,14 +262,6 @@ class Settings {
     return data_.mod2_shape;
   }
 
-  // inline uint8_t mod1_depth() const {
-  //   return data_.mod1_depth * 10;
-  // }
-
-  // inline uint8_t mod2_depth() const {
-  //   return data_.mod2_depth * 10;
-  // }
-
   inline uint8_t mod1_timbre_depth() const {
     return data_.mod1_timbre_depth * 10;
   }
@@ -300,14 +294,6 @@ class Settings {
     return data_.mod2_rate;
   }
 
-  // inline uint8_t mod1_destination() const {
-  //   return data_.mod1_destination;
-  // }
-
-  // inline uint8_t mod2_destination() const {
-  //   return data_.mod2_destination;
-  // }
-
   inline uint8_t mod1_color_depth() const {
     return data_.mod1_color_depth * 10;
   }
@@ -322,6 +308,10 @@ class Settings {
 
   inline uint8_t mod2_level_depth() const {
     return data_.mod2_level_depth * 10;
+  }
+
+  inline uint8_t level_offset() const {
+    return data_.level_offset * 10;
   }
   
   inline const SettingsData& data() const { return data_; }

@@ -390,14 +390,16 @@ void RenderBlock() {
   osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
 
   // gain is a weighted sum of the envelope/LFO levels  
-  // TO-DO: implement level offset when in LFO mode
+  // TO-DO: implement level offset when in LFO mode - done!
   int32_t gain = 65535;
   if (modulator1_mode || modulator2_mode) {
-     gain = 0;
+     gain = settings.level_offset() << 8 ;
   } 
 
-  gain += (ad_value >> 8) * settings.mod1_level_depth();
-  gain += (ad2_value >> 8) * settings.mod2_level_depth();
+  // gain += (ad_value >> 8) * settings.mod1_level_depth();
+  // gain += (ad2_value >> 8) * settings.mod2_level_depth();
+  gain += (ad_value * settings.mod1_level_depth()) >> 8;
+  gain += (ad2_value * settings.mod2_level_depth()) >> 8;
   if (gain > 65535) {
       gain = 65535;
   }
