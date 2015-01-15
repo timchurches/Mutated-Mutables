@@ -67,7 +67,8 @@ const SettingsData kInitSettings = {
   0,                    // mod1_level_depth
   0,                    // mod2_level_depth   
   0,                    // level_offset
-  { 0, 0 },             // padding
+  0,                    // mod2_vibrato_depth
+  0,                    // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -410,6 +411,7 @@ const char* const vco_drift_values[] = {
     "15",
 };
 
+
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
@@ -425,19 +427,20 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 2, "BRIG", brightness_values },
   { 0, 9, "SHP1", mod_shape_values },
   { 0, 9, "SHP2", mod_shape_values },
-  { 0, 25, "M1>T", mod_depth_values },
-  { 0, 25, "M2>T", mod_depth_values },
-  { 0, 20, "\x87\x86 1", ad_ratio_values },
-  { 0, 20, "\x87\x86 2", ad_ratio_values },
+  { 0, 25, "M1" "\x85" "T", mod_depth_values },
+  { 0, 25, "M2" "\x85" "T", mod_depth_values },
+  { 0, 20, "\x82" "\x83" "1", ad_ratio_values },
+  { 0, 20, "\x82" "\x83" "2", ad_ratio_values },
   { 0, 2, "MOD1", mod_mode_values },
   { 0, 2, "MOD2", mod_mode_values },
   { 0, 127, "RAT1", mod_rate_values },
   { 0, 127, "RAT2", mod_rate_values },
-  { 0, 25, "M1>C", mod_depth_values },
-  { 0, 25, "M2>C", mod_depth_values },
-  { 0, 25, "M1>L", mod_depth_values },
-  { 0, 25, "M2>L", mod_depth_values },
+  { 0, 25, "M1" "\x85" "C", mod_depth_values },
+  { 0, 25, "M2" "\x85" "C", mod_depth_values },
+  { 0, 25, "M1" "\x85" "L", mod_depth_values },
+  { 0, 25, "M2" "\x85" "L", mod_depth_values },
   { 0, 25, "LOFF", mod_depth_values },
+  { 0, 127, "M2" "\x85" "F", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3p", NULL },  // Placeholder for version string
@@ -458,6 +461,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_TIMBRE_DEPTH,
   SETTING_MOD2_COLOR_DEPTH,
   SETTING_MOD2_LEVEL_DEPTH,
+  SETTING_MOD2_VIBRATO_DEPTH,
   SETTING_MOD2_AD_RATIO,
   SETTING_MOD2_SHAPE,
   SETTING_LEVEL_OFFSET,

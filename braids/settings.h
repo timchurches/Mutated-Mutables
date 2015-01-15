@@ -146,7 +146,8 @@ enum Setting {
   SETTING_MOD1_LEVEL_DEPTH, 
   SETTING_MOD2_LEVEL_DEPTH, 
   SETTING_LEVEL_OFFSET, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_LEVEL_OFFSET,
+  SETTING_MOD2_VIBRATO_DEPTH,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_VIBRATO_DEPTH,
   
   // Not settings per-se, but used for menu display!
   SETTING_CALIBRATION,
@@ -182,7 +183,8 @@ struct SettingsData {
   uint8_t mod1_level_depth; 
   uint8_t mod2_level_depth; 
   uint8_t level_offset; 
-  uint8_t padding[2];
+  uint8_t mod2_vibrato_depth; 
+  uint8_t padding;
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -312,6 +314,10 @@ class Settings {
 
   inline uint8_t level_offset() const {
     return data_.level_offset * 10;
+  }
+
+  inline uint8_t mod2_vibrato_depth() const {
+    return data_.mod2_vibrato_depth;
   }
   
   inline const SettingsData& data() const { return data_; }

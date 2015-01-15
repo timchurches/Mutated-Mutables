@@ -350,11 +350,18 @@ void RenderBlock() {
     trigger_detected_flag = true;
   }
   previous_pitch = pitch;
-  
-  if (settings.vco_drift()) {
-    int16_t jitter = jitter_source.Render(adc.channel(1) << 3);
-    // jitter depth now settable.
-    pitch += (jitter >> 8) * settings.vco_drift() ;
+
+  // jitter depth now settable.
+  int8_t vco_drift = settings.vco_drift();
+  if (vco_drift) {
+    pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
+  }
+
+  // vibrato from modulator 2
+  uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
+  // vibrato should be bipolar
+  if (mod2_vibrato_depth) {
+     pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 13 ;     
   }
 
   if (pitch > 32767) {
