@@ -7,6 +7,12 @@ This repository is a copy of the Mutable Instruments GitHub repository at https:
 
 So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3q, the source code for which is in the braids/ directory here. 
 
+Acknowledgements
+================
+First and foremost, huge thanks are due to Olivier Gillet of Mutable Instruments for creating Braids and his other wonderful Eurorack synth module in the first place - in terms of depth and breadth of vision, creativity and elegance and excellence of implementation and execution, they are head-and-shoulders above other Eurorack synth modules. But equally huge thanks are due to Olivier for having the vision and courage to release the designs and source code for his modules under open-source licenses. Without that, the modifications which are documented here would just not have been possible.
+
+Many thanks also to [Sneak-Thief](http://sneak-thief.com) in Berlin, first of all for providing the impetus to start hacking the Braids code, and then for providing lots of really useful feedback on the design of the Bees-in_trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!).
+
 Bees-in-Trees v3q enhancements
 =============================
 
@@ -47,6 +53,13 @@ These changes were required in order to free up space in the firmware storage fo
 * The sample rate (RATE) setting has been removed. Braids is locked at the maximum 96K sample rate instead. That isn't a problem from a CPU load perspective, because the sample rate reduction method didn't mean that the Braids processor was working less hard, just that it was discarding every second sample, or all but every third sample, or all but every fourth sample etc. However, the BITS setting is still there and still works, so you can still do bit-depth reduction for lo-fi grungy sounds, if that is your thing, and DRFT can now be cranked up to levels 15 times greater than before, if you really wish to. 
 * VCO tune flattening (FLAT) and signature waveshapping (SIGN) have been removed.
 
+TO-DO and Roadmap
+=================
+* Port the fixes which Olivier has developed for the "sync buffer" problem which appears to exist in the Braids v1.7rc code. Bees-in-Trees is based on the v1.7rc code and thus has inherited the problems - although I cannot seem to reproduce or trigger them on testing - but others can. 
+* Port additional code which Olivier plans to add to Braids v1.8 (which is what v1.7 will finally be released as, he tells me) which checks the layout of the stored Braids settings and the value of a "magic byte" at the end of the settings data structure which indicates whether the settings are for official Braids firmware or for modified firmware such as Bees-in-Trees. These checks are intended to avoid problems and unexpected behaviour if end users use the audio firmware update procedure to try out modified firmware like Bees-in-Trees, and then revert to the official firmware (or v-v). I won't be making audio update (WAV) files for Bees-in-Trees available until this checking code is in place and thoroughly tested. If you are using the serial FTDI interface or the miniJTAG/SWD interface on Braids to update your firmware, then this is not a concern because you can always do a full-chip erase to recover your Braids. But using just the audio bootloader, it is currently theoretically possible to get your Braids into an unrecoverable state (in the absence of FTDI or JTAG/SWD programmers) by swapping between Bees-in-Trees and the official Braids firmware. The additional checking code will prevent that from ever happening.
+* Some of the parameters in Bees-in-Trees have ranges of 0 to 255, and some 0 to 127. I plan to rationalise that and make them all 0 to 127, or all 0 to 255, at least in the user interface. However, some use steps of 10, others use steps of 1 to provide very fine resolution. Those steps may need to be tweaked to minimise encoder twisting, while retaining adequately fine control over critical parameters (pitch modulation and LFO rates in particular).
+* It would be great to add a constrain-to-scales scales capability, similar to the one in Yarns or in the Shruthi and Ambika, to the pitch quantisation facility. That will involve various look-up tables, and there may not be room - the firmware is almost at maximum size as it is.
+  
 Encoder direction
 =================
 Some crazy people have built DIY versions of Braids, and have used Bourns encoders. These operate in the opposite direction to those used by factory-built Braids modules. In order to accomodate this, #define BACKWARDS_ENCODER is set at the top of the encoder.h source code file. If you are compiling the source code yourself to load on a factory-built Braids, then you should ensure that this #define is commented out (place // in front of it on the same line). Failure to do that will mean that the encoder on your Braids will run backwards!
