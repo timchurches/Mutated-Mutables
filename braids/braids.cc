@@ -291,19 +291,19 @@ void RenderBlock() {
   }
 
   // modulate timbre
-  uint16_t parameter_1 = adc.channel(0) << 3;
-  parameter_1 += ad_value * settings.mod1_timbre_depth() >> 9;
-  parameter_1 += ad2_value * settings.mod2_timbre_depth() >> 9;
+  uint16_t parameter_1 = adc.channel(0) << 3; 
+  parameter_1 += (ad_value * settings.mod1_timbre_depth()) >> 9;
+  parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
   if (parameter_1 > 32767) {
     parameter_1 = 32767;
   }
 
   // modulate colour
-  uint16_t parameter_2 = adc.channel(1) << 3;
-  parameter_2 += ad_value * settings.mod1_color_depth() >> 9;
-  parameter_2 += ad2_value * settings.mod2_color_depth() >> 9;
-  if (parameter_1 > 32767) {
-    parameter_1 = 32767;
+  uint16_t parameter_2 = adc.channel(1) << 3; 
+  parameter_2 += (ad_value * settings.mod1_color_depth()) >> 9;
+  parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
+  if (parameter_2 > 32767) {
+    parameter_2 = 32767;
   }
 
   // set the timbre and color parameters on the oscillator
@@ -415,8 +415,9 @@ void RenderBlock() {
   
   // Enable hardsync only if level is a modulator destination when in envelope mode
   // or if both modulators are off
-  uint8_t mod1_level_depth = settings.mod1_level_depth();
-  uint8_t mod2_level_depth = settings.mod2_level_depth();
+  uint32_t mod1_level_depth = uint32_t(settings.mod1_level_depth());
+  uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
+  
   if ((modulator1_mode == 2 && mod1_level_depth) ||
       (modulator2_mode == 2 && mod2_level_depth) ||
       (!modulator1_mode && !modulator2_mode)) {
@@ -436,13 +437,13 @@ void RenderBlock() {
       (modulator1_mode == 1 && !modulator2_mode) ||
       (!modulator1_mode && modulator2_mode == 1)) {
      // subtract from full gain if LFO-only modes
-     gain -= (ad_value * settings.mod1_level_depth()) >> 8;
-     gain -= (ad2_value * settings.mod2_level_depth()) >> 8;
+     gain -= (ad_value * mod1_level_depth) >> 8;
+     gain -= (ad2_value * mod2_level_depth) >> 8;
   } else if (modulator1_mode == 2 || modulator2_mode == 2) {
     // add to zero gain if any envelope modes
      gain = 0;
-     gain += (ad_value * settings.mod1_level_depth()) >> 8;
-     gain += (ad2_value * settings.mod2_level_depth()) >> 8;
+     gain += (ad_value * mod1_level_depth) >> 8;
+     gain += (ad2_value * mod2_level_depth) >> 8;
   }
   if (gain > 65535) {
       gain = 65535;
