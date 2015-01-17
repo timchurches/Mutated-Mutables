@@ -71,7 +71,8 @@ const SettingsData kInitSettings = {
   0,                    // mod1_vibrato_depth
   0,                    // mod2_vibrato_depth
   0,                    // mod1_mod2_depth
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  true,                 // quant_before_vibrato
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -433,7 +434,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 9, "\x82" "SH2", mod_shape_values },
   { 0, 25, "M1" "\x85" "T", mod_depth_values },
   { 0, 25, "M2" "\x85" "T", mod_depth_values },
-  { 0, 20, "\x83" "\x83" "1", ad_ratio_values },
+  { 0, 20, "\x83" "\x82" "1", ad_ratio_values },
   { 0, 20, "\x83" "\x82" "2", ad_ratio_values },
   { 0, 2, "MOD1", mod_mode_values },
   { 0, 2, "MOD2", mod_mode_values },
@@ -446,9 +447,10 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M1" "\x85" "F", mod_rate_values },
   { 0, 127, "M2" "\x85" "F", mod_rate_values },
   { 0, 127, "M1" "\x85" "2", mod_rate_values },
+  { 0, 1, "Qb4V", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3p", NULL },  // Placeholder for version string
+  { 0, 0, "BT3q", NULL },  // Placeholder for version string
 };
 
 /* static */
@@ -479,6 +481,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
   SETTING_PITCH_QUANTIZER,
+  SETTING_QUANT_BEFORE_VIBRATO,
   SETTING_RATE_INVERSION, 
   SETTING_RESOLUTION,
   SETTING_VCO_DRIFT,

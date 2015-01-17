@@ -344,6 +344,22 @@ void RenderBlock() {
     }
   }
   int32_t pitch = settings.adc_to_pitch(pitch_adc_code);
+  
+    // add vibrato from modulators 1 and 2 before or after quantisation
+  uint8_t mod1_vibrato_depth = settings.mod1_vibrato_depth(); // 0 to 127
+  uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
+  bool quant_before_vibrato = settings.quant_before_vibrato();
+
+  if (!quant_before_vibrato) {
+     // vibrato should be bipolar
+     if (mod1_vibrato_depth) {
+        pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13     
+     }
+     if (mod2_vibrato_depth) {
+        pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+     }
+  }
+  
   if (settings.pitch_quantization() == PITCH_QUANTIZATION_QUARTER_TONE) {
     pitch = (pitch + 32) & 0xffffffc0;
   } else if (settings.pitch_quantization() == PITCH_QUANTIZATION_SEMITONE) {
@@ -362,22 +378,23 @@ void RenderBlock() {
   }
   previous_pitch = pitch;
 
+  // Or add vibrator here
+  if (quant_before_vibrato) {
+     // vibrato should be bipolar
+     if (mod1_vibrato_depth) {
+        pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13     
+     }
+     if (mod2_vibrato_depth) {
+        pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+     }
+  }
+
+
   // jitter depth now settable.
   // TO-DO jitter still causes pitch to sharpen slightly
   int8_t vco_drift = settings.vco_drift();
   if (vco_drift) {
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
-  }
-
-  // vibrato from modulators 1 and 2
-  uint8_t mod1_vibrato_depth = settings.mod1_vibrato_depth(); // 0 to 127
-  uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
-  // vibrato should be bipolar
-  if (mod1_vibrato_depth) {
-     pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 13 ;     
-  }
-  if (mod2_vibrato_depth) {
-     pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 13 ;     
   }
 
   // clip the pitch to prevent bad things from happening.
