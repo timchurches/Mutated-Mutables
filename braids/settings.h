@@ -131,8 +131,10 @@ enum Setting {
   SETTING_PITCH_QUANTIZER,
   SETTING_VCO_DRIFT,
   SETTING_BRIGHTNESS,
-  SETTING_MOD1_SHAPE,
-  SETTING_MOD2_SHAPE,
+  SETTING_MOD1_ATTACK_SHAPE,
+  SETTING_MOD2_ATTACK_SHAPE,
+  SETTING_MOD1_DECAY_SHAPE,
+  SETTING_MOD2_DECAY_SHAPE,
   SETTING_MOD1_TIMBRE_DEPTH, 
   SETTING_MOD2_TIMBRE_DEPTH, 
   SETTING_MOD1_AD_RATIO,
@@ -169,8 +171,10 @@ struct SettingsData {
   uint8_t pitch_quantization;
   uint8_t vco_drift;
   uint8_t brightness;
-  uint8_t mod1_shape;
-  uint8_t mod2_shape;
+  uint8_t mod1_attack_shape;
+  uint8_t mod2_attack_shape;
+  uint8_t mod1_decay_shape;
+  uint8_t mod2_decay_shape;
   uint8_t mod1_timbre_depth; 
   uint8_t mod2_timbre_depth;  
   uint8_t mod1_ad_ratio;
@@ -186,7 +190,7 @@ struct SettingsData {
   uint8_t mod1_vibrato_depth;   
   uint8_t mod2_vibrato_depth; 
   uint8_t mod1_mod2_depth;   
-  uint8_t extra_padding[55];
+  uint8_t extra_padding[53];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -257,12 +261,20 @@ class Settings {
     return data_.trig_delay;
   }
 
-  inline uint8_t mod1_shape() const {
-    return data_.mod1_shape;
+  inline uint8_t mod1_attack_shape() const {
+    return data_.mod1_attack_shape;
   }
 
-  inline uint8_t mod2_shape() const {
-    return data_.mod2_shape;
+  inline uint8_t mod2_attack_shape() const {
+    return data_.mod2_attack_shape;
+  }
+
+  inline uint8_t mod1_decay_shape() const {
+    return data_.mod1_decay_shape;
+  }
+
+  inline uint8_t mod2_decay_shape() const {
+    return data_.mod2_decay_shape;
   }
 
   inline uint8_t mod1_timbre_depth() const {

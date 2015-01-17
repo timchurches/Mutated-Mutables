@@ -219,15 +219,16 @@ void RenderBlock() {
 
   // Render envelope in LFO mode, or not
   // envelope 1
-  uint8_t modulator1_shape = settings.mod1_shape();
+  uint8_t modulator1_attack_shape = settings.mod1_attack_shape();
+  uint8_t modulator1_decay_shape = settings.mod1_decay_shape();
   uint16_t ad_value = 0 ;
   if (modulator1_mode == 2) { 
       // LFO mode
-      ad_value = envelope.Render(true, modulator1_shape);
+      ad_value = envelope.Render(true, modulator1_attack_shape, modulator1_decay_shape);
   }
   else if (modulator1_mode == 1){
       // envelope mode
-      ad_value = envelope.Render(false, modulator1_shape);
+      ad_value = envelope.Render(false, modulator1_attack_shape, modulator1_decay_shape);
   }
 
   // TO-DO: instead of repeating code, use an array for env params and a loop!
@@ -277,15 +278,16 @@ void RenderBlock() {
   
   // Render envelope in LFO mode, or not
   // envelope 2
-  uint8_t modulator2_shape = settings.mod2_shape();
+  uint8_t modulator2_attack_shape = settings.mod2_attack_shape();
+  uint8_t modulator2_decay_shape = settings.mod2_decay_shape();
   uint16_t ad2_value = 0 ;
   if (modulator2_mode == 2) { 
       // LFO mode
-      ad2_value = envelope2.Render(true, modulator2_shape);
+      ad2_value = envelope2.Render(true, modulator2_attack_shape, modulator2_decay_shape);
   }
   else if (modulator2_mode == 1) {
       // envelope mode
-      ad2_value = envelope2.Render(false, modulator2_shape);
+      ad2_value = envelope2.Render(false, modulator2_attack_shape, modulator2_decay_shape);
   }
 
   // modulate timbre

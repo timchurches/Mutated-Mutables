@@ -52,8 +52,10 @@ const SettingsData kInitSettings = {
   PITCH_QUANTIZATION_OFF, //pitch_quantization
   0,                    // vco_drift 
   2,                    // brightness
-  0,                    // mod1_shape
-  0,                    // mod2_shape
+  0,                    // mod1_attack_shape
+  0,                    // mod2_attack_shape
+  0,                    // mod1_decay_shape
+  0,                    // mod2_decay_shape
   0,                    // mod1_timbre_depth
   0,                    // mod2_timbre_depth
   10,                   // mod1_ad_ratio
@@ -69,7 +71,7 @@ const SettingsData kInitSettings = {
   0,                    // mod1_vibrato_depth
   0,                    // mod2_vibrato_depth
   0,                    // mod1_mod2_depth
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -425,12 +427,14 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
   { 0, 15, "DRFT", vco_drift_values },
   { 0, 2, "BRIG", brightness_values },
-  { 0, 9, "SHP1", mod_shape_values },
-  { 0, 9, "SHP2", mod_shape_values },
+  { 0, 9, "\x83" "SH1", mod_shape_values },
+  { 0, 9, "\x83" "SH2", mod_shape_values },
+  { 0, 9, "\x82" "SH1", mod_shape_values },
+  { 0, 9, "\x82" "SH2", mod_shape_values },
   { 0, 25, "M1" "\x85" "T", mod_depth_values },
   { 0, 25, "M2" "\x85" "T", mod_depth_values },
-  { 0, 20, "\x82" "\x83" "1", ad_ratio_values },
-  { 0, 20, "\x82" "\x83" "2", ad_ratio_values },
+  { 0, 20, "\x83" "\x83" "1", ad_ratio_values },
+  { 0, 20, "\x83" "\x82" "2", ad_ratio_values },
   { 0, 2, "MOD1", mod_mode_values },
   { 0, 2, "MOD2", mod_mode_values },
   { 0, 127, "RAT1", mod_rate_values },
@@ -452,21 +456,23 @@ const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_MOD1_MODE,
   SETTING_MOD1_RATE,
-  SETTING_MOD1_MOD2_DEPTH,
+  SETTING_MOD1_ATTACK_SHAPE,
+  SETTING_MOD1_DECAY_SHAPE,
+  SETTING_MOD1_AD_RATIO,
   SETTING_MOD1_TIMBRE_DEPTH,
   SETTING_MOD1_COLOR_DEPTH,
   SETTING_MOD1_LEVEL_DEPTH,
   SETTING_MOD1_VIBRATO_DEPTH,
-  SETTING_MOD1_AD_RATIO,
-  SETTING_MOD1_SHAPE,
+  SETTING_MOD1_MOD2_DEPTH,
   SETTING_MOD2_MODE,
   SETTING_MOD2_RATE,
+  SETTING_MOD2_ATTACK_SHAPE,
+  SETTING_MOD2_DECAY_SHAPE,
+  SETTING_MOD2_AD_RATIO,
   SETTING_MOD2_TIMBRE_DEPTH,
   SETTING_MOD2_COLOR_DEPTH,
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
-  SETTING_MOD2_AD_RATIO,
-  SETTING_MOD2_SHAPE,
   SETTING_META_MODULATION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
