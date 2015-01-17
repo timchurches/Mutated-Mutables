@@ -391,8 +391,8 @@ const char* const mod_shape_values[] = {
 
 const char* const mod_mode_values[] = { 
     "OFF",  // 0 
-    "ENV",  // 1 
-    "LFO",  // 2 
+    "LFO",  // 1 
+    "ENV",  // 2 
 };
 
 const char* const vco_drift_values[] = {

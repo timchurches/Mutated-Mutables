@@ -190,7 +190,7 @@ void RenderBlock() {
 	 env_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  if (modulator1_mode == 2 && settings.rate_inversion()) {
+  if (modulator1_mode == 1 && settings.rate_inversion()) {
 	 env_param = 127 - env_param ;
   }  
   // attack and decay parameters, default to FM voltage reading.
@@ -222,11 +222,11 @@ void RenderBlock() {
   uint8_t modulator1_attack_shape = settings.mod1_attack_shape();
   uint8_t modulator1_decay_shape = settings.mod1_decay_shape();
   uint16_t ad_value = 0 ;
-  if (modulator1_mode == 2) { 
+  if (modulator1_mode == 1) { 
       // LFO mode
       ad_value = envelope.Render(true, modulator1_attack_shape, modulator1_decay_shape);
   }
-  else if (modulator1_mode == 1){
+  else if (modulator1_mode == 2){
       // envelope mode
       ad_value = envelope.Render(false, modulator1_attack_shape, modulator1_decay_shape);
   }
@@ -253,7 +253,7 @@ void RenderBlock() {
  	 env2_param = 127 ;
   } 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
-  if (modulator2_mode == 2 && settings.rate_inversion()) { 
+  if (modulator2_mode == 1 && settings.rate_inversion()) { 
 	 env2_param = 127 - env2_param ;
   }  
   env2_a = env2_param;
@@ -281,11 +281,11 @@ void RenderBlock() {
   uint8_t modulator2_attack_shape = settings.mod2_attack_shape();
   uint8_t modulator2_decay_shape = settings.mod2_decay_shape();
   uint16_t ad2_value = 0 ;
-  if (modulator2_mode == 2) { 
+  if (modulator2_mode == 1) { 
       // LFO mode
       ad2_value = envelope2.Render(true, modulator2_attack_shape, modulator2_decay_shape);
   }
-  else if (modulator2_mode == 1) {
+  else if (modulator2_mode == 2) {
       // envelope mode
       ad2_value = envelope2.Render(false, modulator2_attack_shape, modulator2_decay_shape);
   }
@@ -417,8 +417,8 @@ void RenderBlock() {
   // or if both modulators are off
   uint8_t mod1_level_depth = settings.mod1_level_depth();
   uint8_t mod2_level_depth = settings.mod2_level_depth();
-  if ((modulator1_mode == 1 && mod1_level_depth) ||
-      (modulator2_mode == 1 && mod2_level_depth) ||
+  if ((modulator1_mode == 2 && mod1_level_depth) ||
+      (modulator2_mode == 2 && mod2_level_depth) ||
       (!modulator1_mode && !modulator2_mode)) {
     for (size_t i = 0; i < kAudioBlockSize; ++i) {
       sync_buffer[i] = sync_samples.ImmediateRead();
@@ -431,14 +431,16 @@ void RenderBlock() {
   osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
 
   // gain is a weighted sum of the envelope/LFO levels  
-  int32_t gain = 65535;
-  if (modulator1_mode == 1 || modulator2_mode == 1) {
-     gain = 0;
-  }
-  if (modulator1_mode == 2 && modulator2_mode == 2) {
+  int32_t gain = 65535; // gain defaults to full
+  if ((modulator1_mode == 1 && modulator2_mode == 1) ||
+      (modulator1_mode == 1 && !modulator2_mode) ||
+      (!modulator1_mode && modulator2_mode == 1)) {
+     // subtract from full gain if LFO-only modes
      gain -= (ad_value * settings.mod1_level_depth()) >> 8;
      gain -= (ad2_value * settings.mod2_level_depth()) >> 8;
-  } else {
+  } else if (modulator1_mode == 2 || modulator2_mode == 2) {
+    // add to zero gain if any envelope modes
+     gain = 0;
      gain += (ad_value * settings.mod1_level_depth()) >> 8;
      gain += (ad2_value * settings.mod2_level_depth()) >> 8;
   }
