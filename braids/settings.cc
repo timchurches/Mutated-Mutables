@@ -66,14 +66,14 @@ const SettingsData kInitSettings = {
   0,                    // mod2_color_depth
   0,                    // mod1_level_depth
   0,                    // mod2_level_depth   
-  0,                    // level_offset
+  0,                    // mod1_vibrato_depth
   0,                    // mod2_vibrato_depth
-  0,                    // padding
+  0,                    // mod1_mod2_depth
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  66,
+  66,                   // Magic byte = ascii "B"
 };
 
 Storage<0x8020000, 4> storage;
@@ -439,8 +439,9 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 25, "M2" "\x85" "C", mod_depth_values },
   { 0, 25, "M1" "\x85" "L", mod_depth_values },
   { 0, 25, "M2" "\x85" "L", mod_depth_values },
-  { 0, 25, "LOFF", mod_depth_values },
+  { 0, 127, "M1" "\x85" "F", mod_rate_values },
   { 0, 127, "M2" "\x85" "F", mod_rate_values },
+  { 0, 127, "M1" "\x85" "2", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3p", NULL },  // Placeholder for version string
@@ -451,9 +452,11 @@ const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_MOD1_MODE,
   SETTING_MOD1_RATE,
+  SETTING_MOD1_MOD2_DEPTH,
   SETTING_MOD1_TIMBRE_DEPTH,
   SETTING_MOD1_COLOR_DEPTH,
   SETTING_MOD1_LEVEL_DEPTH,
+  SETTING_MOD1_VIBRATO_DEPTH,
   SETTING_MOD1_AD_RATIO,
   SETTING_MOD1_SHAPE,
   SETTING_MOD2_MODE,
@@ -464,7 +467,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_VIBRATO_DEPTH,
   SETTING_MOD2_AD_RATIO,
   SETTING_MOD2_SHAPE,
-  SETTING_LEVEL_OFFSET,
   SETTING_META_MODULATION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,

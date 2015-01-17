@@ -182,6 +182,7 @@ void RenderBlock() {
   if (meta_mod == 2 || meta_mod == 3) {
      env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
   }
+  
   // Clip at zero and 127
   if (env_param < 0) {
  	 env_param = 0 ;
@@ -216,17 +217,36 @@ void RenderBlock() {
   // using the modified attack and decay values
   envelope.Update(env_a, env_d, 0, 0);  
 
+  // Render envelope in LFO mode, or not
+  // envelope 1
+  uint8_t modulator1_shape = settings.mod1_shape();
+  uint16_t ad_value = 0 ;
+  if (modulator1_mode == 2) { 
+      // LFO mode
+      ad_value = envelope.Render(true, modulator1_shape);
+  }
+  else if (modulator1_mode == 1){
+      // envelope mode
+      ad_value = envelope.Render(false, modulator1_shape);
+  }
+
   // TO-DO: instead of repeating code, use an array for env params and a loop!
-  uint16_t env2_param = uint16_t (settings.mod2_rate());
-  uint16_t env2_a = 0;
-  uint16_t env2_d = 0;
+  uint32_t env2_param = uint32_t (settings.mod2_rate());
+  uint32_t env2_a = 0;
+  uint32_t env2_d = 0;
   uint8_t modulator2_mode = settings.mod2_mode();
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   if (meta_mod == 2 || meta_mod == 4) {
      env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
   }
-  if (env2_param < 0) { 
+  // Add cross-modulation
+  int8_t mod1_mod2_depth = settings.mod1_mod2_depth();
+  if (mod1_mod2_depth) {
+    env2_param +=  (ad_value * mod1_mod2_depth) >> 18;
+  }
+  // Clip at zero and 127
+    if (env2_param < 0) { 
  	 env2_param = 0 ;
   } else if (env2_param > 127) {
  	 env2_param = 127 ;
@@ -256,17 +276,6 @@ void RenderBlock() {
   envelope2.Update(env2_a, env2_d, 0, 0);  
   
   // Render envelope in LFO mode, or not
-  // envelope 1
-  uint8_t modulator1_shape = settings.mod1_shape();
-  uint16_t ad_value = 0 ;
-  if (modulator1_mode == 2) { 
-      // LFO mode
-      ad_value = envelope.Render(true, modulator1_shape);
-  }
-  else if (modulator1_mode == 1){
-      // envelope mode
-      ad_value = envelope.Render(false, modulator1_shape);
-  }
   // envelope 2
   uint8_t modulator2_shape = settings.mod2_shape();
   uint16_t ad2_value = 0 ;
@@ -352,18 +361,24 @@ void RenderBlock() {
   previous_pitch = pitch;
 
   // jitter depth now settable.
+  // TO-DO jitter still causes pitch to sharpen slightly
   int8_t vco_drift = settings.vco_drift();
   if (vco_drift) {
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
   }
 
-  // vibrato from modulator 2
+  // vibrato from modulators 1 and 2
+  uint8_t mod1_vibrato_depth = settings.mod1_vibrato_depth(); // 0 to 127
   uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
   // vibrato should be bipolar
+  if (mod1_vibrato_depth) {
+     pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 13 ;     
+  }
   if (mod2_vibrato_depth) {
      pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 13 ;     
   }
 
+  // clip the pitch to prevent bad things from happening.
   if (pitch > 32767) {
     pitch = 32767;
   } else if (pitch < 0) {
@@ -397,16 +412,17 @@ void RenderBlock() {
   osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
 
   // gain is a weighted sum of the envelope/LFO levels  
-  // TO-DO: implement level offset when in LFO mode - done!
   int32_t gain = 65535;
-  if (modulator1_mode || modulator2_mode) {
-     gain = settings.level_offset() << 8 ;
-  } 
-
-  // gain += (ad_value >> 8) * settings.mod1_level_depth();
-  // gain += (ad2_value >> 8) * settings.mod2_level_depth();
-  gain += (ad_value * settings.mod1_level_depth()) >> 8;
-  gain += (ad2_value * settings.mod2_level_depth()) >> 8;
+  if (modulator1_mode == 1 || modulator2_mode == 1) {
+     gain = 0;
+  }
+  if (modulator1_mode == 2 && modulator2_mode == 2) {
+     gain -= (ad_value * settings.mod1_level_depth()) >> 8;
+     gain -= (ad2_value * settings.mod2_level_depth()) >> 8;
+  } else {
+     gain += (ad_value * settings.mod1_level_depth()) >> 8;
+     gain += (ad2_value * settings.mod2_level_depth()) >> 8;
+  }
   if (gain > 65535) {
       gain = 65535;
   }

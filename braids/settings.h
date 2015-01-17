@@ -145,11 +145,12 @@ enum Setting {
   SETTING_MOD2_COLOR_DEPTH, 
   SETTING_MOD1_LEVEL_DEPTH, 
   SETTING_MOD2_LEVEL_DEPTH, 
-  SETTING_LEVEL_OFFSET, 
+  SETTING_MOD1_VIBRATO_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_VIBRATO_DEPTH,
+  SETTING_MOD1_MOD2_DEPTH, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD1_MOD2_DEPTH,
   
-  // Not settings per-se, but used for menu display!
+  // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   SETTING_VERSION,
@@ -182,13 +183,13 @@ struct SettingsData {
   uint8_t mod2_color_depth; 
   uint8_t mod1_level_depth; 
   uint8_t mod2_level_depth; 
-  uint8_t level_offset; 
+  uint8_t mod1_vibrato_depth;   
   uint8_t mod2_vibrato_depth; 
-  uint8_t padding;
+  uint8_t mod1_mod2_depth;   
+  uint8_t extra_padding[55];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
-  uint8_t extra_padding[55];
   uint8_t magic_byte;
 };
 
@@ -312,12 +313,16 @@ class Settings {
     return data_.mod2_level_depth * 10;
   }
 
-  inline uint8_t level_offset() const {
-    return data_.level_offset * 10;
+  inline uint8_t mod1_vibrato_depth() const {
+    return data_.mod1_vibrato_depth;
   }
 
   inline uint8_t mod2_vibrato_depth() const {
     return data_.mod2_vibrato_depth;
+  }
+
+  inline uint8_t mod1_mod2_depth() const {
+    return data_.mod1_mod2_depth;
   }
   
   inline const SettingsData& data() const { return data_; }
