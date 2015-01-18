@@ -9,9 +9,9 @@ So far, the only modified code is the Bees-in-Trees enhancements to Braids. The 
 
 Acknowledgements
 ================
-First and foremost, huge thanks are due to Olivier Gillet of Mutable Instruments for creating Braids and his other wonderful Eurorack synth module in the first place - in terms of depth and breadth of vision, creativity and elegance and excellence of implementation and execution, they are head-and-shoulders above other Eurorack synth modules. But equally huge thanks are due to Olivier for having the vision and courage to release the designs and source code for his modules under open-source licenses. Without that, the modifications which are documented here would just not have been possible.
+First and foremost, huge thanks are due to Olivier Gillet of Mutable Instruments for creating Braids and his other wonderful Eurorack synth modules - in terms of depth and breadth of creativity, elegance and excellence of implementation and execution, they are head-and-shoulders above other Eurorack synth modules. But equally huge thanks are due to Olivier for having the vision, courage and faith to release the designs and source code for his modules under open-source licenses. Without that, the modifications which are documented here would not have been possible.
 
-Many thanks also to [Sneak-Thief](http://sneak-thief.com) in Berlin, first of all for providing the impetus to start hacking the Braids code, and then for providing lots of really useful feedback on the design of the Bees-in_trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!).
+Many thanks also to [Sneak-Thief](http://sneak-thief.com) in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the design of the Bees-in-Trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!).
 
 Bees-in-Trees v3q enhancements
 =============================
