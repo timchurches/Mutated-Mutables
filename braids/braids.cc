@@ -256,7 +256,7 @@ void RenderBlock() {
     env2_param +=  (ad_value * mod1_mod2_depth) >> 18;
   }
   // Clip at zero and 127
-    if (env2_param < 0) { 
+  if (env2_param < 0) { 
  	 env2_param = 0 ;
   } else if (env2_param > 127) {
  	 env2_param = 127 ;
@@ -383,16 +383,16 @@ void RenderBlock() {
      // vibrato should be bipolar
      if (mod1_vibrato_depth) {
         if (modulator1_mode == 2) {
-           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13   
+           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
         } else {  
-           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13
+           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
         }    
      }
      if (mod2_vibrato_depth) {
         if (modulator2_mode == 2) {
-           pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+           pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ;  
         } else {
-           pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13  
+           pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; 
         }   
      }
   }
