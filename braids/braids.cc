@@ -43,7 +43,6 @@
 #include "braids/drivers/system.h"
 #include "braids/envelope.h"
 #include "braids/macro_oscillator.h"
-// #include "braids/signature_waveshaper.h"
 #include "braids/vco_jitter_source.h"
 #include "braids/ui.h"
 
@@ -51,11 +50,6 @@ using namespace braids;
 using namespace std;
 using namespace stmlib;
 
-// const uint16_t kAudioBufferSize = 128;
-// const uint16_t kAudioBlockSize = 24;
-
-// RingBuffer<uint16_t, kAudioBufferSize> audio_samples;
-// RingBuffer<uint8_t, kAudioBufferSize> sync_samples;
 const size_t kNumBlocks = 4;
 const size_t kBlockSize = 24;
 
@@ -67,13 +61,10 @@ Dac dac;
 DebugPin debug_pin;
 GateInput gate_input;
 InternalAdc internal_adc;
-// SignatureWaveshaper ws;
 System sys;
 VcoJitterSource jitter_source;
 Ui ui;
 
-// int16_t render_buffer[kAudioBlockSize];
-// uint8_t sync_buffer[kAudioBlockSize];
 size_t current_sample;
 volatile size_t playback_block;
 volatile size_t render_block;
@@ -100,24 +91,18 @@ void PendSV_Handler(void) { }
 extern "C" {
 
 void SysTick_Handler() {
-  // system_clock.Tick();  // Tick global ms counter.
   ui.Poll();
 }
 
 void TIM1_UP_IRQHandler(void) {
-  // if (TIM_GetITStatus(TIM1, TIM_IT_Update) == RESET) {
   if (!(TIM1->SR & TIM_IT_Update)) {
     return;
   }
   TIM1->SR = (uint16_t)~TIM_IT_Update;
   
-  // TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
-  
-  // dac.Write(audio_samples.ImmediateRead());
   dac.Write(audio_samples[playback_block][current_sample] + 32768);
   
   bool trigger_detected = gate_input.raised();
-  // sync_samples.Overwrite(trigger_detected);
   sync_samples[playback_block][current_sample] = trigger_detected;
   trigger_detected_flag = trigger_detected_flag | trigger_detected;
 
@@ -157,15 +142,8 @@ void Init() {
   // debug_pin.Init();
   dac.Init();
   osc.Init();
-  // audio_samples.Init();
-  // sync_samples.Init();
   internal_adc.Init();
   
-  // for (uint16_t i = 0; i < kAudioBufferSize / 2; ++i) {
-  //   sync_samples.Overwrite(0);
-  //   audio_samples.Overwrite(0);
-  // }
-
   for (size_t i = 0; i < kNumBlocks; ++i) {
     fill(&audio_samples[i][0], &audio_samples[i][kBlockSize], 0);
     fill(&sync_samples[i][0], &sync_samples[i][kBlockSize], 0);
@@ -179,7 +157,6 @@ void Init() {
      
   envelope.Init();
   envelope2.Init();
-  // ws.Init(GetUniqueId(2));
   jitter_source.Init(GetUniqueId(1));
   sys.StartTimers();
 }
@@ -480,19 +457,6 @@ void RenderBlock() {
     trigger_flag = false;
   }
   
-  // Enable hardsync only if level is a modulator destination when in envelope mode
-  // or if both modulators are off  
-  // if ((modulator1_mode == 2 && mod1_level_depth) ||
-  //     (modulator2_mode == 2 && mod2_level_depth) ||
-  //     (!modulator1_mode && !modulator2_mode)) {
-  //   for (size_t i = 0; i < kAudioBlockSize; ++i) {
-  //     sync_buffer[i] = sync_samples.ImmediateRead();
-  //   }
-  // } else {
-  //   // Disable hardsync when any of the shaping envelopes are not used for level.
-  //   memset(sync_buffer, 0, sizeof(sync_buffer));
-  // }
-
   uint8_t* sync_buffer = sync_samples[render_block];
   int16_t* render_buffer = audio_samples[render_block];
   if (modulator1_mode || modulator2_mode) {
@@ -500,7 +464,6 @@ void RenderBlock() {
     memset(sync_buffer, 0, kBlockSize);
    }
 
-  // osc.Render(sync_buffer, render_buffer, kAudioBlockSize);
   osc.Render(sync_buffer, render_buffer, kBlockSize);
 
   // gain is a weighted sum of the envelope/LFO levels  
@@ -547,11 +510,8 @@ void RenderBlock() {
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
   uint16_t bit_mask = bit_reduction_masks[bits_setting];
-  // for (size_t i = 0; i < kAudioBlockSize; ++i) {
   for (size_t i = 0; i < kBlockSize; ++i) {
     sample = render_buffer[i] & bit_mask;
-    // sample = static_cast<int32_t>(sample) * gain >> 16;
-    // audio_samples.Overwrite(sample + 32768);
     render_buffer[i] = static_cast<int32_t>(sample) * gain >> 16;
   }
   render_block = (render_block + 1) % kNumBlocks;

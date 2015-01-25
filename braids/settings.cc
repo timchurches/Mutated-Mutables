@@ -76,7 +76,6 @@ const SettingsData kInitSettings = {
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
-  // 66,                   // Magic byte = ascii "B"
 };
 
 Storage<0x8020000, 4> storage;

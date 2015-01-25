@@ -102,11 +102,8 @@ void MacroOscillator::RenderMorph(
     balance = 0;
   }
   
-  // uint8_t half_size = size >> 1;
   int16_t* shape_1 = temp_buffer_;
   int16_t* shape_2 = temp_buffer_ + half_size;
-  // analog_oscillator_[0].Render(sync, shape_1, NULL, half_size);
-  // analog_oscillator_[1].Render(sync, shape_2, NULL, half_size);
   analog_oscillator_[0].Render(sync_buffer_, shape_1, NULL, half_size);
   analog_oscillator_[1].Render(sync_buffer_, shape_2, NULL, half_size);
   
@@ -157,12 +154,9 @@ void MacroOscillator::RenderSawSquare(
   analog_oscillator_[0].set_shape(OSC_SHAPE_SAW);
   analog_oscillator_[1].set_shape(OSC_SHAPE_SQUARE);
   
-  // uint8_t half_size = size >> 1;
   int16_t* saw_buffer = temp_buffer_;
   int16_t* square_buffer = temp_buffer_ + half_size;
   
-  // analog_oscillator_[0].Render(sync, saw_buffer, NULL, half_size);
-  // analog_oscillator_[1].Render(sync, square_buffer, NULL, half_size);
   analog_oscillator_[0].Render(sync_buffer_, saw_buffer, NULL, half_size);
   analog_oscillator_[1].Render(sync_buffer_, square_buffer, NULL, half_size);  
 
