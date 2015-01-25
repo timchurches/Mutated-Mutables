@@ -377,9 +377,9 @@ void RenderBlock() {
     // add vibrato from modulators 1 and 2 before or after quantisation
   uint8_t mod1_vibrato_depth = settings.mod1_vibrato_depth(); // 0 to 127
   uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
-  bool quant_before_vibrato = settings.quant_before_vibrato();
+  bool quantize_vibrato = settings.quantize_vibrato();
 
-  if (!quant_before_vibrato) {
+  if (quantize_vibrato) {
      // vibrato should be bipolar
      if (mod1_vibrato_depth) {
         if (modulator1_mode == 2) {
@@ -416,7 +416,7 @@ void RenderBlock() {
   previous_pitch = pitch;
 
   // Or add vibrato here
-  if (quant_before_vibrato) {
+  if (!quantize_vibrato) {
      // vibrato should be bipolar
      if (mod1_vibrato_depth) {
         if (modulator1_mode == 2) {

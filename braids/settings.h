@@ -191,7 +191,7 @@ struct SettingsData {
   uint8_t mod1_vibrato_depth;   
   uint8_t mod2_vibrato_depth; 
   uint8_t mod1_mod2_depth;   
-  uint8_t quant_before_vibrato;   
+  uint8_t quantize_vibrato;   
   uint8_t extra_padding[52];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
@@ -339,8 +339,8 @@ class Settings {
     return data_.mod1_mod2_depth;
   }
 
-  inline bool quant_before_vibrato() const {
-    return data_.quant_before_vibrato;
+  inline bool quantize_vibrato() const {
+    return data_.quantize_vibrato;
   }
   
   inline const SettingsData& data() const { return data_; }
