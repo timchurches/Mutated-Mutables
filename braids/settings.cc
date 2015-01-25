@@ -338,7 +338,7 @@ const char* const mod_depth_values[] = {
     "120",
     "130",    
     "140",    
-    "150",    
+    "150",
     "160",    
     "170",    
     "180",    
@@ -348,7 +348,7 @@ const char* const mod_depth_values[] = {
     "220",    
     "230",    
     "240",    
-    "250",    
+    "250",
 };
 
 const char* const brightness_values[] = {
@@ -465,7 +465,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "Qb4V", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3r", NULL },  // Placeholder for version string
+  { 0, 0, "BT3t", NULL },  // Placeholder for version string
 };
 
 /* static */
