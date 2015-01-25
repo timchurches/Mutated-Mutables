@@ -75,6 +75,11 @@ enum DigitalOscillatorShape {
 
   OSC_SHAPE_STRUCK_BELL,
   OSC_SHAPE_STRUCK_DRUM,
+
+  OSC_SHAPE_KICK,
+  OSC_SHAPE_HAT,
+  OSC_SHAPE_SNARE,
+  
   OSC_SHAPE_PLUCKED,
   OSC_SHAPE_BOWED,
   OSC_SHAPE_BLOWN,
@@ -90,10 +95,6 @@ enum DigitalOscillatorShape {
   OSC_SHAPE_CLOCKED_NOISE,
   OSC_SHAPE_GRANULAR_CLOUD,
   OSC_SHAPE_PARTICLE_NOISE,
-
-  OSC_SHAPE_KICK,
-  OSC_SHAPE_SNARE,
-  OSC_SHAPE_HAT,
 
   // Leave this here because it marks the end of the oscillator model list.
   OSC_SHAPE_QUESTION_MARK_LAST

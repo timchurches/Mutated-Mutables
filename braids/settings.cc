@@ -76,7 +76,7 @@ const SettingsData kInitSettings = {
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
-  66,                   // Magic byte = ascii "B"
+  // 66,                   // Magic byte = ascii "B"
 };
 
 Storage<0x8020000, 4> storage;
@@ -85,13 +85,28 @@ void Settings::Init() {
   if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
     Reset();
   }
+  bool settings_within_range = true;
+  for (int32_t i = 0; i <= SETTING_LAST_EDITABLE_SETTING; ++i) {
+    const Setting setting = static_cast<Setting>(i);
+    const SettingMetadata& setting_metadata = metadata(setting);
+    uint8_t value = GetValue(setting);
+    settings_within_range = settings_within_range && \
+        value >= setting_metadata.min_value && \
+        value <= setting_metadata.max_value;
+  }
+  settings_within_range = settings_within_range && data_.magic_byte == 'B';
+  if (!settings_within_range) {
+    Reset();
+  }  
 }
 
 void Settings::Reset() {
   memcpy(&data_, &kInitSettings, sizeof(SettingsData));
+  data_.magic_byte = 'B';
 }
 
 void Settings::Save() {
+  data_.magic_byte = 'B';
   storage.ParsimoniousSave(data_, &version_token_);
 }
 
@@ -450,7 +465,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "Qb4V", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3q", NULL },  // Placeholder for version string
+  { 0, 0, "BT3r", NULL },  // Placeholder for version string
 };
 
 /* static */

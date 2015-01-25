@@ -34,6 +34,8 @@
 
 #include <cstring>
 
+#include "stmlib/system/system_clock.h"
+
 namespace braids {
 
 using namespace stmlib;
@@ -52,6 +54,7 @@ void Ui::Init() {
 }
 
 void Ui::Poll() {
+  system_clock.Tick();  // Tick global ms counter.
   ++sub_clock_;
   encoder_.Debounce();
   if (encoder_.just_pressed()) {

@@ -196,7 +196,7 @@ struct SettingsData {
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
-  uint8_t magic_byte;
+  char magic_byte;
 };
 
 struct SettingMetadata {
