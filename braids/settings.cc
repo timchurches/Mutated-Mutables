@@ -407,7 +407,8 @@ const char* const mod_shape_values[] = {
 const char* const mod_mode_values[] = { 
     "OFF",  // 0 
     "LFO",  // 1 
-    "ENV",  // 2 
+    "ENV-",  // 2 
+    "ENV+",  // 3 
 };
 
 const char* const vco_drift_values[] = {
@@ -451,8 +452,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 25, "M2" "\x85" "T", mod_depth_values },
   { 0, 20, "\x83" "\x82" "1", ad_ratio_values },
   { 0, 20, "\x83" "\x82" "2", ad_ratio_values },
-  { 0, 2, "MOD1", mod_mode_values },
-  { 0, 2, "MOD2", mod_mode_values },
+  { 0, 3, "MOD1", mod_mode_values },
+  { 0, 3, "MOD2", mod_mode_values },
   { 0, 127, "RAT1", mod_rate_values },
   { 0, 127, "RAT2", mod_rate_values },
   { 0, 25, "M1" "\x85" "C", mod_depth_values },

@@ -258,7 +258,7 @@ void RenderBlock() {
       // LFO mode
       ad_value = envelope.Render(true, modulator1_attack_shape, modulator1_decay_shape);
   }
-  else if (modulator1_mode == 2){
+  else if (modulator1_mode > 1){
       // envelope mode
       ad_value = envelope.Render(false, modulator1_attack_shape, modulator1_decay_shape);
   }
@@ -323,23 +323,43 @@ void RenderBlock() {
   }
 
   // modulate timbre
-  uint16_t parameter_1 = adc.channel(0) << 3; 
-  parameter_1 += (ad_value * settings.mod1_timbre_depth()) >> 9;
-  parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
+  int32_t parameter_1 = adc.channel(0) << 3; 
+  if (modulator1_mode == 2) {
+     parameter_1 -= (ad_value * settings.mod1_timbre_depth()) >> 9;
+  } else {
+     parameter_1 += (ad_value * settings.mod1_timbre_depth()) >> 9;
+  }  
+  if (modulator2_mode == 2) {
+     parameter_1 -= (ad2_value * settings.mod2_timbre_depth()) >> 9;
+  } else {
+     parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
+  }
   if (parameter_1 > 32767) {
     parameter_1 = 32767;
+  } else if (parameter_1 < 0) {
+    parameter_1 = 0;
   }
 
   // modulate colour
-  uint16_t parameter_2 = adc.channel(1) << 3; 
-  parameter_2 += (ad_value * settings.mod1_color_depth()) >> 9;
-  parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
+  int32_t parameter_2 = adc.channel(1) << 3; 
+  if (modulator1_mode == 2) {
+     parameter_2 -= (ad_value * settings.mod1_color_depth()) >> 9;
+  } else {
+     parameter_2 += (ad_value * settings.mod1_color_depth()) >> 9;
+  }
+  if (modulator1_mode == 2) {
+     parameter_2 -= (ad2_value * settings.mod2_color_depth()) >> 9;
+  } else {
+     parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
+  }
   if (parameter_2 > 32767) {
     parameter_2 = 32767;
+  } else if (parameter_2 < 0) {
+    parameter_2 = 0;
   }
 
   // set the timbre and color parameters on the oscillator
-  osc.set_parameters(parameter_1, parameter_2);
+  osc.set_parameters(uint16_t(parameter_1), uint16_t(parameter_2));
 
   // meta_modulation no longer a boolean  
   if (meta_mod == 1) {
@@ -385,10 +405,18 @@ void RenderBlock() {
   if (!quant_before_vibrato) {
      // vibrato should be bipolar
      if (mod1_vibrato_depth) {
-        pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13     
+        if (modulator1_mode == 2) {
+           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13   
+        } else {  
+           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13
+        }    
      }
      if (mod2_vibrato_depth) {
-        pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+        if (modulator2_mode == 2) {
+           pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+        } else {
+           pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13  
+        }   
      }
   }
   
@@ -410,17 +438,24 @@ void RenderBlock() {
   }
   previous_pitch = pitch;
 
-  // Or add vibrator here
+  // Or add vibrato here
   if (quant_before_vibrato) {
      // vibrato should be bipolar
      if (mod1_vibrato_depth) {
-        pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13     
+        if (modulator1_mode == 2) {
+           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13   
+        } else {  
+           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13
+        }    
      }
      if (mod2_vibrato_depth) {
-        pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+        if (modulator2_mode == 2) {
+           pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
+        } else {
+           pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13  
+        }   
      }
   }
-
 
   // jitter depth now settable.
   // TO-DO jitter still causes pitch to sharpen slightly
@@ -472,20 +507,30 @@ void RenderBlock() {
   uint32_t mod1_level_depth = uint32_t(settings.mod1_level_depth());
   uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
   int32_t gain = 65535; // gain defaults to full
-  if ((modulator1_mode == 1 && modulator2_mode == 1) ||
-      (modulator1_mode == 1 && !modulator2_mode) ||
-      (!modulator1_mode && modulator2_mode == 1)) {
-     // subtract from full gain if LFO-only modes
+  if (modulator1_mode == 3 || modulator2_mode == 3) {
+    // gain defaults to zero if either modulator is in ENV+ mode
+    gain = 0;
+  }
+  // Gain mod by modulator 1
+  if (modulator1_mode  && modulator1_mode < 3) {
+     // subtract from full gain if LFO-only modes (mode==1) or Env- modes (mode==2)
      gain -= (ad_value * mod1_level_depth) >> 8;
-     gain -= (ad2_value * mod2_level_depth) >> 8;
-  } else if (modulator1_mode == 2 || modulator2_mode == 2) {
-    // add to zero gain if any envelope modes
-     gain = 0;
+  } else if (modulator1_mode == 3) {
      gain += (ad_value * mod1_level_depth) >> 8;
+  }
+  // Gain mod by modulator 2
+  if (modulator2_mode  && modulator2_mode < 3) {
+     // subtract from full gain if LFO-only modes (mode==1) or Env- modes (mode==2)
+     gain -= (ad2_value * mod2_level_depth) >> 8;
+  } else if (modulator2_mode == 3) {
      gain += (ad2_value * mod2_level_depth) >> 8;
   }
+  // clip the gain  
   if (gain > 65535) {
       gain = 65535;
+  }
+  else if (gain < 0) {
+      gain = 0;
   }
    
   // Voltage control of bit crushing
