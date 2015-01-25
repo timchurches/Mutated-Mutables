@@ -72,7 +72,10 @@ const SettingsData kInitSettings = {
   0,                    // mod2_vibrato_depth
   0,                    // mod1_mod2_depth
   false,                // quantize_vibrato
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  true,                 // mod1_sync
+  true,                 // mod2_sync
+  false,                 // osc_sync
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -463,6 +466,9 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M2" "\x85" "F", mod_rate_values },
   { 0, 127, "M1" "\x85" "2", mod_rate_values },
   { 0, 1, "QVIB", boolean_values },
+  { 0, 1, "M1SY", boolean_values },
+  { 0, 1, "M2SY", boolean_values },
+  { 0, 1, "OSYN", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3t", NULL },  // Placeholder for version string
@@ -497,6 +503,9 @@ const Setting Settings::settings_order_[] = {
   SETTING_PITCH_OCTAVE,
   SETTING_PITCH_QUANTIZER,
   SETTING_QUANT_BEFORE_VIBRATO,
+  SETTING_MOD1_SYNC,
+  SETTING_MOD2_SYNC,
+  SETTING_OSC_SYNC,
   SETTING_RATE_INVERSION, 
   SETTING_RESOLUTION,
   SETTING_VCO_DRIFT,

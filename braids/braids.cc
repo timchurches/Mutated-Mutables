@@ -452,15 +452,23 @@ void RenderBlock() {
 
   if (trigger_flag) {
     osc.Strike();
-    envelope.Trigger(ENV_SEGMENT_ATTACK);
-    envelope2.Trigger(ENV_SEGMENT_ATTACK);
+    if (settings.mod1_sync()) {
+       envelope.Trigger(ENV_SEGMENT_ATTACK);
+    }
+    if (settings.mod2_sync()) {
+       envelope2.Trigger(ENV_SEGMENT_ATTACK);
+    }
     trigger_flag = false;
   }
   
   uint8_t* sync_buffer = sync_samples[render_block];
   int16_t* render_buffer = audio_samples[render_block];
-  if (modulator1_mode || modulator2_mode) {
-    // Disable hardsync when the trigger is used for envelopes or LFOs.
+  // if (modulator1_mode || modulator2_mode) {
+  //   // Disable hardsync when the trigger is used for envelopes or LFOs.
+  //   memset(sync_buffer, 0, kBlockSize);
+  //  }
+  if (!settings.osc_sync()) {
+    // Disable hardsync when oscillator sync disabled.
     memset(sync_buffer, 0, kBlockSize);
    }
 

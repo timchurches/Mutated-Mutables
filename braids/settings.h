@@ -151,7 +151,10 @@ enum Setting {
   SETTING_MOD2_VIBRATO_DEPTH,
   SETTING_MOD1_MOD2_DEPTH, 
   SETTING_QUANT_BEFORE_VIBRATO,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_QUANT_BEFORE_VIBRATO,
+  SETTING_MOD1_SYNC,
+  SETTING_MOD2_SYNC,
+  SETTING_OSC_SYNC,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_OSC_SYNC,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -191,8 +194,11 @@ struct SettingsData {
   uint8_t mod1_vibrato_depth;   
   uint8_t mod2_vibrato_depth; 
   uint8_t mod1_mod2_depth;   
-  uint8_t quantize_vibrato;   
-  uint8_t extra_padding[52];
+  uint8_t quantize_vibrato;  
+  uint8_t mod1_sync; 
+  uint8_t mod2_sync; 
+  uint8_t osc_sync; 
+  uint8_t extra_padding[49];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -341,6 +347,18 @@ class Settings {
 
   inline bool quantize_vibrato() const {
     return data_.quantize_vibrato;
+  }
+
+  inline bool mod1_sync() const {
+    return data_.mod1_sync;
+  }
+
+  inline bool mod2_sync() const {
+    return data_.mod2_sync;
+  }
+
+  inline bool osc_sync() const {
+    return data_.osc_sync;
   }
   
   inline const SettingsData& data() const { return data_; }
