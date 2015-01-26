@@ -158,7 +158,9 @@ enum Setting {
   SETTING_MOD1_MOD2_COLOR_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_INITIAL_GAIN,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_INITIAL_GAIN,
+  SETTING_MOD1_VCO_JITTER_DEPTH, 
+  SETTING_MOD2_VCO_JITTER_DEPTH, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_VCO_JITTER_DEPTH,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -206,7 +208,9 @@ struct SettingsData {
   uint8_t mod1_mod2_color_depth; 
   uint8_t mod1_mod2_vibrato_depth; 
   uint8_t initial_gain; 
-  uint8_t extra_padding[45];
+  uint8_t mod1_vco_jitter_depth; 
+  uint8_t mod2_vco_jitter_depth; 
+  uint8_t extra_padding[43];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -265,7 +269,7 @@ class Settings {
     return static_cast<PitchQuantization>(data_.pitch_quantization);
   }
 
-  inline uint8_t vco_drift() const {
+  inline uint16_t vco_drift() const {
     return data_.vco_drift;
   }
 
@@ -383,6 +387,14 @@ class Settings {
   
   inline int32_t initial_gain() const {
     return (data_.initial_gain * 2621) + 5;
+  }
+
+  inline uint8_t mod1_vco_jitter_depth() const {
+    return data_.mod1_vco_jitter_depth;
+  }
+
+  inline uint8_t mod2_vco_jitter_depth() const {
+    return data_.mod2_vco_jitter_depth;
   }
     
   inline const SettingsData& data() const { return data_; }

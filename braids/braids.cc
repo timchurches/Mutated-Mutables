@@ -482,11 +482,35 @@ void RenderBlock() {
      }
   }
 
-  // jitter depth now settable.
-  // TO-DO jitter still causes pitch to sharpen slightly
-  int8_t vco_drift = settings.vco_drift();
+  // jitter depth now settable and voltage controllable.
+  // TO-DO jitter still causes pitch to sharpen slightly - why?
+  int32_t vco_drift = settings.vco_drift();
+  if (meta_mod == 5) {
+     vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
+  } 
   if (vco_drift) {
+  
+    if (modulator1_mode == 2) {
+      vco_drift -= (ad_value * settings.mod1_vco_jitter_depth()) >> 14; // was 16
+    } else {
+      vco_drift += (ad_value * settings.mod1_vco_jitter_depth()) >> 14;
+    }  
+
+    if (modulator2_mode == 2) {
+      vco_drift -= (ad2_value * settings.mod2_vco_jitter_depth()) >> 14;
+    } else {
+      vco_drift += (ad2_value * settings.mod2_vco_jitter_depth()) >> 14;
+    }  
+  
+     if (vco_drift < 0) {
+	    vco_drift = 0 ;
+     } else if (vco_drift > 127) {
+        vco_drift = 127;
+     }
+
+    // now apply the jitter
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
+        
   }
 
   // clip the pitch to prevent bad things from happening.
@@ -522,11 +546,6 @@ void RenderBlock() {
   uint32_t mod1_level_depth = uint32_t(settings.mod1_level_depth());
   uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
   int32_t gain = settings.initial_gain(); 
-  // int32_t gain = 65535; // gain defaults to full
-  // if (modulator1_mode == 3 || modulator2_mode == 3) {
-  //   // gain defaults to zero if either modulator is in ENV+ mode
-  //   gain = 0;
-  // }
   // Gain mod by modulator 1
   if (modulator1_mode  && modulator1_mode < 3) {
      // subtract from full gain if LFO-only modes (mode==1) or Env- modes (mode==2)
@@ -548,21 +567,10 @@ void RenderBlock() {
   else if (gain < 0) {
       gain = 0;
   }
-   
-  // Voltage control of bit crushing
-  uint8_t bits_setting = settings.resolution();
-  if (meta_mod == 5) {
-     bits_setting -= uint8_t (settings.adc_to_fm(adc.channel(3)) >> 9);
-     if (bits_setting < 0) {
-	    bits_setting = 0 ;
-     } else if (bits_setting > 6) {
-        bits_setting = 6;
-     }
-  }
- 
+    
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
-  uint16_t bit_mask = bit_reduction_masks[bits_setting];
+  uint16_t bit_mask = bit_reduction_masks[settings.resolution()];
   for (size_t i = 0; i < kBlockSize; ++i) {
     sample = render_buffer[i] & bit_mask;
     render_buffer[i] = static_cast<int32_t>(sample) * gain >> 16;

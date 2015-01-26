@@ -79,7 +79,9 @@ const SettingsData kInitSettings = {
   false,                // mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
   25,                   // initial_gain = 65525
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  0,                    // mod1_vco_jitter_depth
+  0,                    // mod2_vco_jitter_depth
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -370,7 +372,7 @@ const char* const meta_values[] = {
     "RATE", // 2
     "RAT1", // 3
     "RAT2", // 4
-    "BIT\x86", // 5
+    "JITR", // 5
 };
 
 const char* const ad_ratio_values[] = { 
@@ -417,44 +419,6 @@ const char* const mod_mode_values[] = {
     "ENV+",  // 3 
 };
 
-/*
-// const char* const vco_drift_values[] = {
-//     "OFF",
-//     "1",
-//     "2",
-//     "3",
-//     "4",
-//     "5",
-//     "6",
-//     "7",
-//     "8",
-//     "9",
-//     "10",
-//     "11",
-//     "12",
-//     "13",
-//     "14",
-//     "15",
-//     "16",
-//     "17",
-//     "18",
-//     "19",
-//     "20",
-//     "21",
-//     "22",
-//     "23",
-//     "24",
-//     "25",
-//     "26",
-//     "27",
-//     "28",
-//     "29",
-//     "30",
-//     "31",
-// };
-*/
-
-
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
@@ -466,7 +430,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
-  { 0, 127, "DRFT", mod_rate_values },
+  { 0, 127, "JITR", mod_rate_values },
   { 0, 2, "BRIG", brightness_values },
   { 0, 9, "\x83" "SH1", mod_shape_values },
   { 0, 9, "\x83" "SH2", mod_shape_values },
@@ -495,6 +459,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "M1C2", boolean_values },
   { 0, 1, "M1F2", boolean_values },
   { 0, 25, "GAIN", mod_depth_values },
+  { 0, 25, "M1" "\x85" "J", mod_depth_values },
+  { 0, 25, "M2" "\x85" "J", mod_depth_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3u", NULL },  // Placeholder for version string
@@ -513,6 +479,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD1_COLOR_DEPTH,
   SETTING_MOD1_LEVEL_DEPTH,
   SETTING_MOD1_VIBRATO_DEPTH,
+  SETTING_MOD1_VCO_JITTER_DEPTH,
   SETTING_MOD1_MOD2_DEPTH,
   SETTING_MOD2_MODE,
   SETTING_MOD2_RATE,
@@ -523,6 +490,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_COLOR_DEPTH,
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
+  SETTING_MOD2_VCO_JITTER_DEPTH,
   SETTING_MOD1_MOD2_TIMBRE_DEPTH,
   SETTING_MOD1_MOD2_COLOR_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
