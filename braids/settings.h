@@ -157,7 +157,8 @@ enum Setting {
   SETTING_MOD1_MOD2_TIMBRE_DEPTH,
   SETTING_MOD1_MOD2_COLOR_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD1_MOD2_VIBRATO_DEPTH,
+  SETTING_INITIAL_GAIN,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_INITIAL_GAIN,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -204,7 +205,8 @@ struct SettingsData {
   uint8_t mod1_mod2_timbre_depth; 
   uint8_t mod1_mod2_color_depth; 
   uint8_t mod1_mod2_vibrato_depth; 
-  uint8_t extra_padding[46];
+  uint8_t initial_gain; 
+  uint8_t extra_padding[45];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -379,6 +381,10 @@ class Settings {
     return data_.mod1_mod2_vibrato_depth;
   }
   
+  inline int32_t initial_gain() const {
+    return (data_.initial_gain * 2621) + 5;
+  }
+    
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }
   

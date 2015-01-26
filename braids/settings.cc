@@ -78,7 +78,8 @@ const SettingsData kInitSettings = {
   false,                // mod1_mod2_timbre_depth
   false,                // mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  25,                   // initial_gain = 65525
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -392,8 +393,8 @@ const char* const ad_ratio_values[] = {
     "250", // 16
     "333", // 17
     "500", // 18
-    "1k", // 19
-    "5k", // 20
+    "1000", // 19
+    "5000", // 20
 };
 
 const char* const mod_shape_values[] = { 
@@ -416,24 +417,42 @@ const char* const mod_mode_values[] = {
     "ENV+",  // 3 
 };
 
-const char* const vco_drift_values[] = {
-    "OFF",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-};
+/*
+// const char* const vco_drift_values[] = {
+//     "OFF",
+//     "1",
+//     "2",
+//     "3",
+//     "4",
+//     "5",
+//     "6",
+//     "7",
+//     "8",
+//     "9",
+//     "10",
+//     "11",
+//     "12",
+//     "13",
+//     "14",
+//     "15",
+//     "16",
+//     "17",
+//     "18",
+//     "19",
+//     "20",
+//     "21",
+//     "22",
+//     "23",
+//     "24",
+//     "25",
+//     "26",
+//     "27",
+//     "28",
+//     "29",
+//     "30",
+//     "31",
+// };
+*/
 
 
 /* static */
@@ -447,7 +466,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
-  { 0, 15, "DRFT", vco_drift_values },
+  { 0, 127, "DRFT", mod_rate_values },
   { 0, 2, "BRIG", brightness_values },
   { 0, 9, "\x83" "SH1", mod_shape_values },
   { 0, 9, "\x83" "SH2", mod_shape_values },
@@ -475,6 +494,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "M1T2", boolean_values },
   { 0, 1, "M1C2", boolean_values },
   { 0, 1, "M1F2", boolean_values },
+  { 0, 25, "GAIN", mod_depth_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3u", NULL },  // Placeholder for version string
@@ -483,6 +503,7 @@ const SettingMetadata Settings::metadata_[] = {
 /* static */
 const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
+  SETTING_INITIAL_GAIN,
   SETTING_MOD1_MODE,
   SETTING_MOD1_RATE,
   SETTING_MOD1_ATTACK_SHAPE,

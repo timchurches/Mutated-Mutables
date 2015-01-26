@@ -511,10 +511,6 @@ void RenderBlock() {
   
   uint8_t* sync_buffer = sync_samples[render_block];
   int16_t* render_buffer = audio_samples[render_block];
-  // if (modulator1_mode || modulator2_mode) {
-  //   // Disable hardsync when the trigger is used for envelopes or LFOs.
-  //   memset(sync_buffer, 0, kBlockSize);
-  //  }
   if (!settings.osc_sync()) {
     // Disable hardsync when oscillator sync disabled.
     memset(sync_buffer, 0, kBlockSize);
@@ -525,11 +521,12 @@ void RenderBlock() {
   // gain is a weighted sum of the envelope/LFO levels  
   uint32_t mod1_level_depth = uint32_t(settings.mod1_level_depth());
   uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
-  int32_t gain = 65535; // gain defaults to full
-  if (modulator1_mode == 3 || modulator2_mode == 3) {
-    // gain defaults to zero if either modulator is in ENV+ mode
-    gain = 0;
-  }
+  int32_t gain = settings.initial_gain(); 
+  // int32_t gain = 65535; // gain defaults to full
+  // if (modulator1_mode == 3 || modulator2_mode == 3) {
+  //   // gain defaults to zero if either modulator is in ENV+ mode
+  //   gain = 0;
+  // }
   // Gain mod by modulator 1
   if (modulator1_mode  && modulator1_mode < 3) {
      // subtract from full gain if LFO-only modes (mode==1) or Env- modes (mode==2)
