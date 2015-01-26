@@ -306,11 +306,22 @@ void RenderBlock() {
   } else {
      parameter_1 += (ad_value * settings.mod1_timbre_depth()) >> 9;
   }  
-  if (modulator2_mode == 2) {
-     parameter_1 -= (ad2_value * settings.mod2_timbre_depth()) >> 9;
+  if (settings.mod1_mod2_timbre_depth()) {   
+     int32_t timbre_delta = (ad2_value * settings.mod2_timbre_depth()) >> 9;
+     timbre_delta = (timbre_delta * ad_value) >> 16;
+     if (modulator2_mode == 2) {  
+        parameter_1 -= timbre_delta;
+     } else {
+        parameter_1 += timbre_delta;
+     }
   } else {
-     parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
+     if (modulator2_mode == 2) {  
+        parameter_1 -= (ad2_value * settings.mod2_timbre_depth()) >> 9;
+     } else {
+        parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
+     }
   }
+  // clip
   if (parameter_1 > 32767) {
     parameter_1 = 32767;
   } else if (parameter_1 < 0) {
@@ -324,11 +335,22 @@ void RenderBlock() {
   } else {
      parameter_2 += (ad_value * settings.mod1_color_depth()) >> 9;
   }
-  if (modulator1_mode == 2) {
-     parameter_2 -= (ad2_value * settings.mod2_color_depth()) >> 9;
+  if (settings.mod1_mod2_color_depth()) {   
+     int32_t color_delta = (ad2_value * settings.mod2_color_depth()) >> 9;
+     color_delta = (color_delta * ad_value) >> 16;
+     if (modulator2_mode == 2) {  
+        parameter_1 -= color_delta;
+     } else {
+        parameter_1 += color_delta;
+     }
   } else {
-     parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
+     if (modulator2_mode == 2) {  
+        parameter_1 -= (ad2_value * settings.mod2_color_depth()) >> 9;
+     } else {
+        parameter_1 += (ad2_value * settings.mod2_color_depth()) >> 9;
+     }
   }
+  // clip
   if (parameter_2 > 32767) {
     parameter_2 = 32767;
   } else if (parameter_2 < 0) {
@@ -377,6 +399,7 @@ void RenderBlock() {
     // add vibrato from modulators 1 and 2 before or after quantisation
   uint8_t mod1_vibrato_depth = settings.mod1_vibrato_depth(); // 0 to 127
   uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
+  bool mod1_mod2_vibrato_depth = settings.mod1_mod2_vibrato_depth();
   bool quantize_vibrato = settings.quantize_vibrato();
 
   if (quantize_vibrato) {
@@ -388,12 +411,25 @@ void RenderBlock() {
            pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
         }    
      }
-     if (mod2_vibrato_depth) {
-        if (modulator2_mode == 2) {
-           pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ;  
-        } else {
-           pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; 
-        }   
+     // mod1 envelope mediate the degree of vibrato from mod2, or not.
+     if (mod1_mod2_vibrato_depth) {
+        if (mod2_vibrato_depth) {
+           int32_t pitch_delta = ((ad2_value - 32767) * mod2_vibrato_depth) >> 11;
+           pitch_delta = (pitch_delta * ad_value) >> 16;
+           if (modulator2_mode == 2) {
+              pitch -= pitch_delta;  
+           } else {
+              pitch += pitch_delta; 
+           }   
+        }
+     } else {
+        if (mod2_vibrato_depth) {
+           if (modulator2_mode == 2) {
+              pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ;  
+           } else {
+              pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; 
+           }        
+        }
      }
   }
   
@@ -417,20 +453,32 @@ void RenderBlock() {
 
   // Or add vibrato here
   if (!quantize_vibrato) {
-     // vibrato should be bipolar
      if (mod1_vibrato_depth) {
         if (modulator1_mode == 2) {
-           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13   
+           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
         } else {  
-           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; // was 13
+           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
         }    
      }
-     if (mod2_vibrato_depth) {
-        if (modulator2_mode == 2) {
-           pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13     
-        } else {
-           pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; // was 13  
-        }   
+     // mod1 envelope mediate the degree of vibrato from mod2, or not.
+     if (mod1_mod2_vibrato_depth) {
+        if (mod2_vibrato_depth) {
+           int32_t pitch_delta = ((ad2_value - 32767) * mod2_vibrato_depth) >> 11;
+           pitch_delta = (pitch_delta * ad_value) >> 16;
+           if (modulator2_mode == 2) {
+              pitch -= pitch_delta;  
+           } else {
+              pitch += pitch_delta; 
+           }   
+        }
+     } else {
+        if (mod2_vibrato_depth) {
+           if (modulator2_mode == 2) {
+              pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ;  
+           } else {
+              pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; 
+           }        
+        }
      }
   }
 

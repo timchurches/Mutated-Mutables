@@ -74,8 +74,11 @@ const SettingsData kInitSettings = {
   false,                // quantize_vibrato
   true,                 // mod1_sync
   true,                 // mod2_sync
-  false,                 // osc_sync
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  false,                // osc_sync
+  false,                // mod1_mod2_timbre_depth
+  false,                // mod1_mod2_color_depth
+  false,                // mod1_mod2_vibrato_depth
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -469,16 +472,18 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "M1SY", boolean_values },
   { 0, 1, "M2SY", boolean_values },
   { 0, 1, "OSYN", boolean_values },
+  { 0, 1, "M1T2", boolean_values },
+  { 0, 1, "M1C2", boolean_values },
+  { 0, 1, "M1F2", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3t", NULL },  // Placeholder for version string
+  { 0, 0, "BT3u", NULL },  // Placeholder for version string
 };
 
 /* static */
 const Setting Settings::settings_order_[] = {
   SETTING_OSCILLATOR_SHAPE,
   SETTING_MOD1_MODE,
-  SETTING_MOD1_SYNC,
   SETTING_MOD1_RATE,
   SETTING_MOD1_ATTACK_SHAPE,
   SETTING_MOD1_DECAY_SHAPE,
@@ -489,7 +494,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD1_VIBRATO_DEPTH,
   SETTING_MOD1_MOD2_DEPTH,
   SETTING_MOD2_MODE,
-  SETTING_MOD2_SYNC,
   SETTING_MOD2_RATE,
   SETTING_MOD2_ATTACK_SHAPE,
   SETTING_MOD2_DECAY_SHAPE,
@@ -498,15 +502,20 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_COLOR_DEPTH,
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
+  SETTING_MOD1_MOD2_TIMBRE_DEPTH,
+  SETTING_MOD1_MOD2_COLOR_DEPTH,
+  SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_META_MODULATION,
   SETTING_TRIG_SOURCE,
   SETTING_TRIG_DELAY,
+  SETTING_MOD1_SYNC,
+  SETTING_MOD2_SYNC,
+  SETTING_OSC_SYNC,
+  SETTING_RATE_INVERSION, 
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
   SETTING_PITCH_QUANTIZER,
   SETTING_QUANT_BEFORE_VIBRATO,
-  SETTING_OSC_SYNC,
-  SETTING_RATE_INVERSION, 
   SETTING_RESOLUTION,
   SETTING_VCO_DRIFT,
   SETTING_BRIGHTNESS, 
