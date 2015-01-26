@@ -491,15 +491,15 @@ void RenderBlock() {
   if (vco_drift) {
   
     if (modulator1_mode == 2) {
-      vco_drift -= (ad_value * settings.mod1_vco_jitter_depth()) >> 14; // was 16
+      vco_drift -= (ad_value * settings.mod1_vco_jitter_depth()) >> 15; // was 16
     } else {
-      vco_drift += (ad_value * settings.mod1_vco_jitter_depth()) >> 14;
+      vco_drift += (ad_value * settings.mod1_vco_jitter_depth()) >> 15;
     }  
 
     if (modulator2_mode == 2) {
-      vco_drift -= (ad2_value * settings.mod2_vco_jitter_depth()) >> 14;
+      vco_drift -= (ad2_value * settings.mod2_vco_jitter_depth()) >> 15;
     } else {
-      vco_drift += (ad2_value * settings.mod2_vco_jitter_depth()) >> 14;
+      vco_drift += (ad2_value * settings.mod2_vco_jitter_depth()) >> 15;
     }  
   
      if (vco_drift < 0) {

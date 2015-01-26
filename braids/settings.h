@@ -298,11 +298,11 @@ class Settings {
   }
 
   inline uint8_t mod1_timbre_depth() const {
-    return data_.mod1_timbre_depth * 10;
+    return data_.mod1_timbre_depth * 5;
   }
 
   inline uint8_t mod2_timbre_depth() const {
-    return data_.mod2_timbre_depth * 10;
+    return data_.mod2_timbre_depth * 5;
   }
 
     inline uint8_t mod1_ad_ratio() const {
@@ -330,19 +330,19 @@ class Settings {
   }
 
   inline uint8_t mod1_color_depth() const {
-    return data_.mod1_color_depth * 10;
+    return data_.mod1_color_depth * 5;
   }
 
   inline uint8_t mod2_color_depth() const {
-    return data_.mod2_color_depth * 10;
+    return data_.mod2_color_depth * 5;
   }
 
   inline uint8_t mod1_level_depth() const {
-    return data_.mod1_level_depth * 10;
+    return data_.mod1_level_depth * 5;
   }
 
   inline uint8_t mod2_level_depth() const {
-    return data_.mod2_level_depth * 10;
+    return data_.mod2_level_depth * 5;
   }
 
   inline uint8_t mod1_vibrato_depth() const {
@@ -386,7 +386,7 @@ class Settings {
   }
   
   inline int32_t initial_gain() const {
-    return (data_.initial_gain * 2621) + 5;
+    return (data_.initial_gain * 1285);
   }
 
   inline uint8_t mod1_vco_jitter_depth() const {
