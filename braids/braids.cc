@@ -546,6 +546,10 @@ void RenderBlock() {
   uint32_t mod1_level_depth = uint32_t(settings.mod1_level_depth());
   uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
   int32_t gain = settings.initial_gain(); 
+  // add external CV if FMCV used for level
+  if (meta_mod == 6) {
+     gain += settings.adc_to_fm(adc.channel(3)) << 4; // was 3 
+  } 
   // Gain mod by modulator 1
   if (modulator1_mode  && modulator1_mode < 3) {
      // subtract from full gain if LFO-only modes (mode==1) or Env- modes (mode==2)

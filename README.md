@@ -5,7 +5,7 @@ Various enhancements, experiments and outright hacks of Mutable Instruments firm
 
 This repository is a copy of the Mutable Instruments GitHub repository at https://github.com/pichenettes/eurorack
 
-So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3u, the source code for which is in the braids/ directory here. 
+So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3v, the source code for which is in the braids/ directory here. 
 
 Acknowledgements
 ================
@@ -13,8 +13,8 @@ First and foremost, huge thanks are due to Olivier Gillet of Mutable Instruments
 
 Many thanks also to [Sneak-Thief](http://sneak-thief.com) in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the design of the Bees-in-Trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!). Thanks also to _weliveincities_ on the Mutable Instruments forum for testing each version and providing feedback.
 
-Bees-in-Trees v3u enhancements
-=============================
+Bees-in-Trees version 3v enhancements
+=====================================
 
 * Bees-in-Trees is based on the official Braids v1.7 source code, and has had the sync buffer and DAC timing bug fixes ported to it, thus the core oscillator code is identical to the current Braids v1.7 code. However, many changes to modulation options and other aspects have been made, as detailed below. 
 * Instead of a single internal envelope, there are now two internal modulators, MOD1 and MOD2. The MOD1 and MOD2 menu settings allow each internal modulator to be turned off (OFF), put in in LFO mode (LFO), or in one of two envelope modes (ENV- and ENV+). ENV- and ENV+ are negative and positive envelopes respectively - ENV+ is like a traditional attack-decay envelope, ENV- is the  inverse.
@@ -34,13 +34,14 @@ Bees-in-Trees v3u enhancements
   * RNDE is the same as EXPO except that the target level for the top of the envelope or LFO waveform varies randomly on each envelope or LFO cycle; 
   * RANDL and RNDS are the same as RNDE, except using linear and square-ish curves as described above; 
   * RNDM sets a fixed random level which is flat for the entire envelope segment or LFO half-wave - thus it acts like a traditional clocked sample-and-hold sampling a random voltage.
-* The META menu setting has been replaced by an FMCV setting, which determines to what use the FM control voltage input is put. The available choices are: 
+* The FMCV setting replaces what was the META menu setting. FMCV determines to what use the FM control voltage input is put. The available choices are: 
   * FREQ, which means the FM input does FM;
   * META, which is the same as META mode on in the official firmware - voltage on the FM input scans through the oscillator modes;
   * RATE, in which voltage on the FM input sets the duration of the envelope segments, or the frequency of the LFOs - thus providing voltage-controlled envelopes and/or LFOs, with the FM voltage affecting the duration/speed of both internal modulators;
   * RAT1 is the same except the FM voltage only affects modulator 1;
   * RAT2 is also the same but the FM voltage only affects modulator 2. Note that for the rate settings, the voltage on the FM input is added to the RAT1 and RAT2 values for each each modulator, thus a base LFO speed or envelope duration can be set using RAT1 and RAT2, and that can then be modified by voltage on the FM input.
   * JITR provides voltage control over VCO jitter (drift), with a base level set by the JITR menu setting (and also subject to modulation by the internal modulators) via the M1→J and M2→J modulation depth settings.
+  * LEVL provides voltage control over the level (amplitude, gain). You may need to reduce the initial gain (GAIN) down to zero to hear the full effect - approximately 5V at the FM CV input should produce full gain. This setting provides Braids with a built-in virtual VCA, in the same way that the Level input in Tides/Sheep acts as a virtual VCA.
 * LFO range has been enabled in the range (RANG) menu. This LFO range was always present in the Braids source code, but its selection was disabled. The LFO range seems to go down to about 1Hz or so - thus it doesn't make Braids into a proper LFO, but it is low enough for many LFO modulation duties. Braids certainly produces many more interesting LFO waveforms than your average voltage-controlled LFO, And of course the two internal LFOs can still modulate Braids when its set to LFO - thus you can use Braids as two voltage-controlled LFOs (MOD1 and MOD2) inside your voltage-controlled LFO (the main Braids VCO when in LFO range)! 
 * DRFT (VCO drift) has been renamed JITR (jitter), and is now a settable value, from zero (off) to 127. At a setting of 127, you get noisy sonic destruction, but lower levels of jitter can add something to some oscillator models. JITR is also now a destination for the internal modulators, as mentioned above, and it can also be put under voltage control via the FMCV setting. Note that JITR causes the oscillator pitch to chnage (not sure why), but this can be balanced out by applying pitch modulation from the same modulator (i.e. using M1→F or M2→F), because frequency modulation fortuitously acts in teh opposite sense to the pitch change caused by JITR.
 * TSRC, TDLY, OCTV, QNTZ, BITS, BRIG, CAL. and CV testing menu choices are unchanged and function exactly as they do in the official Braids firmware.

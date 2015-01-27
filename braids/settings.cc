@@ -398,6 +398,7 @@ const char* const meta_values[] = {
     "RAT1", // 3
     "RAT2", // 4
     "JITR", // 5
+    "LEVL", // 6
 };
 
 const char* const ad_ratio_values[] = { 
@@ -451,7 +452,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 5, "FMCV", meta_values },
+  { 0, 6, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -488,7 +489,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 50, "M2" "\x85" "J", mod_depth_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3u", NULL },  // Placeholder for version string
+  { 0, 0, "BT3v", NULL },  // Placeholder for version string
 };
 
 /* static */
