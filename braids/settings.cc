@@ -78,7 +78,7 @@ const SettingsData kInitSettings = {
   false,                // mod1_mod2_timbre_depth
   false,                // mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
-  50,                   // initial_gain = 65525
+  50,                   // initial_gain = 65535
   0,                    // mod1_vco_jitter_depth
   0,                    // mod2_vco_jitter_depth
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

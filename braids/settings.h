@@ -386,7 +386,7 @@ class Settings {
   }
   
   inline int32_t initial_gain() const {
-    return (data_.initial_gain * 1285);
+    return (data_.initial_gain * 1310);
   }
 
   inline uint8_t mod1_vco_jitter_depth() const {
