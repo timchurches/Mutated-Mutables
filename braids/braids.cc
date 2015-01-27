@@ -294,7 +294,7 @@ void RenderBlock() {
       // LFO mode
       ad2_value = envelope2.Render(true, modulator2_attack_shape, modulator2_decay_shape);
   }
-  else if (modulator2_mode == 2) {
+  else if (modulator2_mode > 1) {
       // envelope mode
       ad2_value = envelope2.Render(false, modulator2_attack_shape, modulator2_decay_shape);
   }
