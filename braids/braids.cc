@@ -182,9 +182,9 @@ void RenderBlock() {
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
-  uint16_t env_param = uint16_t (settings.mod1_rate());
-  uint16_t env_a = 0;
-  uint16_t env_d = 0;
+  uint32_t env_param = uint32_t (settings.mod1_rate());
+  uint32_t env_a = 0;
+  uint32_t env_d = 0;
   uint8_t modulator1_mode = settings.mod1_mode();
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
@@ -411,7 +411,7 @@ void RenderBlock() {
            pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
         }    
      }
-     // mod1 envelope mediate the degree of vibrato from mod2, or not.
+     // mod1 envelope mediates the degree of vibrato from mod2, or not.
      if (mod1_mod2_vibrato_depth) {
         if (mod2_vibrato_depth) {
            int32_t pitch_delta = ((ad2_value - 32767) * mod2_vibrato_depth) >> 11;
@@ -586,7 +586,6 @@ void RenderBlock() {
 int main(void) {
   Init();
   while (1) {
-    // while (audio_samples.writable() >= kAudioBlockSize && sync_samples.readable() >= kAudioBlockSize) {
     while (render_block != playback_block) {
       RenderBlock();
     }
