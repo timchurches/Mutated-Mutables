@@ -81,7 +81,12 @@ const SettingsData kInitSettings = {
   50,                   // initial_gain = 65535
   0,                    // mod1_vco_jitter_depth
   0,                    // mod2_vco_jitter_depth
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  false,                // metaseq
+  0,                    // metaseq_shape1
+  0,                    // metaseq_shape2
+  0,                    // metaseq_shape3
+  0,                    // metaseq_shape4
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -487,6 +492,11 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 50, "GAIN", mod_depth_values },
   { 0, 50, "M1" "\x85" "J", mod_depth_values },
   { 0, 50, "M2" "\x85" "J", mod_depth_values },
+  { 0, 1, "MSEQ", boolean_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ1", algo_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ2", algo_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ3", algo_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ4", algo_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3v", NULL },  // Placeholder for version string
@@ -533,6 +543,11 @@ const Setting Settings::settings_order_[] = {
   SETTING_QUANT_BEFORE_VIBRATO,
   SETTING_RESOLUTION,
   SETTING_VCO_DRIFT,
+  SETTING_METASEQ, 
+  SETTING_METASEQ_SHAPE1, 
+  SETTING_METASEQ_SHAPE2, 
+  SETTING_METASEQ_SHAPE3, 
+  SETTING_METASEQ_SHAPE4, 
   SETTING_BRIGHTNESS, 
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,

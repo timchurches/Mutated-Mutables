@@ -160,7 +160,12 @@ enum Setting {
   SETTING_INITIAL_GAIN,
   SETTING_MOD1_VCO_JITTER_DEPTH, 
   SETTING_MOD2_VCO_JITTER_DEPTH, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MOD2_VCO_JITTER_DEPTH,
+  SETTING_METASEQ,
+  SETTING_METASEQ_SHAPE1, 
+  SETTING_METASEQ_SHAPE2, 
+  SETTING_METASEQ_SHAPE3, 
+  SETTING_METASEQ_SHAPE4, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_SHAPE4,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -210,7 +215,12 @@ struct SettingsData {
   uint8_t initial_gain; 
   uint8_t mod1_vco_jitter_depth; 
   uint8_t mod2_vco_jitter_depth; 
-  uint8_t extra_padding[43];
+  uint8_t metaseq;
+  uint8_t metaseq_shape1;
+  uint8_t metaseq_shape2;
+  uint8_t metaseq_shape3;
+  uint8_t metaseq_shape4;
+  uint8_t extra_padding[38];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -396,7 +406,27 @@ class Settings {
   inline uint8_t mod2_vco_jitter_depth() const {
     return data_.mod2_vco_jitter_depth;
   }
-    
+
+  inline bool metaseq() const {
+    return data_.metaseq;
+  }
+
+  inline MacroOscillatorShape metaseq_shape1() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape1);
+  }
+
+  inline MacroOscillatorShape metaseq_shape2() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape2);
+  }
+
+  inline MacroOscillatorShape metaseq_shape3() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape3);
+  }
+
+  inline MacroOscillatorShape metaseq_shape4() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape4);
+  }
+   
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }
   

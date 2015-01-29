@@ -174,6 +174,7 @@ void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static int32_t previous_pitch = 0;
   static int32_t previous_shape = 0;
+  static uint8_t metaseq_index = 0;
 
   // debug_pin.High();
 
@@ -361,28 +362,30 @@ void RenderBlock() {
   osc.set_parameters(uint16_t(parameter_1), uint16_t(parameter_2));
 
   // meta_modulation no longer a boolean  
-  if (meta_mod == 1) {
-    int32_t shape = adc.channel(3);
-    shape -= settings.data().fm_cv_offset;
-    if (shape > previous_shape + 2 || shape < previous_shape - 2) {
-      previous_shape = shape;
-    } else {
-      shape = previous_shape;
-    }
-    shape = MACRO_OSC_SHAPE_LAST * shape >> 11;
-    shape += settings.shape();
-    if (shape >= MACRO_OSC_SHAPE_LAST_ACCESSIBLE_FROM_META) {
-        shape = MACRO_OSC_SHAPE_LAST_ACCESSIBLE_FROM_META;
-    } else if (shape <= 0) {
-      shape = 0;
-    }
-    MacroOscillatorShape osc_shape = static_cast<MacroOscillatorShape>(shape);
-    osc.set_shape(osc_shape);
-    ui.set_meta_shape(osc_shape);
-  } else {
-    osc.set_shape(settings.shape());
-  }
-    
+  // meta-sequencer over-rides FMCV=META and the WAVE setting
+  if (!settings.metaseq()) {
+	  if (meta_mod == 1) {
+		int32_t shape = adc.channel(3);
+		shape -= settings.data().fm_cv_offset;
+		if (shape > previous_shape + 2 || shape < previous_shape - 2) {
+		  previous_shape = shape;
+		} else {
+		  shape = previous_shape;
+		}
+		shape = MACRO_OSC_SHAPE_LAST * shape >> 11;
+		shape += settings.shape();
+		if (shape >= MACRO_OSC_SHAPE_LAST_ACCESSIBLE_FROM_META) {
+			shape = MACRO_OSC_SHAPE_LAST_ACCESSIBLE_FROM_META;
+		} else if (shape <= 0) {
+		  shape = 0;
+		}
+		MacroOscillatorShape osc_shape = static_cast<MacroOscillatorShape>(shape);
+		osc.set_shape(osc_shape);
+		ui.set_meta_shape(osc_shape);
+	  } else {
+		osc.set_shape(settings.shape());
+	  }
+  } 
   // Apply hysteresis to ADC reading to prevent a single bit error to move
   // the quantized pitch up and down the quantization boundary.
   uint16_t pitch_adc_code = adc.channel(2);
@@ -530,9 +533,17 @@ void RenderBlock() {
     if (settings.mod2_sync()) {
        envelope2.Trigger(ENV_SEGMENT_ATTACK);
     }
+    if (settings.metaseq()) {
+       metaseq_index += 1;
+       if (metaseq_index > 3) { metaseq_index = 0; }
+       MacroOscillatorShape metaseq_shapes[4] = { settings.metaseq_shape1(), settings.metaseq_shape2(), settings.metaseq_shape3(), settings.metaseq_shape4() };
+       MacroOscillatorShape metaseq_current__shape = metaseq_shapes[metaseq_index];
+       osc.set_shape(metaseq_current__shape);
+       ui.set_meta_shape(metaseq_current__shape);     
+    }
     trigger_flag = false;
   }
-  
+
   uint8_t* sync_buffer = sync_samples[render_block];
   int16_t* render_buffer = audio_samples[render_block];
   if (!settings.osc_sync()) {
