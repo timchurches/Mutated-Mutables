@@ -100,7 +100,7 @@ void Ui::RefreshDisplay() {
       {
         uint8_t value = settings.GetValue(setting_);
         if (setting_ == SETTING_OSCILLATOR_SHAPE &&
-            settings.meta_modulation() == 1) {
+            (settings.meta_modulation() == 1 || settings.metaseq() )) {
           value = meta_shape_;
         }
         display_.Print(settings.metadata(setting_).strings[value]);
@@ -246,7 +246,7 @@ void Ui::DoEvents() {
   if (queue_.idle_time() >= 50 &&
       setting_ == SETTING_OSCILLATOR_SHAPE &&
       mode_ == MODE_EDIT &&
-      settings.meta_modulation() == 1) {
+      (settings.meta_modulation() == 1 || settings.metaseq())) {
     refresh_display_ = true;
   }
   if (refresh_display_) {

@@ -83,6 +83,7 @@ class Ui {
     cv_[2] = cv_pitch;
     cv_[3] = cv_fm;
   }
+  
   // Overrides oscillator shape display when in meta mode.
   inline void set_meta_shape(MacroOscillatorShape shape) {
     meta_shape_ = shape;

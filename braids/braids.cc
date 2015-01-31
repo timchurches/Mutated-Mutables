@@ -174,9 +174,8 @@ void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static int32_t previous_pitch = 0;
   static int32_t previous_shape = 0;
+  static uint8_t metaseq_steps_index = 0;
   static uint8_t metaseq_index = 0;
-  static uint16_t ad_value = 0 ;
-  static uint16_t ad2_value = 0 ;
 
   // debug_pin.High();
 
@@ -234,6 +233,7 @@ void RenderBlock() {
   // envelope 1
   uint8_t modulator1_attack_shape = settings.mod1_attack_shape();
   uint8_t modulator1_decay_shape = settings.mod1_decay_shape();
+  uint16_t ad_value = 0 ;
   if (modulator1_mode == 1) { 
 	  // LFO mode
 	  ad_value = envelope.Render(true, modulator1_attack_shape, modulator1_decay_shape);
@@ -291,6 +291,7 @@ void RenderBlock() {
   // envelope 2
   uint8_t modulator2_attack_shape = settings.mod2_attack_shape();
   uint8_t modulator2_decay_shape = settings.mod2_decay_shape();
+  uint16_t ad2_value = 0 ;
   if (modulator2_mode == 1) { 
 	  // LFO mode
 	  ad2_value = envelope2.Render(true, modulator2_attack_shape, modulator2_decay_shape);
@@ -363,7 +364,8 @@ void RenderBlock() {
 
   // meta_modulation no longer a boolean  
   // meta-sequencer over-rides FMCV=META and the WAVE setting
-  if (!settings.metaseq()) {
+  uint8_t metaseq_length = settings.metaseq();
+  if (!metaseq_length) {
 	  if (meta_mod == 1) {
 		int32_t shape = adc.channel(3);
 		shape -= settings.data().fm_cv_offset;
@@ -533,10 +535,25 @@ void RenderBlock() {
     if (settings.mod2_sync()) {
        envelope2.Trigger(ENV_SEGMENT_ATTACK);
     }
-    if (settings.metaseq()) {
-       metaseq_index += 1;
-       if (metaseq_index > 3) { metaseq_index = 0; }
-       MacroOscillatorShape metaseq_shapes[4] = { settings.metaseq_shape1(), settings.metaseq_shape2(), settings.metaseq_shape3(), settings.metaseq_shape4() };
+    if (metaseq_length) {
+       MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
+                       settings.metaseq_shape2(), settings.metaseq_shape3(),
+                       settings.metaseq_shape4(), settings.metaseq_shape5(),
+                       settings.metaseq_shape6(), settings.metaseq_shape7(),
+                       settings.metaseq_shape8() };                   
+       uint8_t metaseq_step_lengths[8] = { settings.metaseq_step_length1(),
+                       settings.metaseq_step_length2(), settings.metaseq_step_length3(),
+                       settings.metaseq_step_length4(), settings.metaseq_step_length5(),
+                       settings.metaseq_step_length6(), settings.metaseq_step_length7(),
+                       settings.metaseq_step_length8() };
+       metaseq_steps_index += 1;
+       if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
+          metaseq_index += 1;
+          if (metaseq_index > (metaseq_length - 1)) { 
+             metaseq_index = 0;
+          }
+          metaseq_steps_index = 0;
+       }
        MacroOscillatorShape metaseq_current__shape = metaseq_shapes[metaseq_index];
        osc.set_shape(metaseq_current__shape);
        ui.set_meta_shape(metaseq_current__shape);     
