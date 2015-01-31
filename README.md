@@ -5,7 +5,7 @@ Various enhancements, experiments and outright hacks of Mutable Instruments firm
 
 This repository is a copy of the Mutable Instruments GitHub repository at https://github.com/pichenettes/eurorack
 
-So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3v, the source code for which is in the braids/ directory here. 
+So far, the only modified code is the Bees-in-Trees enhancements to Braids. The following features (and some anti-features) have all been implemented in Bees-in-Trees Version 3u, the source code for which is in the braids/ directory here. 
 
 Acknowledgements
 ================
@@ -13,7 +13,7 @@ First and foremost, huge thanks are due to Olivier Gillet of Mutable Instruments
 
 Many thanks also to [Sneak-Thief](http://sneak-thief.com) in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the design of the Bees-in-Trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!). Thanks also to _weliveincities_ on the Mutable Instruments forum for testing each version and providing feedback.
 
-Bees-in-Trees version 3v enhancements
+Bees-in-Trees version 3w enhancements
 =====================================
 
 * Bees-in-Trees is based on the official Braids v1.7 source code, and has had the sync buffer and DAC timing bug fixes ported to it, thus the core oscillator code is identical to the current Braids v1.7 code. However, many changes to modulation options and other aspects have been made, as detailed below. 
@@ -48,6 +48,7 @@ Bees-in-Trees version 3v enhancements
 * However, immediately following QNTZ (pitch quantisation), there is a new menu selection called QVIB, which stands for "quantise vibrato". It defaults to OFF - that is, vibrato from the internal modulators (or from the external FM input) is applied after pitch quantisation has been performed, if pitch quantisation is enabled (via the QNTZ setting). IF QVIB is set to ON, however, then quantisation will be performed after pitch modulation from the internal modulators has been added. Thus, a triangle pitch (frequency) modulation, set by, say, the M1→F level, will result rising and falling chromatic arpeggio effects, more or less. It can be quite effective when the RNDM modulator shape is used, for example.
 * M1SY and M2SY (modulator 1 sync, and modulator 2 sync) determine whether a trigger (either external or auto) will reset the phase of modulator 1 or modulator 2, respectively. They default to ON.
 * OSYN (oscillator sync) determines whether oscillator phase synchronisation is enabled or not. It defaults to OFF. When enabled, (external or auto) triggers may cause audible clicks in some oscillator modes. Disabling it prevents those clicks, at the expense of not resetting the oscillator phase. However, the official Braids firmware disables oscillator sync whenever the internal envelope was used, in any case, probably for the same reason.
+* There is now a simple meta-sequencer. There are eight steps in the sequence available, and the sequence is advanced by triggers received on the trigger input jack. The MSEQ setting enables the meta-sequencer. The value, from 1 to 8, sets the number of steps. The settings MSQ1, MSQ2...MSQ8 allow the oscillator model for that step to be chosen. The settings MSL1 to MSL8 set the number of trigger inputs that that step is held for - they al default to 1. Thus, MSL3=3 means that the sequence of oscillator models will stay on step 3 for 3 input triggers. Thus a rhythm of oscillator models can be set up, even when the triggers come from a regular clock signal. Note that if MSEQ is enabled, then FMCV=META mode is overridden.
 
 Anti-enhancements
 =================
