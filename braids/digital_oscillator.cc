@@ -2300,8 +2300,7 @@ void DigitalOscillator::RenderCymbal(
   }
 }
 
-/*
-void DigitalOscillator::RenderYourAlgo(
+void DigitalOscillator::RenderSilence(
     const uint8_t* sync,
     int16_t* buffer,
     uint8_t size) {
@@ -2309,7 +2308,6 @@ void DigitalOscillator::RenderYourAlgo(
     *buffer++ = 0;
   }
 }
-*/
 
 /* static */
 DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
@@ -2345,7 +2343,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,
-  // &DigitalOscillator::RenderYourAlgo,
+  &DigitalOscillator::RenderSilence,
 };
 
 }  // namespace braids

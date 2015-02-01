@@ -95,6 +95,7 @@ enum DigitalOscillatorShape {
   OSC_SHAPE_CLOCKED_NOISE,
   OSC_SHAPE_GRANULAR_CLOUD,
   OSC_SHAPE_PARTICLE_NOISE,
+  OSC_SHAPE_SILENCE,
 
   // Leave this here because it marks the end of the oscillator model list.
   OSC_SHAPE_QUESTION_MARK_LAST
@@ -319,7 +320,7 @@ class DigitalOscillator {
   void RenderCymbal(const uint8_t*, int16_t*, uint8_t);
   void RenderQuestionMark(const uint8_t*, int16_t*, uint8_t);
   
-  // void RenderYourAlgo(const uint8_t*, int16_t*, uint8_t);
+  void RenderSilence(const uint8_t*, int16_t*, uint8_t);
   
   uint32_t ComputePhaseIncrement(int16_t midi_pitch);
   uint32_t ComputeDelay(int16_t midi_pitch);

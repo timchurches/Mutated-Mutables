@@ -180,7 +180,7 @@ const char* const algo_values[] = {
     "CLKN",
     "CLOU",
     "PRTC",
-    // "NAME" // For your algorithm
+    "ZERO", // this is the RenderSilence digital model 
 };
 
 const char* const bits_values[] = {
@@ -535,7 +535,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MSL8", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "BT3w", NULL },  // Placeholder for version string
+  { 0, 0, "BT3x", NULL },  // Placeholder for version string
 };
 
 /* static */
