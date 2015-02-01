@@ -41,7 +41,7 @@
 build
 
 # Jekyll site staging directory
-_site
+# _site
 
 # BETA Layout variants
 *_beta.sch
