@@ -1,0 +1,1 @@
+exclude: avrlib, avrlibx, braids, edges, frames, grids,links, peaks, ripples, stm_audio_bootloader, stmlib, tides, tools, volts, yarns, __init__.py
