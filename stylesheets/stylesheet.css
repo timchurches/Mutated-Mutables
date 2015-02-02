@@ -183,6 +183,8 @@ sub {
 
 img {
   border: 0;
+  margin-right: 15px;
+  float: left;
 }
 
 /**
