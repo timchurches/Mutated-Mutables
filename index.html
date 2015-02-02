@@ -59,9 +59,9 @@
 <li>the storage space for compiled program code in flash memory is limited to exactly 108 pages of 1024 bytes each - that is, 110,592 bytes. Thus there is a hard limit to the size and complexity of the firmware for Braids. In order to remain under this firmware size limit, some features have had to be removed from Braids to make space for the enhancements described below. See <a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true">Anti-enhancements</a> below for details of what has been removed.</li>
 </ul>
 
-<p>Bees-and-the-Trees is based on the official Braids v1.7 source code, and has had the sync buffer and DAC timing bug fixes which were made to the v1.7 code in late January 2015 ported to it: thus the core oscillator code is identical to the current Braids v1.7 code. However, many changes to modulation options and other aspects have been made.</p>
+<p><img src="images/Bees-in-the-Trees.png" alt="Bees-in-the-Trees">Bees-and-the-Trees is based on the official Braids v1.7 source code, and has had the sync buffer and DAC timing bug fixes which were made to the v1.7 code in late January 2015 ported to it: thus the core oscillator code is identical to the current Braids v1.7 code. However, many changes to modulation options and other aspects have been made.</p>
 
-<p><img src="images/Bees-in-the-Trees.png" alt="Bees-in-the-Trees">Why is it called <em>Bees-and-the-Trees</em>? Because Olivier Gillet named his alternative firmware for the <a href="http://mutable-instruments.net/modules/tides">Mutable Instruments Tides</a> module "<em><a href="http://mutable-instruments.net/modules/sheep/manual">Sheep</a></em>". That established a pattern which demanded to be followed.</p>
+<p>Why is it called <em>Bees-and-the-Trees</em>? Because Olivier Gillet named his alternative firmware for the <a href="http://mutable-instruments.net/modules/tides">Mutable Instruments Tides</a> module "<em><a href="http://mutable-instruments.net/modules/sheep/manual">Sheep</a></em>". That established a pattern which demanded to be followed.</p>
 
 
 <h2>
@@ -129,6 +129,8 @@
 <p>
 <li>There is a new oscillator model, called <b>ZERO</b>, right at the end of the model list, after <b>PRTC</b>. Don't get too excited, because this model fills the audio buffer with zeroes, and thus produces absolute silence. This was added to enable "rests" to be inserted in the <code>MSEQ</code> meta-sequencer. The downside is that there is an audible click when switching to it, because the signal amplitude immediately goes to zero. I can't think of any easy way to avoid this, however. The same problem occurs, to a lesser degree, and in the factory firmware as well, when switching to some of the other models, for similar reasons. Note that the ZERO model isn't accessible via <code>FMCV</code>=<b>META</b> mode.
 </ul>
+
+<p><img src="images/Bees-and-the-Trees-schematic-v3x-v001.png"></p>
 
 <h1>
 <a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Anti-enhancements</h1>
