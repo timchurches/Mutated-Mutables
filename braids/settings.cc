@@ -84,21 +84,29 @@ const SettingsData kInitSettings = {
   0,                    // metaseq
   0,                    // metaseq_shape1
   1,                    // metaseq_step_length1
+  0,                    // metaseq_step_freq1
   0,                    // metaseq_shape2
   1,                    // metaseq_step_length2
+  0,                    // metaseq_step_freq2
   0,                    // metaseq_shape3
   1,                    // metaseq_step_length3
+  0,                    // metaseq_step_freq3
   0,                    // metaseq_shape4
   1,                    // metaseq_step_length4
+  0,                    // metaseq_step_freq4
   0,                    // metaseq_shape5
   1,                    // metaseq_step_length5
+  0,                    // metaseq_step_freq5
   0,                    // metaseq_shape6
   1,                    // metaseq_step_length6
+  0,                    // metaseq_step_freq6
   0,                    // metaseq_shape7
   1,                    // metaseq_step_length7
+  0,                    // metaseq_step_freq7
   0,                    // metaseq_shape8
   1,                    // metaseq_step_length8
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  0,                    // metaseq_step_freq8
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -519,20 +527,28 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 8, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ1", algo_values },
   { 1, 127, "MSL1", mod_rate_values },
+  { 0, 127, "MSF1", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ2", algo_values },
   { 1, 127, "MSL2", mod_rate_values },
+  { 0, 127, "MSF2", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ3", algo_values },
   { 1, 127, "MSL3", mod_rate_values },
+  { 0, 127, "MSF3", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ4", algo_values },
   { 1, 127, "MSL4", mod_rate_values },
+  { 0, 127, "MSF4", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ5", algo_values },
   { 1, 127, "MSL5", mod_rate_values },
+  { 0, 127, "MSF5", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ6", algo_values },
   { 1, 127, "MSL6", mod_rate_values },
+  { 0, 127, "MSF6", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ7", algo_values },
   { 1, 127, "MSL7", mod_rate_values },
+  { 0, 127, "MSF7", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ8", algo_values },
   { 1, 127, "MSL8", mod_rate_values },
+  { 0, 127, "MSF8", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3x", NULL },  // Placeholder for version string
@@ -582,20 +598,28 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ, 
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_STEP_LENGTH1, 
+  SETTING_METASEQ_STEP_FREQ1, 
   SETTING_METASEQ_SHAPE2, 
   SETTING_METASEQ_STEP_LENGTH2, 
+  SETTING_METASEQ_STEP_FREQ2, 
   SETTING_METASEQ_SHAPE3, 
   SETTING_METASEQ_STEP_LENGTH3, 
+  SETTING_METASEQ_STEP_FREQ3, 
   SETTING_METASEQ_SHAPE4, 
   SETTING_METASEQ_STEP_LENGTH4, 
+  SETTING_METASEQ_STEP_FREQ4, 
   SETTING_METASEQ_SHAPE5, 
   SETTING_METASEQ_STEP_LENGTH5, 
+  SETTING_METASEQ_STEP_FREQ5, 
   SETTING_METASEQ_SHAPE6, 
   SETTING_METASEQ_STEP_LENGTH6, 
+  SETTING_METASEQ_STEP_FREQ6, 
   SETTING_METASEQ_SHAPE7, 
   SETTING_METASEQ_STEP_LENGTH7, 
+  SETTING_METASEQ_STEP_FREQ7, 
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_STEP_LENGTH8, 
+  SETTING_METASEQ_STEP_FREQ8, 
   SETTING_BRIGHTNESS, 
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,

@@ -163,21 +163,29 @@ enum Setting {
   SETTING_METASEQ,
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_STEP_LENGTH1, 
+  SETTING_METASEQ_STEP_FREQ1, 
   SETTING_METASEQ_SHAPE2, 
   SETTING_METASEQ_STEP_LENGTH2, 
+  SETTING_METASEQ_STEP_FREQ2, 
   SETTING_METASEQ_SHAPE3, 
   SETTING_METASEQ_STEP_LENGTH3, 
+  SETTING_METASEQ_STEP_FREQ3, 
   SETTING_METASEQ_SHAPE4, 
   SETTING_METASEQ_STEP_LENGTH4, 
+  SETTING_METASEQ_STEP_FREQ4, 
   SETTING_METASEQ_SHAPE5, 
   SETTING_METASEQ_STEP_LENGTH5, 
+  SETTING_METASEQ_STEP_FREQ5, 
   SETTING_METASEQ_SHAPE6, 
   SETTING_METASEQ_STEP_LENGTH6, 
+  SETTING_METASEQ_STEP_FREQ6, 
   SETTING_METASEQ_SHAPE7, 
   SETTING_METASEQ_STEP_LENGTH7, 
+  SETTING_METASEQ_STEP_FREQ7, 
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_STEP_LENGTH8, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_STEP_LENGTH8,
+  SETTING_METASEQ_STEP_FREQ8, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_STEP_FREQ8,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -230,21 +238,29 @@ struct SettingsData {
   uint8_t metaseq;
   uint8_t metaseq_shape1;
   uint8_t metaseq_step_length1;
+  uint8_t metaseq_step_freq1;
   uint8_t metaseq_shape2;
   uint8_t metaseq_step_length2;
+  uint8_t metaseq_step_freq2;
   uint8_t metaseq_shape3;
   uint8_t metaseq_step_length3;
+  uint8_t metaseq_step_freq3;
   uint8_t metaseq_shape4;
   uint8_t metaseq_step_length4;
+  uint8_t metaseq_step_freq4;
   uint8_t metaseq_shape5;
   uint8_t metaseq_step_length5;
+  uint8_t metaseq_step_freq5;
   uint8_t metaseq_shape6;
   uint8_t metaseq_step_length6;
+  uint8_t metaseq_step_freq6;
   uint8_t metaseq_shape7;
   uint8_t metaseq_step_length7;
+  uint8_t metaseq_step_freq7;
   uint8_t metaseq_shape8;
   uint8_t metaseq_step_length8;
-  uint8_t extra_padding[26];
+  uint8_t metaseq_step_freq8;
+  uint8_t extra_padding[18];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -443,12 +459,20 @@ class Settings {
     return data_.metaseq_step_length1;
   }
 
+  inline uint8_t metaseq_step_freq1() const {
+    return data_.metaseq_step_freq1;
+  }
+
   inline MacroOscillatorShape metaseq_shape2() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape2);
   }
 
   inline uint8_t metaseq_step_length2() const {
     return data_.metaseq_step_length2;
+  }
+
+  inline uint8_t metaseq_step_freq2() const {
+    return data_.metaseq_step_freq2;
   }
 
   inline MacroOscillatorShape metaseq_shape3() const {
@@ -459,12 +483,20 @@ class Settings {
     return data_.metaseq_step_length3;
   }
 
+  inline uint8_t metaseq_step_freq3() const {
+    return data_.metaseq_step_freq3;
+  }
+
   inline MacroOscillatorShape metaseq_shape4() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape4);
   }
    
   inline uint8_t metaseq_step_length4() const {
     return data_.metaseq_step_length4;
+  }
+
+  inline uint8_t metaseq_step_freq4() const {
+    return data_.metaseq_step_freq4;
   }
 
   inline MacroOscillatorShape metaseq_shape5() const {
@@ -475,12 +507,20 @@ class Settings {
     return data_.metaseq_step_length5;
   }
 
+  inline uint8_t metaseq_step_freq5() const {
+    return data_.metaseq_step_freq5;
+  }
+
   inline MacroOscillatorShape metaseq_shape6() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape6);
   }
 
   inline uint8_t metaseq_step_length6() const {
     return data_.metaseq_step_length6;
+  }
+
+  inline uint8_t metaseq_step_freq6() const {
+    return data_.metaseq_step_freq6;
   }
 
   inline MacroOscillatorShape metaseq_shape7() const {
@@ -491,6 +531,10 @@ class Settings {
     return data_.metaseq_step_length7;
   }
 
+  inline uint8_t metaseq_step_freq7() const {
+    return data_.metaseq_step_freq7;
+  }
+
   inline MacroOscillatorShape metaseq_shape8() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
   }
@@ -498,7 +542,11 @@ class Settings {
   inline uint8_t metaseq_step_length8() const {
     return data_.metaseq_step_length8;
   }
-   
+ 
+   inline uint8_t metaseq_step_freq8() const {
+    return data_.metaseq_step_freq8;
+  }
+  
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }
   

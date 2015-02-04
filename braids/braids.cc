@@ -437,6 +437,36 @@ void RenderBlock() {
         }
      }
   }
+
+  if (metaseq_length) {
+	   MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
+					   settings.metaseq_shape2(), settings.metaseq_shape3(),
+					   settings.metaseq_shape4(), settings.metaseq_shape5(),
+					   settings.metaseq_shape6(), settings.metaseq_shape7(),
+					   settings.metaseq_shape8() };                   
+	   uint8_t metaseq_step_lengths[8] = { settings.metaseq_step_length1(),
+					   settings.metaseq_step_length2(), settings.metaseq_step_length3(),
+					   settings.metaseq_step_length4(), settings.metaseq_step_length5(),
+					   settings.metaseq_step_length6(), settings.metaseq_step_length7(),
+					   settings.metaseq_step_length8() };
+	   uint8_t metaseq_step_freqs[8] = { settings.metaseq_step_freq1(),
+					   settings.metaseq_step_freq2(), settings.metaseq_step_freq3(),
+					   settings.metaseq_step_freq4(), settings.metaseq_step_freq5(),
+					   settings.metaseq_step_freq6(), settings.metaseq_step_freq7(),
+					   settings.metaseq_step_freq8() };
+	   metaseq_steps_index += 1;
+	   if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
+		  metaseq_index += 1;
+		  if (metaseq_index > (metaseq_length - 1)) { 
+			 metaseq_index = 0;
+		  }
+		  metaseq_steps_index = 0;
+	   }
+	   MacroOscillatorShape metaseq_current__shape = metaseq_shapes[metaseq_index];
+	   osc.set_shape(metaseq_current__shape);
+	   ui.set_meta_shape(metaseq_current__shape);  
+	   pitch += metaseq_step_freqs[metaseq_index] ;   
+  }
   
   if (settings.pitch_quantization() == PITCH_QUANTIZATION_QUARTER_TONE) {
     pitch = (pitch + 32) & 0xffffffc0;
@@ -493,7 +523,7 @@ void RenderBlock() {
   if (meta_mod == 5) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
-  if (vco_drift) {
+  if (settings.vco_drift()) {
   
     if (modulator1_mode == 2) {
       vco_drift -= (ad_value * settings.mod1_vco_jitter_depth()) >> 15; // was 16
@@ -534,29 +564,6 @@ void RenderBlock() {
     }
     if (settings.mod2_sync()) {
        envelope2.Trigger(ENV_SEGMENT_ATTACK);
-    }
-    if (metaseq_length) {
-       MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
-                       settings.metaseq_shape2(), settings.metaseq_shape3(),
-                       settings.metaseq_shape4(), settings.metaseq_shape5(),
-                       settings.metaseq_shape6(), settings.metaseq_shape7(),
-                       settings.metaseq_shape8() };                   
-       uint8_t metaseq_step_lengths[8] = { settings.metaseq_step_length1(),
-                       settings.metaseq_step_length2(), settings.metaseq_step_length3(),
-                       settings.metaseq_step_length4(), settings.metaseq_step_length5(),
-                       settings.metaseq_step_length6(), settings.metaseq_step_length7(),
-                       settings.metaseq_step_length8() };
-       metaseq_steps_index += 1;
-       if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
-          metaseq_index += 1;
-          if (metaseq_index > (metaseq_length - 1)) { 
-             metaseq_index = 0;
-          }
-          metaseq_steps_index = 0;
-       }
-       MacroOscillatorShape metaseq_current__shape = metaseq_shapes[metaseq_index];
-       osc.set_shape(metaseq_current__shape);
-       ui.set_meta_shape(metaseq_current__shape);     
     }
     trigger_flag = false;
   }
