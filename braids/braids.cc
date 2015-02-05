@@ -536,16 +536,24 @@ void RenderBlock() {
        envelope2.Trigger(ENV_SEGMENT_ATTACK);
     }
     if (metaseq_length) {
-       MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
+       MacroOscillatorShape metaseq_shapes[16] = { settings.metaseq_shape1(),
                        settings.metaseq_shape2(), settings.metaseq_shape3(),
                        settings.metaseq_shape4(), settings.metaseq_shape5(),
                        settings.metaseq_shape6(), settings.metaseq_shape7(),
-                       settings.metaseq_shape8() };                   
-       uint8_t metaseq_step_lengths[8] = { settings.metaseq_step_length1(),
-                       settings.metaseq_step_length2(), settings.metaseq_step_length3(),
-                       settings.metaseq_step_length4(), settings.metaseq_step_length5(),
-                       settings.metaseq_step_length6(), settings.metaseq_step_length7(),
-                       settings.metaseq_step_length8() };
+                       settings.metaseq_shape8(), settings.metaseq_shape9(),
+                       settings.metaseq_shape10(), settings.metaseq_shape11(),
+                       settings.metaseq_shape12(), settings.metaseq_shape13(),
+                       settings.metaseq_shape14(), settings.metaseq_shape15(),
+                       settings.metaseq_shape16()};                   
+       uint8_t metaseq_step_lengths[16] = { settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH2), settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH4), settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH6), settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH8), settings.GetValue(SETTING_METASEQ_STEP_LENGTH9),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH10), settings.GetValue(SETTING_METASEQ_STEP_LENGTH11),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH12), settings.GetValue(SETTING_METASEQ_STEP_LENGTH13),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH14), settings.GetValue(SETTING_METASEQ_STEP_LENGTH15),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH16) };
        metaseq_steps_index += 1;
        if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
           metaseq_index += 1;

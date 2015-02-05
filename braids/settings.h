@@ -177,7 +177,23 @@ enum Setting {
   SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_STEP_LENGTH8, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_STEP_LENGTH8,
+  SETTING_METASEQ_SHAPE9, 
+  SETTING_METASEQ_STEP_LENGTH9, 
+  SETTING_METASEQ_SHAPE10, 
+  SETTING_METASEQ_STEP_LENGTH10, 
+  SETTING_METASEQ_SHAPE11, 
+  SETTING_METASEQ_STEP_LENGTH11, 
+  SETTING_METASEQ_SHAPE12, 
+  SETTING_METASEQ_STEP_LENGTH12, 
+  SETTING_METASEQ_SHAPE13, 
+  SETTING_METASEQ_STEP_LENGTH13, 
+  SETTING_METASEQ_SHAPE14, 
+  SETTING_METASEQ_STEP_LENGTH14, 
+  SETTING_METASEQ_SHAPE15, 
+  SETTING_METASEQ_STEP_LENGTH15, 
+  SETTING_METASEQ_SHAPE16, 
+  SETTING_METASEQ_STEP_LENGTH16, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_STEP_LENGTH16,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -244,7 +260,23 @@ struct SettingsData {
   uint8_t metaseq_step_length7;
   uint8_t metaseq_shape8;
   uint8_t metaseq_step_length8;
-  uint8_t extra_padding[26];
+  uint8_t metaseq_shape9;
+  uint8_t metaseq_step_length9;
+  uint8_t metaseq_shape10;
+  uint8_t metaseq_step_length10;
+  uint8_t metaseq_shape11;
+  uint8_t metaseq_step_length11;
+  uint8_t metaseq_shape12;
+  uint8_t metaseq_step_length12;
+  uint8_t metaseq_shape13;
+  uint8_t metaseq_step_length13;
+  uint8_t metaseq_shape14;
+  uint8_t metaseq_step_length14;
+  uint8_t metaseq_shape15;
+  uint8_t metaseq_step_length15;
+  uint8_t metaseq_shape16;
+  uint8_t metaseq_step_length16;
+  uint8_t extra_padding[10];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -439,64 +471,64 @@ class Settings {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape1);
   }
 
-  inline uint8_t metaseq_step_length1() const {
-    return data_.metaseq_step_length1;
-  }
-
   inline MacroOscillatorShape metaseq_shape2() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape2);
-  }
-
-  inline uint8_t metaseq_step_length2() const {
-    return data_.metaseq_step_length2;
   }
 
   inline MacroOscillatorShape metaseq_shape3() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape3);
   }
 
-  inline uint8_t metaseq_step_length3() const {
-    return data_.metaseq_step_length3;
-  }
-
   inline MacroOscillatorShape metaseq_shape4() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape4);
   }
    
-  inline uint8_t metaseq_step_length4() const {
-    return data_.metaseq_step_length4;
-  }
-
   inline MacroOscillatorShape metaseq_shape5() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape5);
-  }
-
-  inline uint8_t metaseq_step_length5() const {
-    return data_.metaseq_step_length5;
   }
 
   inline MacroOscillatorShape metaseq_shape6() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape6);
   }
 
-  inline uint8_t metaseq_step_length6() const {
-    return data_.metaseq_step_length6;
-  }
-
   inline MacroOscillatorShape metaseq_shape7() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape7);
-  }
-
-  inline uint8_t metaseq_step_length7() const {
-    return data_.metaseq_step_length7;
   }
 
   inline MacroOscillatorShape metaseq_shape8() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
   }
 
-  inline uint8_t metaseq_step_length8() const {
-    return data_.metaseq_step_length8;
+  inline MacroOscillatorShape metaseq_shape9() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape9);
+  }
+
+  inline MacroOscillatorShape metaseq_shape10() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape10);
+  }
+
+  inline MacroOscillatorShape metaseq_shape11() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape11);
+  }
+
+  inline MacroOscillatorShape metaseq_shape12() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape12);
+  }
+   
+  inline MacroOscillatorShape metaseq_shape13() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape13);
+  }
+
+  inline MacroOscillatorShape metaseq_shape14() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape14);
+  }
+
+  inline MacroOscillatorShape metaseq_shape15() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape15);
+  }
+
+  inline MacroOscillatorShape metaseq_shape16() const {
+    return static_cast<MacroOscillatorShape>(data_.metaseq_shape16);
   }
    
   inline const SettingsData& data() const { return data_; }

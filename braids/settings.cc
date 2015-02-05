@@ -98,7 +98,23 @@ const SettingsData kInitSettings = {
   1,                    // metaseq_step_length7
   0,                    // metaseq_shape8
   1,                    // metaseq_step_length8
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  0,                    // metaseq_shape9
+  1,                    // metaseq_step_length9
+  0,                    // metaseq_shape10
+  1,                    // metaseq_step_length10
+  0,                    // metaseq_shape11
+  1,                    // metaseq_step_length11
+  0,                    // metaseq_shape12
+  1,                    // metaseq_step_length12
+  0,                    // metaseq_shape13
+  1,                    // metaseq_step_length13
+  0,                    // metaseq_shape14
+  1,                    // metaseq_step_length14
+  0,                    // metaseq_shape15
+  1,                    // metaseq_step_length15
+  0,                    // metaseq_shape16
+  1,                    // metaseq_step_length16
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -472,6 +488,14 @@ const char* const metaseq_values[] = {
     "6",
     "7",
     "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
 };
 
 /* static */
@@ -516,23 +540,39 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 50, "GAIN", mod_depth_values },
   { 0, 50, "M1" "\x85" "J", mod_depth_values },
   { 0, 50, "M2" "\x85" "J", mod_depth_values },
-  { 0, 8, "MSEQ", metaseq_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ1", algo_values },
-  { 1, 127, "MSL1", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ2", algo_values },
-  { 1, 127, "MSL2", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ3", algo_values },
-  { 1, 127, "MSL3", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ4", algo_values },
-  { 1, 127, "MSL4", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ5", algo_values },
-  { 1, 127, "MSL5", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ6", algo_values },
-  { 1, 127, "MSL6", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ7", algo_values },
-  { 1, 127, "MSL7", mod_rate_values },
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "MSQ8", algo_values },
-  { 1, 127, "MSL8", mod_rate_values },
+  { 0, 16, "MSEQ", metaseq_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM1", algo_values },
+  { 1, 127, "SL1", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM2", algo_values },
+  { 1, 127, "SL2", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM3", algo_values },
+  { 1, 127, "SL3", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM4", algo_values },
+  { 1, 127, "SL4", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM5", algo_values },
+  { 1, 127, "SL5", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM6", algo_values },
+  { 1, 127, "SL6", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM7", algo_values },
+  { 1, 127, "SL7", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM8", algo_values },
+  { 1, 127, "SL8", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM9", algo_values },
+  { 1, 127, "SL9", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM10", algo_values },
+  { 1, 127, "SL10", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM11", algo_values },
+  { 1, 127, "SL11", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM12", algo_values },
+  { 1, 127, "SL12", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM13", algo_values },
+  { 1, 127, "SL13", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM14", algo_values },
+  { 1, 127, "SL14", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM15", algo_values },
+  { 1, 127, "SL15", mod_rate_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SM16", algo_values },
+  { 1, 127, "SL16", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3x", NULL },  // Placeholder for version string
@@ -596,6 +636,22 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_STEP_LENGTH8, 
+  SETTING_METASEQ_SHAPE9, 
+  SETTING_METASEQ_STEP_LENGTH9, 
+  SETTING_METASEQ_SHAPE10, 
+  SETTING_METASEQ_STEP_LENGTH10, 
+  SETTING_METASEQ_SHAPE11, 
+  SETTING_METASEQ_STEP_LENGTH11, 
+  SETTING_METASEQ_SHAPE12, 
+  SETTING_METASEQ_STEP_LENGTH12, 
+  SETTING_METASEQ_SHAPE13, 
+  SETTING_METASEQ_STEP_LENGTH13, 
+  SETTING_METASEQ_SHAPE14, 
+  SETTING_METASEQ_STEP_LENGTH14, 
+  SETTING_METASEQ_SHAPE15, 
+  SETTING_METASEQ_STEP_LENGTH15, 
+  SETTING_METASEQ_SHAPE16, 
+  SETTING_METASEQ_STEP_LENGTH16, 
   SETTING_BRIGHTNESS, 
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
