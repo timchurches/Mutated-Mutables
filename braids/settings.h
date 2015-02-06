@@ -413,11 +413,11 @@ class Settings {
     return data_.quantize_vibrato;
   }
 
-  inline bool mod1_sync() const {
+  inline uint8_t mod1_sync() const {
     return data_.mod1_sync;
   }
 
-  inline bool mod2_sync() const {
+  inline uint8_t mod2_sync() const {
     return data_.mod2_sync;
   }
 
