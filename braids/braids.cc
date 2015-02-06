@@ -170,12 +170,16 @@ const uint16_t bit_reduction_masks[] = {
     0xfff0,
     0xffff };
 
+const uint16_t decimation_factors[] = { 24, 12, 6, 4, 3, 2, 1 };
+
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static int32_t previous_pitch = 0;
   static int32_t previous_shape = 0;
   static uint8_t metaseq_steps_index = 0;
   static uint8_t metaseq_index = 0;
+  static uint8_t mod1_sync_index = 0;
+  static uint8_t mod2_sync_index = 0;
 
   // debug_pin.High();
 
@@ -388,6 +392,7 @@ void RenderBlock() {
 		osc.set_shape(settings.shape());
 	  }
   } 
+  
   // Apply hysteresis to ADC reading to prevent a single bit error to move
   // the quantized pitch up and down the quantization boundary.
   uint16_t pitch_adc_code = adc.channel(2);
@@ -529,31 +534,38 @@ void RenderBlock() {
 
   if (trigger_flag) {
     osc.Strike();
+    // reset internal modulator phase if mod1_sync or mod2_sync > 0
+    // and if a trigger counter for each = the setting of mod1_sync
+    // or mod2_sync (defaults to 1 thus every trigger).
     if (settings.mod1_sync()) {
-       envelope.Trigger(ENV_SEGMENT_ATTACK);
+       mod1_sync_index += 1;
+       if (mod1_sync_index == settings.mod1_sync()) {
+          envelope.Trigger(ENV_SEGMENT_ATTACK);
+          mod1_sync_index = 0 ;
+       }
     }
     if (settings.mod2_sync()) {
-       envelope2.Trigger(ENV_SEGMENT_ATTACK);
+       mod2_sync_index += 1;
+       if (mod2_sync_index == settings.mod2_sync()) {
+          envelope2.Trigger(ENV_SEGMENT_ATTACK);
+          mod2_sync_index = 0 ;
+       }
     }
     if (metaseq_length) {
-       MacroOscillatorShape metaseq_shapes[16] = { settings.metaseq_shape1(),
+       MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
                        settings.metaseq_shape2(), settings.metaseq_shape3(),
                        settings.metaseq_shape4(), settings.metaseq_shape5(),
                        settings.metaseq_shape6(), settings.metaseq_shape7(),
-                       settings.metaseq_shape8(), settings.metaseq_shape9(),
-                       settings.metaseq_shape10(), settings.metaseq_shape11(),
-                       settings.metaseq_shape12(), settings.metaseq_shape13(),
-                       settings.metaseq_shape14(), settings.metaseq_shape15(),
-                       settings.metaseq_shape16()};                   
-       uint8_t metaseq_step_lengths[16] = { settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH2), settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH4), settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH6), settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH8), settings.GetValue(SETTING_METASEQ_STEP_LENGTH9),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH10), settings.GetValue(SETTING_METASEQ_STEP_LENGTH11),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH12), settings.GetValue(SETTING_METASEQ_STEP_LENGTH13),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH14), settings.GetValue(SETTING_METASEQ_STEP_LENGTH15),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH16) };
+                       settings.metaseq_shape8() };                   
+       uint8_t metaseq_step_lengths[8] = { 
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
+                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
        metaseq_steps_index += 1;
        if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
           metaseq_index += 1;
@@ -610,9 +622,12 @@ void RenderBlock() {
     
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
+  size_t decimation_factor = decimation_factors[settings.data().sample_rate];  
   uint16_t bit_mask = bit_reduction_masks[settings.resolution()];
   for (size_t i = 0; i < kBlockSize; ++i) {
-    sample = render_buffer[i] & bit_mask;
+    if ((i % decimation_factor) == 0) {
+       sample = render_buffer[i] & bit_mask;
+    }
     render_buffer[i] = static_cast<int32_t>(sample) * gain >> 16;
   }
   render_block = (render_block + 1) % kNumBlocks;

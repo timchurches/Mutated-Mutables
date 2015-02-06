@@ -104,6 +104,18 @@ enum Resolution {
   RESOLUTION_LAST
 };
 
+enum SampleRate {
+  SAMPLE_RATE_4K,
+  SAMPLE_RATE_8K,
+  SAMPLE_RATE_16K,
+  SAMPLE_RATE_24k,
+  SAMPLE_RATE_32k,
+  SAMPLE_RATE_48K,
+  SAMPLE_RATE_96K,
+  SAMPLE_RATE_LAST
+};
+
+
 enum PitchQuantization {
   PITCH_QUANTIZATION_OFF,
   PITCH_QUANTIZATION_QUARTER_TONE,
@@ -177,23 +189,8 @@ enum Setting {
   SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_STEP_LENGTH8, 
-  SETTING_METASEQ_SHAPE9, 
-  SETTING_METASEQ_STEP_LENGTH9, 
-  SETTING_METASEQ_SHAPE10, 
-  SETTING_METASEQ_STEP_LENGTH10, 
-  SETTING_METASEQ_SHAPE11, 
-  SETTING_METASEQ_STEP_LENGTH11, 
-  SETTING_METASEQ_SHAPE12, 
-  SETTING_METASEQ_STEP_LENGTH12, 
-  SETTING_METASEQ_SHAPE13, 
-  SETTING_METASEQ_STEP_LENGTH13, 
-  SETTING_METASEQ_SHAPE14, 
-  SETTING_METASEQ_STEP_LENGTH14, 
-  SETTING_METASEQ_SHAPE15, 
-  SETTING_METASEQ_STEP_LENGTH15, 
-  SETTING_METASEQ_SHAPE16, 
-  SETTING_METASEQ_STEP_LENGTH16, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_STEP_LENGTH16,
+  SETTING_SAMPLE_RATE,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_SAMPLE_RATE,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -260,23 +257,8 @@ struct SettingsData {
   uint8_t metaseq_step_length7;
   uint8_t metaseq_shape8;
   uint8_t metaseq_step_length8;
-  uint8_t metaseq_shape9;
-  uint8_t metaseq_step_length9;
-  uint8_t metaseq_shape10;
-  uint8_t metaseq_step_length10;
-  uint8_t metaseq_shape11;
-  uint8_t metaseq_step_length11;
-  uint8_t metaseq_shape12;
-  uint8_t metaseq_step_length12;
-  uint8_t metaseq_shape13;
-  uint8_t metaseq_step_length13;
-  uint8_t metaseq_shape14;
-  uint8_t metaseq_step_length14;
-  uint8_t metaseq_shape15;
-  uint8_t metaseq_step_length15;
-  uint8_t metaseq_shape16;
-  uint8_t metaseq_step_length16;
-  uint8_t extra_padding[10];
+  uint8_t sample_rate;  
+  uint8_t extra_padding[26];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -325,6 +307,10 @@ class Settings {
   
   inline Resolution resolution() const {
     return static_cast<Resolution>(data_.resolution);
+  }
+
+  inline SampleRate sample_rate() const {
+    return static_cast<SampleRate>(data_.sample_rate);
   }
   
   inline bool rate_inversion() const {
@@ -497,38 +483,6 @@ class Settings {
 
   inline MacroOscillatorShape metaseq_shape8() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
-  }
-
-  inline MacroOscillatorShape metaseq_shape9() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape9);
-  }
-
-  inline MacroOscillatorShape metaseq_shape10() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape10);
-  }
-
-  inline MacroOscillatorShape metaseq_shape11() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape11);
-  }
-
-  inline MacroOscillatorShape metaseq_shape12() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape12);
-  }
-   
-  inline MacroOscillatorShape metaseq_shape13() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape13);
-  }
-
-  inline MacroOscillatorShape metaseq_shape14() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape14);
-  }
-
-  inline MacroOscillatorShape metaseq_shape15() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape15);
-  }
-
-  inline MacroOscillatorShape metaseq_shape16() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape16);
   }
    
   inline const SettingsData& data() const { return data_; }
