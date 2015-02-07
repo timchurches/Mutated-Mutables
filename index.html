@@ -38,7 +38,7 @@
 
 <p>First and foremost, huge thanks are due to <a href="https://media.licdn.com/mpr/mpr/shrink_500_500/p/4/005/041/08d/3190533.jpg">Olivier Gillet</a> of <a href="http://mutable-instruments.net">Mutable Instruments</a> for creating Braids and his other wonderful Eurorack synth modules - in terms of depth and breadth of creativity, elegance and excellence of implementation and execution, they are head-and-shoulders above other Eurorack synth modules. But equally huge thanks are due to Olivier for having the vision, courage and faith to release the designs and source code for his modules under open-source licenses. Without that, the modifications which are documented here would not have been possible.</p>
 
-<p>Many thanks also to <a href="http://sneak-thief.com">Sneak-Thief</a> in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the initial design of the Bees-in-the-Trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!). Thanks are also due to <em>weliveincities</em> (aka Chris), <em>Bmhot</em>, <em>stevencrichton</em> and <em>stevenb</em> (aka Steven Barsky) on the Mutable Instruments forum for their invaluable help in testing alpha and beta versions, finding and reporting various bugs, and providing feedback.</p>
+<p>Many thanks also to <a href="http://sneak-thief.com">Sneak-Thief</a> in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the initial design of the Bees-in-the-Trees modifications, and finally for actively testing the code and discovering several bugs (and documenting how to reproduce them!). Thanks are also due to <em>weliveincities</em> (aka Chris), <em>Bmhot</em>, <em>stevencrichton</em>, <em>stevenb</em> (aka Steven Barsky) and <em>AcousmatiK</em> on the Mutable Instruments forum for their invaluable help in testing alpha and beta versions, finding and reporting various bugs, and providing feedback.</p>
 
 <h1>
 <a id="Bees-in-the-Trees" class="anchor" href="#Bees-in-the-Trees" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees</h1>
@@ -71,6 +71,8 @@
 
 <h2>
 <a id="Bees-in-the-Trees-enhancements" class="anchor" href="#Bees-in-the-Trees-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes to the factory Braids firmware made by Bees-in-the-Trees</h2>
+
+<p>The following documentation relates to Bees-in-the-Trees version 3y.</p>
 
 <ul>
 <li>Instead of a single internal envelope, there are now two internal modulators, <code>MOD1</code> and <code>MOD2</code>. The <code>MOD1</code> and <code>MOD2</code> menu settings allow each internal modulator to be turned off (<b>OFF</b>), put in in LFO mode (<b>LFO</b>), or in one of two envelope modes (<b>ENV-</b> and <b>ENV+</b>). <b>ENV-</b> and <b>ENV+</b> are negative and positive envelopes respectively - <b>ENV+</b> is like a traditional attack-decay envelope, <b>ENV-</b> is the  inverse.</li>
@@ -210,11 +212,9 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <ul>
 <li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change.</li>
-<li>PENDING: Prevent the LFO frequency or the total envelope duration from changing when the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted.</li>
-<li>MAYBE: Some of the parameters in Bees-in-the-Trees have ranges of 0 to 250, and some 0 to 127. I did have some vague plans to rationalise that and make them all 0 to 127, or all 0 to 250, at least in the user interface. However, some use steps of 5, others use steps of 1, in order to provide very fine resolution. Those steps may need to be tweaked to minimise the need for encoder twisting, while retaining adequately fine control over critical parameters (pitch modulation and LFO rates in particular).</li>
-<li>NOT FEASIBLE: It would be great to add a constrain-to-scales scales capability, similar to the one in Yarns or in the Shruthi and Ambika, to the pitch quantisation facility. However, such a feature requires various look-up tables, and there is just not enough flash storage space remaining - the firmware is almost at maximum size as it is.</li>
-<li>NOT FEASIBLE: Alternatively, it might be possible to add a simple step sequencer to Braids, like the ones in the Anushri and in Yarns. However, there may not be enough room, and I am very reluctant to remove any more features or oscillator models from Bees-in-the-Trees to  accomodate it. Braids-with-built-in-sequencer might need to be a separate set of modifications resulting in different firmware yet again.</li>
+<li>PENDING: Prevent the LFO frequency or the total envelope duration from changing when the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. Did I mention that integer arithmetic is a pain in the arse?</li>
 </ul>
+<p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured in the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>.</p>
 
 <h1>
 <a id="encoder-direction" class="anchor" href="#encoder-direction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoder direction</h1>
