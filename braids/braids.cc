@@ -539,14 +539,14 @@ void RenderBlock() {
     // or mod2_sync (defaults to 1 thus every trigger).
     if (settings.mod1_sync()) {
        mod1_sync_index += 1;
-       if (mod1_sync_index == settings.mod1_sync()) {
+       if (mod1_sync_index >= settings.mod1_sync()) {
           envelope.Trigger(ENV_SEGMENT_ATTACK);
           mod1_sync_index = 0 ;
        }
     }
     if (settings.mod2_sync()) {
        mod2_sync_index += 1;
-       if (mod2_sync_index == settings.mod2_sync()) {
+       if (mod2_sync_index >= settings.mod2_sync()) {
           envelope2.Trigger(ENV_SEGMENT_ATTACK);
           mod2_sync_index = 0 ;
        }
