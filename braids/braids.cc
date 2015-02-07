@@ -183,7 +183,7 @@ void RenderBlock() {
 
   // debug_pin.High();
 
-  uint8_t meta_mod = settings.meta_modulation();
+  uint8_t meta_mod = settings.meta_modulation(); // FMCV setting, in fact
   uint8_t modulator1_mode = settings.mod1_mode();
   uint8_t modulator2_mode = settings.mod2_mode();
 
@@ -495,7 +495,7 @@ void RenderBlock() {
   // jitter depth now settable and voltage controllable.
   // TO-DO jitter still causes pitch to sharpen slightly - why?
   int32_t vco_drift = settings.vco_drift();
-  if (meta_mod == 5) {
+  if (meta_mod == 6 || meta_mod == 9 || meta_mod == 10 || meta_mod == 12) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
@@ -580,7 +580,7 @@ void RenderBlock() {
   uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
   int32_t gain = settings.initial_gain(); 
   // add external CV if FMCV used for level
-  if (meta_mod == 6) {
+  if (meta_mod == 5) {
      gain += settings.adc_to_fm(adc.channel(3)) << 4; // was 3 
   } 
   // Gain mod by modulator 1
@@ -604,11 +604,33 @@ void RenderBlock() {
   else if (gain < 0) {
       gain = 0;
   }
-    
+
+  // Voltage control of bit crushing
+  uint8_t bits_value = settings.resolution();
+  if (meta_mod == 7 || meta_mod == 9 || meta_mod >= 11 ) {
+     bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
+     if (bits_value < 0) {
+	    bits_value = 0 ;
+     } else if (bits_value > 6) {
+        bits_value = 6;
+     }
+  }
+
+  // Voltage control of sample rate decimation
+  uint8_t sample_rate_value = settings.data().sample_rate;
+  if (meta_mod == 8 || meta_mod >= 10 ) {
+     sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
+     if (sample_rate_value < 0) {
+	    sample_rate_value = 0 ;
+     } else if (sample_rate_value > 6) {
+        sample_rate_value = 6;
+     }
+  }
+     
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
-  size_t decimation_factor = decimation_factors[settings.data().sample_rate];  
-  uint16_t bit_mask = bit_reduction_masks[settings.resolution()];
+  size_t decimation_factor = decimation_factors[sample_rate_value];  
+  uint16_t bit_mask = bit_reduction_masks[bits_value];
   for (size_t i = 0; i < kBlockSize; ++i) {
     if ((i % decimation_factor) == 0) {
        sample = render_buffer[i] & bit_mask;

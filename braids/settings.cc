@@ -193,13 +193,13 @@ const char* const bits_values[] = {
 };
 
 const char* const sample_rate_values[] = {
-    "4KHZ",
-    "8KHZ",
-    "16K",
-    "24K",
-    "32K",
-    "48K",
-    "96K" };
+    "4KHZ", // 0
+    "8KHZ", // 1
+    "16K",  // 2
+    "24K",  // 3
+    "32K",  // 4
+    "48K",  // 5
+    "96K" }; // 6
 
   
 const char* const mod_rate_values[] = {
@@ -423,8 +423,14 @@ const char* const meta_values[] = {
     "RATE", // 2
     "RAT1", // 3
     "RAT2", // 4
-    "JITR", // 5
-    "LEVL", // 6
+    "LEVL", // 5
+    "JITR", // 6
+    "BITS", // 7
+    "SRAT", // 8
+    "DIRT", // 9 = BITS + JITR
+    "FLTH", // 10 = SRAT + JITR
+    "UGLY", // 11 = BITS + SRAT
+    "FCKD", // 12 = BITS + SRAT + JITR
 };
 
 const char* const ad_ratio_values[] = { 
@@ -498,7 +504,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 6, "FMCV", meta_values },
+  { 0, 12, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
