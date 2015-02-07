@@ -70,7 +70,7 @@
 <p>Bees-in-the-Trees is intended for expert users of the Braids module. It, and this documentation, presumes a good understanding of the way in which Braids running the  official, factory firmware works. If you have only recently obtained your Braids module, then it is strongly recommended that you spend some time (days, weeks, months) thoroughly familiarising yourself with it before trying Bees-in-the-Trees. Braids is a complex, deep module - it isn't called a <b><em>MacroOscillator</em></b> for nothing! Bees-in-the-Trees only makes it more complex. Also, this documentation is intended to be a <em>meta-manual</em>, to be read in conjunction with or as an adjunct to the <a href="http://mutable-instruments.net/modules/braids/manual">official Braids manual</a>.</p>
 
 <h2>
-<a id="Bees-in-the-Trees-version-3w-enhancements" class="anchor" href="#Bees-in-the-Trees-version-3w-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enhancements made by Bees-in-the-Trees</h2>
+<a id="Bees-in-the-Trees-enhancements" class="anchor" href="#Bees-in-the-Trees-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes to the factory Braids firmware made by Bees-in-the-Trees</h2>
 
 <ul>
 <li>Instead of a single internal envelope, there are now two internal modulators, <code>MOD1</code> and <code>MOD2</code>. The <code>MOD1</code> and <code>MOD2</code> menu settings allow each internal modulator to be turned off (<b>OFF</b>), put in in LFO mode (<b>LFO</b>), or in one of two envelope modes (<b>ENV-</b> and <b>ENV+</b>). <b>ENV-</b> and <b>ENV+</b> are negative and positive envelopes respectively - <b>ENV+</b> is like a traditional attack-decay envelope, <b>ENV-</b> is the  inverse.</li>
@@ -112,7 +112,10 @@
 <li><b>JITR</b> provides voltage control over VCO jitter (drift), with a base level set by the <code>JITR</code> menu setting.</li>
 <li><b>BITS</b> provides voltage control over bit crush depth, with a base level set by the <code>BITS</code> menu setting. Increasing voltage reduces the number of bits in the output signal.</li>
 <li><b>SRAT</b> provides voltage control over sample rate (decimation), with a base level set by the <code>SRAT</code> menu setting. Increasing voltage reduces the sample rate (that is, increases the decimation) of the output signal.</li>
-<li><b>DIRT</b> puts both provides voltage control over sample rate (decimation), with a base level set by the <code>SRAT</code> menu setting. Increasing voltage reduces the sample rate (that is, increases the decimation) of the output signal.</li>
+<li><b>DIRT</b> puts both provides simultaneous voltage control over both bit crushing (BITS) and VCO jitter (JITR).</li>
+<li><b>FLTH</b> puts both provides simultaneous voltage control over both sample rate reduction (SRAT) and VCO jitter (JITR).</li>
+<li><b>UGLY</b> puts both provides simultaneous voltage control over both sample rate reduction (SRAT) and bit crushing (BITS).</li>
+<li>The final setting provides simultaneous voltage control over both sample rate reduction (SRAT), bit crushing (BITS) and VCO jitter (JITR).</li>
 </ul>
 </li>
 <p>
