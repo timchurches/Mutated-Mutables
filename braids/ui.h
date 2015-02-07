@@ -85,6 +85,14 @@ class Ui {
     cv_[3] = cv_fm;
   }
   
+  // Following method is retained because it is responsible for causing the CV tester
+  // to blink on each trigger received. But we don't need to increment marquee_step 
+  // it no longer exists.
+  inline void StepMarquee() {
+    // marquee_step_++;
+    blink_ = true;
+  }
+
   // Overrides oscillator shape display when in meta mode.
   inline void set_meta_shape(MacroOscillatorShape shape) {
     meta_shape_ = shape;

@@ -563,6 +563,7 @@ void RenderBlock() {
        osc.set_shape(metaseq_current__shape);
        ui.set_meta_shape(metaseq_current__shape);     
     }
+    ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;
   }
 
