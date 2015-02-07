@@ -79,8 +79,6 @@ const SettingsData kInitSettings = {
   false,                // mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
   50,                   // initial_gain = 65535
-  0,                    // mod1_vco_jitter_depth
-  0,                    // mod2_vco_jitter_depth
   0,                    // metaseq
   0,                    // metaseq_shape1
   1,                    // metaseq_step_length1
@@ -99,7 +97,7 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_shape8
   1,                    // metaseq_step_length8
   SAMPLE_RATE_96K ,     // sample_rate
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -533,8 +531,6 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "M1C2", boolean_values },
   { 0, 1, "M1F2", boolean_values },
   { 0, 50, "GAIN", mod_depth_values },
-  { 0, 50, "M1" "\x85" "J", mod_depth_values },
-  { 0, 50, "M2" "\x85" "J", mod_depth_values },
   { 0, 16, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV1", algo_values },
   { 1, 127, "LEN1", mod_rate_values },
@@ -571,7 +567,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD1_COLOR_DEPTH,
   SETTING_MOD1_LEVEL_DEPTH,
   SETTING_MOD1_VIBRATO_DEPTH,
-  SETTING_MOD1_VCO_JITTER_DEPTH,
   SETTING_MOD1_MOD2_DEPTH,
   SETTING_MOD2_MODE,
   SETTING_MOD2_RATE,
@@ -582,7 +577,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_COLOR_DEPTH,
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
-  SETTING_MOD2_VCO_JITTER_DEPTH,
   SETTING_MOD1_MOD2_TIMBRE_DEPTH,
   SETTING_MOD1_MOD2_COLOR_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,

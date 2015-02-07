@@ -499,28 +499,13 @@ void RenderBlock() {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
-  
-    if (modulator1_mode == 2) {
-      vco_drift -= (ad_value * settings.mod1_vco_jitter_depth()) >> 15; // was 16
-    } else {
-      vco_drift += (ad_value * settings.mod1_vco_jitter_depth()) >> 15;
-    }  
-
-    if (modulator2_mode == 2) {
-      vco_drift -= (ad2_value * settings.mod2_vco_jitter_depth()) >> 15;
-    } else {
-      vco_drift += (ad2_value * settings.mod2_vco_jitter_depth()) >> 15;
-    }  
-  
      if (vco_drift < 0) {
 	    vco_drift = 0 ;
      } else if (vco_drift > 127) {
         vco_drift = 127;
      }
-
     // now apply the jitter
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
-        
   }
 
   // clip the pitch to prevent bad things from happening.

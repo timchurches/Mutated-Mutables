@@ -170,8 +170,6 @@ enum Setting {
   SETTING_MOD1_MOD2_COLOR_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_INITIAL_GAIN,
-  SETTING_MOD1_VCO_JITTER_DEPTH, 
-  SETTING_MOD2_VCO_JITTER_DEPTH, 
   SETTING_METASEQ,
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_STEP_LENGTH1, 
@@ -238,8 +236,6 @@ struct SettingsData {
   uint8_t mod1_mod2_color_depth; 
   uint8_t mod1_mod2_vibrato_depth; 
   uint8_t initial_gain; 
-  uint8_t mod1_vco_jitter_depth; 
-  uint8_t mod2_vco_jitter_depth; 
   uint8_t metaseq;
   uint8_t metaseq_shape1;
   uint8_t metaseq_step_length1;
@@ -258,7 +254,7 @@ struct SettingsData {
   uint8_t metaseq_shape8;
   uint8_t metaseq_step_length8;
   uint8_t sample_rate;  
-  uint8_t extra_padding[26];
+  uint8_t extra_padding[28];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -439,14 +435,6 @@ class Settings {
   
   inline int32_t initial_gain() const {
     return (data_.initial_gain * 1310);
-  }
-
-  inline uint8_t mod1_vco_jitter_depth() const {
-    return data_.mod1_vco_jitter_depth;
-  }
-
-  inline uint8_t mod2_vco_jitter_depth() const {
-    return data_.mod2_vco_jitter_depth;
   }
 
   inline uint8_t metaseq() const {
