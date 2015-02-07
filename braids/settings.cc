@@ -536,7 +536,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "M1T2", boolean_values },
   { 0, 1, "M1C2", boolean_values },
   { 0, 1, "M1F2", boolean_values },
-  { 0, 50, "GAIN", mod_depth_values },
+  { 0, 50, "LEVL", mod_depth_values },
   { 0, 16, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV1", algo_values },
   { 1, 127, "LEN1", mod_rate_values },
