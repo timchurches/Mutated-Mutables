@@ -194,7 +194,7 @@ enum Setting {
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   SETTING_VERSION,
-  SETTING_LAST
+  SETTING_LAST,
 };
 
 struct SettingsData {

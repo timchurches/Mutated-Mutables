@@ -115,6 +115,7 @@ class Ui {
   UiMode mode_;
   int16_t setting_index_;
   Setting setting_;
+  Setting last_setting_;
   
   Display display_;
   Encoder encoder_;
@@ -124,6 +125,7 @@ class Ui {
   
   uint8_t splash_frame_;
   bool blink_;
+  bool reset_enabled_;
   
   MacroOscillatorShape meta_shape_;
 

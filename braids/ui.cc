@@ -50,7 +50,9 @@ void Ui::Init() {
   value_ = 0;
   mode_ = MODE_SPLASH;
   setting_ = SETTING_OSCILLATOR_SHAPE;
+  last_setting_ = setting_;
   setting_index_ = 0;
+  reset_enabled_ = false;
 }
 
 void Ui::Poll() {
@@ -142,10 +144,28 @@ void Ui::OnLongClick() {
     case MODE_MENU:
       if (setting_ == SETTING_CALIBRATION) {
         mode_ = MODE_CALIBRATION_STEP_1;
-      } else if (setting_ == SETTING_VERSION) {
+      } else if (setting_ == SETTING_VERSION && !reset_enabled_) {
+        reset_enabled_ = true;
+        setting_ = SETTING_OSCILLATOR_SHAPE;
+        mode_ = MODE_EDIT;
+      } else if (setting_ == SETTING_VERSION && reset_enabled_) {
         settings.Reset();
         settings.Save();
-      } 
+        reset_enabled_ = false;
+        setting_ = SETTING_OSCILLATOR_SHAPE;
+        mode_ = MODE_EDIT;
+      } else {
+        last_setting_ = setting_;
+        setting_ = SETTING_OSCILLATOR_SHAPE;
+        mode_ = MODE_EDIT;
+      }
+      break;
+
+    case MODE_EDIT:
+      if (setting_ == SETTING_OSCILLATOR_SHAPE) {
+         setting_ = last_setting_;
+         mode_ = MODE_MENU;
+      }
       break;
     
     default:
@@ -165,9 +185,11 @@ void Ui::OnClick() {
         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
           settings.Save();
         }
-      } else if (setting_ == SETTING_VERSION) {
-        mode_ = MODE_SPLASH;
-      }
+      } 
+      // disable mode splash here
+      // else if (setting_ == SETTING_VERSION) {
+      //   mode_ = MODE_SPLASH;
+      // }
       break;
       
     case MODE_CALIBRATION_STEP_1:
