@@ -156,6 +156,9 @@ void Ui::OnLongClick() {
         setting_ = SETTING_OSCILLATOR_SHAPE;
         mode_ = MODE_EDIT;
       } else {
+        if (setting_ == SETTING_OSCILLATOR_SHAPE) {
+           settings.Save();
+        }      
         last_setting_ = setting_;
         setting_ = SETTING_OSCILLATOR_SHAPE;
         mode_ = MODE_EDIT;
