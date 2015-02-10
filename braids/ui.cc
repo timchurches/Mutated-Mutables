@@ -48,7 +48,8 @@ void Ui::Init() {
   queue_.Init();
   sub_clock_ = 0;
   value_ = 0;
-  mode_ = MODE_SPLASH;
+//  mode_ = MODE_SPLASH;
+  mode_ = MODE_EDIT;
   setting_ = SETTING_OSCILLATOR_SHAPE;
   last_setting_ = setting_;
   setting_index_ = 0;
@@ -90,13 +91,13 @@ void Ui::FlushEvents() {
 
 void Ui::RefreshDisplay() {
   switch (mode_) {
-    case MODE_SPLASH:
-      {
-        char text[] = "    ";
-        text[0] = '\x98' + (splash_frame_ & 0x7);
-        display_.Print(text);
-      }
-      break;
+//     case MODE_SPLASH:
+//       {
+//         char text[] = "    ";
+//         text[0] = '\x98' + (splash_frame_ & 0x7);
+//         display_.Print(text);
+//       }
+//       break;
     
     case MODE_EDIT:
       {
@@ -252,15 +253,15 @@ void Ui::DoEvents() {
   if (queue_.idle_time() > 1000) {
     refresh_display_ = true;
   }
-  if (queue_.idle_time() >= 50 && mode_ == MODE_SPLASH) {
-    ++splash_frame_;
-    if (splash_frame_ == 8) {
-      splash_frame_ = 0;
-      mode_ = MODE_EDIT;
-      setting_ = SETTING_OSCILLATOR_SHAPE;
-    }
-    refresh_display_ = true;
-  }
+//   if (queue_.idle_time() >= 50 && mode_ == MODE_SPLASH) {
+//     ++splash_frame_;
+//     if (splash_frame_ == 8) {
+//       splash_frame_ = 0;
+//       mode_ = MODE_EDIT;
+//       setting_ = SETTING_OSCILLATOR_SHAPE;
+//     }
+//     refresh_display_ = true;
+//   }
   if (queue_.idle_time() >= 50 &&
       (setting_ == SETTING_CV_TESTER)) {
     refresh_display_ = true;
