@@ -70,8 +70,14 @@ void Display::Refresh() {
   if (brightness_pwm_cycle_ <= brightness_) {
     GPIOB->BRR = kCharacterEnablePins[active_position_];
     active_position_ = (active_position_ + 1) % kDisplayWidth;
-    Shift14SegmentsWord(chr_characters[
-        static_cast<uint8_t>(buffer_[active_position_])]);
+    char_index_ = static_cast<uint8_t>(buffer_[active_position_]);
+    if (char_index_ < 33 || (char_index_ > 160 && char_index_ < 255)) {
+       Shift14SegmentsWord(0);
+    } else if (char_index_ >= 33 && char_index_ < 161) {
+       Shift14SegmentsWord(chr_characters[char_index_ - 33]);
+    } else if (char_index_ == 255) {
+       Shift14SegmentsWord(chr_characters[127]);
+    }
     GPIOB->BSRR = kCharacterEnablePins[active_position_];
   } else {
     GPIOB->BRR = kCharacterEnablePins[active_position_];

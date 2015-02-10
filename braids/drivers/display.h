@@ -53,6 +53,7 @@ class Display {
   void Shift14SegmentsWord(uint16_t data);
 
   char buffer_[kDisplayWidth];
+  uint8_t char_index_;
   uint16_t active_position_;
   uint16_t brightness_pwm_cycle_;
   uint16_t brightness_;
