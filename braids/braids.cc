@@ -178,7 +178,6 @@ void RenderBlock() {
   static int32_t previous_shape = 0;
   static uint8_t metaseq_steps_index = 0;
   static uint8_t metaseq_index = 0;
-  static uint8_t metaseq_current_gain = 50;
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
 
@@ -552,15 +551,6 @@ void RenderBlock() {
                        settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
                        settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
                        settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
-       uint8_t metaseq_levels[8] = { 
-                       settings.GetValue(SETTING_METASEQ_LEVEL1),
-                       settings.GetValue(SETTING_METASEQ_LEVEL2),   
-                       settings.GetValue(SETTING_METASEQ_LEVEL3),
-                       settings.GetValue(SETTING_METASEQ_LEVEL4),
-                       settings.GetValue(SETTING_METASEQ_LEVEL5),
-                       settings.GetValue(SETTING_METASEQ_LEVEL6),
-                       settings.GetValue(SETTING_METASEQ_LEVEL7),
-                       settings.GetValue(SETTING_METASEQ_LEVEL8) };
        metaseq_steps_index += 1;
        if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
           metaseq_index += 1;
@@ -569,10 +559,12 @@ void RenderBlock() {
           }
           metaseq_steps_index = 0;
        }
-       MacroOscillatorShape metaseq_current__shape = metaseq_shapes[metaseq_index];
-       osc.set_shape(metaseq_current__shape);
-       ui.set_meta_shape(metaseq_current__shape);
-       metaseq_current_gain = metaseq_levels[metaseq_index];     
+       MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
+       if (settings.metaseq_random()) {
+          metaseq_current_shape = metaseq_shapes[uint8_t(Random::GetWord() & 0x0007)];
+       }
+       osc.set_shape(metaseq_current_shape);
+       ui.set_meta_shape(metaseq_current_shape);
     }
     ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;
@@ -609,9 +601,6 @@ void RenderBlock() {
   } else if (modulator2_mode == 3) {
      gain += (ad2_value * mod2_level_depth) >> 8;
   }
-  if (metaseq_length) {
-     gain = (gain * metaseq_current_gain) / 50 ;
-  } 
   // clip the gain  
   if (gain > 65535) {
       gain = 65535;

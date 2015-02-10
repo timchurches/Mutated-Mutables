@@ -188,15 +188,8 @@ enum Setting {
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_STEP_LENGTH8, 
   SETTING_SAMPLE_RATE,
-  SETTING_METASEQ_LEVEL1, 
-  SETTING_METASEQ_LEVEL2, 
-  SETTING_METASEQ_LEVEL3, 
-  SETTING_METASEQ_LEVEL4, 
-  SETTING_METASEQ_LEVEL5, 
-  SETTING_METASEQ_LEVEL6, 
-  SETTING_METASEQ_LEVEL7, 
-  SETTING_METASEQ_LEVEL8, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_LEVEL8,
+  SETTING_METASEQ_RANDOM,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_RANDOM,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -262,15 +255,8 @@ struct SettingsData {
   uint8_t metaseq_shape8;
   uint8_t metaseq_step_length8;
   uint8_t sample_rate;  
-  uint8_t metaseq_level1;
-  uint8_t metaseq_level2;
-  uint8_t metaseq_level3;
-  uint8_t metaseq_level4;
-  uint8_t metaseq_level5;
-  uint8_t metaseq_level6;
-  uint8_t metaseq_level7;
-  uint8_t metaseq_level8;
-  uint8_t extra_padding[20];
+  uint8_t metaseq_random;
+  uint8_t extra_padding[27];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -487,6 +473,10 @@ class Settings {
 
   inline MacroOscillatorShape metaseq_shape8() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
+  }
+
+  inline bool metaseq_random() const {
+    return data_.metaseq_random;
   }
    
   inline const SettingsData& data() const { return data_; }

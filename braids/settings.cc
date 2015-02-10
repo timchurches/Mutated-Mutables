@@ -97,15 +97,8 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_shape8
   1,                    // metaseq_step_length8
   SAMPLE_RATE_96K,      // sample_rate
-  50,                   // metaseq_level1
-  50,                   // metaseq_level2
-  50,                   // metaseq_level3
-  50,                   // metaseq_level4
-  50,                   // metaseq_level5
-  50,                   // metaseq_level6
-  50,                   // metaseq_level6
-  50,                   // metaseq_level8
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  false,                // metaseq_random
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -555,14 +548,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV8", algo_values },
   { 1, 127, "LEN8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
-  { 0, 50, "LEV1", mod_depth_values },
-  { 0, 50, "LEV2", mod_depth_values },
-  { 0, 50, "LEV3", mod_depth_values },
-  { 0, 50, "LEV4", mod_depth_values },
-  { 0, 50, "LEV5", mod_depth_values },
-  { 0, 50, "LEV6", mod_depth_values },
-  { 0, 50, "LEV7", mod_depth_values },
-  { 0, 50, "LEV8", mod_depth_values },
+  { 0, 1, "MDIR", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3y", NULL },  // Placeholder for version string
@@ -608,30 +594,23 @@ const Setting Settings::settings_order_[] = {
   SETTING_RESOLUTION,
   SETTING_SAMPLE_RATE,
   SETTING_VCO_DRIFT,
-  SETTING_METASEQ, 
+  SETTING_METASEQ,
+  SETTING_METASEQ_RANDOM, 
   SETTING_METASEQ_SHAPE1, 
-  SETTING_METASEQ_LEVEL1, 
   SETTING_METASEQ_STEP_LENGTH1, 
   SETTING_METASEQ_SHAPE2, 
-  SETTING_METASEQ_LEVEL2, 
   SETTING_METASEQ_STEP_LENGTH2, 
   SETTING_METASEQ_SHAPE3, 
-  SETTING_METASEQ_LEVEL3, 
   SETTING_METASEQ_STEP_LENGTH3, 
   SETTING_METASEQ_SHAPE4, 
-  SETTING_METASEQ_LEVEL4, 
   SETTING_METASEQ_STEP_LENGTH4, 
   SETTING_METASEQ_SHAPE5, 
-  SETTING_METASEQ_LEVEL5, 
   SETTING_METASEQ_STEP_LENGTH5, 
   SETTING_METASEQ_SHAPE6, 
-  SETTING_METASEQ_LEVEL6, 
   SETTING_METASEQ_STEP_LENGTH6, 
   SETTING_METASEQ_SHAPE7, 
-  SETTING_METASEQ_LEVEL7, 
   SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
-  SETTING_METASEQ_LEVEL8, 
   SETTING_METASEQ_STEP_LENGTH8, 
   SETTING_BRIGHTNESS, 
   SETTING_CALIBRATION,
