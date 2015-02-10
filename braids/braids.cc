@@ -177,7 +177,8 @@ void RenderBlock() {
   static int32_t previous_pitch = 0;
   static int32_t previous_shape = 0;
   static uint8_t metaseq_steps_index = 0;
-  static uint8_t metaseq_index = 0;
+  static int8_t metaseq_index = 0;
+  static bool current_mseq_dir = true;
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
 
@@ -552,17 +553,42 @@ void RenderBlock() {
                        settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
                        settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
        metaseq_steps_index += 1;
+       uint8_t metaseq_direction = settings.metaseq_direction();
        if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
-          metaseq_index += 1;
-          if (metaseq_index > (metaseq_length - 1)) { 
-             metaseq_index = 0;
-          }
           metaseq_steps_index = 0;
+          if (metaseq_direction == 0) {
+             // ascending
+             metaseq_index += 1;
+             if (metaseq_index > (metaseq_length - 1)) { 
+                metaseq_index = 0;
+             }
+          } else if (metaseq_direction == 1) {
+             // descending
+             metaseq_index -= 1;
+             if (metaseq_index < 0) { 
+                metaseq_index = metaseq_length - 1;
+             }             
+          } else if (metaseq_direction == 2) {
+             // swing
+             if (current_mseq_dir) {
+                // ascending
+                metaseq_index += 1;
+                if (metaseq_index == (metaseq_length - 1)) { 
+                   current_mseq_dir = !current_mseq_dir;
+                }
+             } else {
+                // descending
+                metaseq_index -= 1;
+                if (metaseq_index == 0) { 
+                   current_mseq_dir = !current_mseq_dir;
+                }
+            }             
+          } else if (metaseq_direction == 3) {
+             // random
+             metaseq_index = int8_t(Random::GetWord() & 0x0007);
+          }
        }
        MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
-       if (settings.metaseq_random()) {
-          metaseq_current_shape = metaseq_shapes[uint8_t(Random::GetWord() & 0x0007)];
-       }
        osc.set_shape(metaseq_current_shape);
        ui.set_meta_shape(metaseq_current_shape);
     }

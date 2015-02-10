@@ -97,7 +97,7 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_shape8
   1,                    // metaseq_step_length8
   SAMPLE_RATE_96K,      // sample_rate
-  false,                // metaseq_random
+  0,                    // metaseq_direction
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
@@ -490,6 +490,13 @@ const char* const metaseq_values[] = {
     "8",
 };
 
+const char* const metaseq_dir_values[] = {
+    "UP",   // 0
+    "DOWN", // 1
+    "SWNG", // 2
+    "RNDM", // 3
+};
+
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
@@ -548,7 +555,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV8", algo_values },
   { 1, 127, "LEN8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
-  { 0, 1, "MDIR", boolean_values },
+  { 0, 3, "MDIR", metaseq_dir_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3y", NULL },  // Placeholder for version string
@@ -595,7 +602,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_SAMPLE_RATE,
   SETTING_VCO_DRIFT,
   SETTING_METASEQ,
-  SETTING_METASEQ_RANDOM, 
+  SETTING_METASEQ_DIRECTION, 
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_STEP_LENGTH1, 
   SETTING_METASEQ_SHAPE2, 
