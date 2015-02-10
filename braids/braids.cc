@@ -585,7 +585,7 @@ void RenderBlock() {
             }             
           } else if (metaseq_direction == 3) {
              // random
-             metaseq_index = int8_t(Random::GetWord() & 0x0007);
+             metaseq_index = Random::GetWord() >> 13;
           }
        }
        MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
