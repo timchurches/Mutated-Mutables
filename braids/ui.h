@@ -114,6 +114,7 @@ class Ui {
   
   UiMode mode_;
   int16_t setting_index_;
+  int16_t last_setting_index_;
   Setting setting_;
   Setting last_setting_;
   

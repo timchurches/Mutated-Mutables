@@ -76,7 +76,7 @@ class Envelope {
     segment_ = segment;
     phase_ = 0;
   }
-
+  
   inline uint16_t Render(bool LfoMode, uint8_t EnvTypeA, uint8_t EnvTypeD) {
     uint32_t increment = increment_[segment_];
     phase_ += increment;
@@ -87,7 +87,7 @@ class Envelope {
 
     if (phase_ < increment) {
       value_ = Mix(a_, b_, 65535);
-      // This makes the envelope loop if LFO mode selected in META
+      // This makes the envelope loop if LFO mode selected
       if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
          Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
       } 

@@ -184,14 +184,14 @@ void RenderBlock() {
 
   // debug_pin.High();
 
-  uint8_t meta_mod = settings.meta_modulation(); // FMCV setting, in fact
-  uint8_t modulator1_mode = settings.mod1_mode();
-  uint8_t modulator2_mode = settings.mod2_mode();
+  uint8_t meta_mod = settings.GetValue(SETTING_META_MODULATION); // FMCV setting, in fact
+  uint8_t modulator1_mode = settings.GetValue(SETTING_MOD1_MODE);
+  uint8_t modulator2_mode = settings.GetValue(SETTING_MOD2_MODE);
 
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
-  uint32_t env_param = uint32_t (settings.mod1_rate());
+  uint32_t env_param = uint32_t (settings.GetValue(SETTING_MOD1_RATE));
   uint32_t env_a = 0;
   uint32_t env_d = 0;
   // add the external voltage to this.
@@ -216,7 +216,7 @@ void RenderBlock() {
   // These are ratios of attack to decay, from A/D = 0.02 
   // through to A/D=0.9, then A=D, then D/A = 0.9 down to 0.02
   // as listed in ad_ratio_values in settings.cc
-  uint8_t modulator1_ad_ratio = settings.mod1_ad_ratio();
+  uint8_t modulator1_ad_ratio = settings.GetValue(SETTING_MOD1_AD_RATIO);
   if (modulator1_ad_ratio == 0) {
    env_a = (env_param * 2) / 100; 
   } 
@@ -236,8 +236,8 @@ void RenderBlock() {
 
   // Render envelope in LFO mode, or not
   // envelope 1
-  uint8_t modulator1_attack_shape = settings.mod1_attack_shape();
-  uint8_t modulator1_decay_shape = settings.mod1_decay_shape();
+  uint8_t modulator1_attack_shape = settings.GetValue(SETTING_MOD1_ATTACK_SHAPE);
+  uint8_t modulator1_decay_shape = settings.GetValue(SETTING_MOD1_DECAY_SHAPE);
   uint16_t ad_value = 0 ;
   if (modulator1_mode == 1) { 
 	  // LFO mode
@@ -249,7 +249,7 @@ void RenderBlock() {
   }
 
   // TO-DO: instead of repeating code, use an array for env params and a loop!
-  uint32_t env2_param = uint32_t (settings.mod2_rate());
+  uint32_t env2_param = uint32_t (settings.GetValue(SETTING_MOD2_RATE));
   uint32_t env2_a = 0;
   uint32_t env2_d = 0;
   // add the external voltage to this.
@@ -275,7 +275,7 @@ void RenderBlock() {
   env2_a = env2_param;
   env2_d = env2_param;
   // Repeat for envelope2
-  uint8_t modulator2_ad_ratio = settings.mod2_ad_ratio();
+  uint8_t modulator2_ad_ratio = settings.GetValue(SETTING_MOD2_AD_RATIO);
   if (modulator2_ad_ratio == 0) {
 	env2_a = (env2_param * 2) / 100; 
   } 
@@ -294,8 +294,8 @@ void RenderBlock() {
 
   // Render envelope in LFO mode, or not
   // envelope 2
-  uint8_t modulator2_attack_shape = settings.mod2_attack_shape();
-  uint8_t modulator2_decay_shape = settings.mod2_decay_shape();
+  uint8_t modulator2_attack_shape = settings.GetValue(SETTING_MOD2_ATTACK_SHAPE);
+  uint8_t modulator2_decay_shape = settings.GetValue(SETTING_MOD2_DECAY_SHAPE);
   uint16_t ad2_value = 0 ;
   if (modulator2_mode == 1) { 
 	  // LFO mode
@@ -369,7 +369,7 @@ void RenderBlock() {
 
   // meta_modulation no longer a boolean  
   // meta-sequencer over-rides FMCV=META and the WAVE setting
-  uint8_t metaseq_length = settings.metaseq();
+  uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
   if (!metaseq_length) {
 	  if (meta_mod == 1) {
 		int32_t shape = adc.channel(3);
@@ -408,8 +408,8 @@ void RenderBlock() {
   int32_t pitch = settings.adc_to_pitch(pitch_adc_code);
   
     // add vibrato from modulators 1 and 2 before or after quantisation
-  uint8_t mod1_vibrato_depth = settings.mod1_vibrato_depth(); // 0 to 127
-  uint8_t mod2_vibrato_depth = settings.mod2_vibrato_depth(); // 0 to 127
+  uint8_t mod1_vibrato_depth = settings.GetValue(SETTING_MOD1_VIBRATO_DEPTH); // 0 to 127
+  uint8_t mod2_vibrato_depth = settings.GetValue(SETTING_MOD2_VIBRATO_DEPTH); // 0 to 127
   bool mod1_mod2_vibrato_depth = settings.mod1_mod2_vibrato_depth();
   bool quantize_vibrato = settings.quantize_vibrato();
 
@@ -537,61 +537,56 @@ void RenderBlock() {
           mod2_sync_index = 0 ;
        }
     }
-    if (metaseq_length) {
-       MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
-                       settings.metaseq_shape2(), settings.metaseq_shape3(),
-                       settings.metaseq_shape4(), settings.metaseq_shape5(),
-                       settings.metaseq_shape6(), settings.metaseq_shape7(),
-                       settings.metaseq_shape8() };                   
-       uint8_t metaseq_step_lengths[8] = { 
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
-                       settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
-       metaseq_steps_index += 1;
-       uint8_t metaseq_direction = settings.metaseq_direction();
-       if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
-          metaseq_steps_index = 0;
-          if (metaseq_direction == 0) {
-             // ascending
-             metaseq_index += 1;
-             if (metaseq_index > (metaseq_length - 1)) { 
-                metaseq_index = 0;
-             }
-          } else if (metaseq_direction == 1) {
-             // descending
-             metaseq_index -= 1;
-             if (metaseq_index < 0) { 
-                metaseq_index = metaseq_length - 1;
-             }             
-          } else if (metaseq_direction == 2) {
-             // swing
-             if (current_mseq_dir) {
-                // ascending
-                metaseq_index += 1;
-                if (metaseq_index == (metaseq_length - 1)) { 
-                   current_mseq_dir = !current_mseq_dir;
-                }
-             } else {
-                // descending
-                metaseq_index -= 1;
-                if (metaseq_index == 0) { 
-                   current_mseq_dir = !current_mseq_dir;
-                }
-            }             
-          } else if (metaseq_direction == 3) {
-             // random
-             metaseq_index = uint8_t(Random::GetWord() >> 29);
-          }
-       }
-       MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
-       osc.set_shape(metaseq_current_shape);
-       ui.set_meta_shape(metaseq_current_shape);
-    }
+    // meta-sequencer
+	if (metaseq_length) {
+		 MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
+						   settings.metaseq_shape2(), settings.metaseq_shape3(),
+						   settings.metaseq_shape4(), settings.metaseq_shape5(),
+						   settings.metaseq_shape6(), settings.metaseq_shape7(),
+						   settings.metaseq_shape8() };                   
+		 uint8_t metaseq_step_lengths[8] = { 
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
+	     metaseq_steps_index += 1;
+		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
+		 if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
+			  metaseq_steps_index = 0;
+			  if (metaseq_direction == 0) {
+				 // looping
+				 metaseq_index += 1;
+				 if (metaseq_index > (metaseq_length - 1)) { 
+					metaseq_index = 0;
+				 }
+			  } else if (metaseq_direction == 1) {
+				 // swing
+				 if (current_mseq_dir) {
+					// ascending
+					metaseq_index += 1;
+					if (metaseq_index == (metaseq_length - 1)) { 
+					   current_mseq_dir = !current_mseq_dir;
+					}
+				 } else {
+					// descending
+					metaseq_index -= 1;
+					if (metaseq_index == 0) { 
+					   current_mseq_dir = !current_mseq_dir;
+					}
+				}             
+			  } else if (metaseq_direction == 2) {
+				 // random
+				 metaseq_index = uint8_t(Random::GetWord() >> 29);
+			  }
+		 }
+		 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
+		 osc.set_shape(metaseq_current_shape);
+		 ui.set_meta_shape(metaseq_current_shape);
+	}
     ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;
   }

@@ -491,10 +491,9 @@ const char* const metaseq_values[] = {
 };
 
 const char* const metaseq_dir_values[] = {
-    "UP",   // 0
-    "DOWN", // 1
-    "SWNG", // 2
-    "RNDM", // 3
+    "LOOP", // 0
+    "SWNG", // 1
+    "RNDM", // 2
 };
 
 /* static */
@@ -555,7 +554,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV8", algo_values },
   { 1, 127, "LEN8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
-  { 0, 3, "MDIR", metaseq_dir_values },
+  { 0, 2, "MDIR", metaseq_dir_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3y", NULL },  // Placeholder for version string

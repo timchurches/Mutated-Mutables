@@ -53,6 +53,7 @@ void Ui::Init() {
   setting_ = SETTING_OSCILLATOR_SHAPE;
   last_setting_ = setting_;
   setting_index_ = 0;
+  last_setting_index_ = setting_index_;
   reset_enabled_ = false;
 }
 
@@ -103,7 +104,8 @@ void Ui::RefreshDisplay() {
       {
         uint8_t value = settings.GetValue(setting_);
         if (setting_ == SETTING_OSCILLATOR_SHAPE &&
-            (settings.meta_modulation() == 1 || settings.metaseq() )) {
+            (settings.GetValue(SETTING_META_MODULATION) == 1 ||
+             settings.GetValue(SETTING_METASEQ) )) {
           value = meta_shape_;
         }
         display_.Print(settings.metadata(setting_).strings[value]);
@@ -149,25 +151,30 @@ void Ui::OnLongClick() {
         reset_enabled_ = true;
         setting_ = SETTING_OSCILLATOR_SHAPE;
         mode_ = MODE_EDIT;
+        setting_index_ = 0;
       } else if (setting_ == SETTING_VERSION && reset_enabled_) {
         settings.Reset();
         settings.Save();
         reset_enabled_ = false;
         setting_ = SETTING_OSCILLATOR_SHAPE;
         mode_ = MODE_EDIT;
+        setting_index_ = 0;
       } else {
         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
            settings.Save();
         }      
         last_setting_ = setting_;
+        last_setting_index_ = setting_index_;
         setting_ = SETTING_OSCILLATOR_SHAPE;
         mode_ = MODE_EDIT;
+        setting_index_ = 0;
       }
       break;
 
     case MODE_EDIT:
       if (setting_ == SETTING_OSCILLATOR_SHAPE) {
          setting_ = last_setting_;
+         setting_index_ = last_setting_index_;
          mode_ = MODE_MENU;
       }
       break;
@@ -272,7 +279,8 @@ void Ui::DoEvents() {
   if (queue_.idle_time() >= 50 &&
       setting_ == SETTING_OSCILLATOR_SHAPE &&
       mode_ == MODE_EDIT &&
-      (settings.meta_modulation() == 1 || settings.metaseq())) {
+      (settings.GetValue(SETTING_META_MODULATION) == 1 || 
+       settings.GetValue(SETTING_METASEQ) )) {
     refresh_display_ = true;
   }
   if (refresh_display_) {
