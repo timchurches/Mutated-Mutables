@@ -428,9 +428,9 @@ const char* const meta_values[] = {
     "JITR", // 6
     "BITS", // 7
     "SRAT", // 8
-    "DIRT", // 9 = BITS + JITR
-    "FLTH", // 10 = SRAT + JITR
-    "UGLY", // 11 = BITS + SRAT
+    "SMUT", // 9 = BITS + JITR
+    "DIRT", // 10 = SRAT + JITR
+    "FLTH", // 11 = BITS + SRAT
     "FCKD", // 12 = BITS + SRAT + JITR
 };
 

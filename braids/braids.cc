@@ -181,7 +181,8 @@ void RenderBlock() {
   static bool current_mseq_dir = true;
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
-
+  static uint8_t previous_metaseq_direction = 0;
+  
   // debug_pin.High();
 
   uint8_t meta_mod = settings.GetValue(SETTING_META_MODULATION); // FMCV setting, in fact
@@ -555,6 +556,10 @@ void RenderBlock() {
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
 	     metaseq_steps_index += 1;
 		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
+		 if (metaseq_direction != previous_metaseq_direction) {
+		    metaseq_index = 0;   
+			metaseq_steps_index = 0;
+		 }
 		 if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
 			  metaseq_steps_index = 0;
 			  if (metaseq_direction == 0) {
@@ -568,7 +573,8 @@ void RenderBlock() {
 				 if (current_mseq_dir) {
 					// ascending
 					metaseq_index += 1;
-					if (metaseq_index == (metaseq_length - 1)) { 
+					if (metaseq_index >= (metaseq_length - 1)) {
+					   metaseq_index = metaseq_length - 1; 
 					   current_mseq_dir = !current_mseq_dir;
 					}
 				 } else {
@@ -586,6 +592,7 @@ void RenderBlock() {
 		 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
 		 osc.set_shape(metaseq_current_shape);
 		 ui.set_meta_shape(metaseq_current_shape);
+		 previous_metaseq_direction = metaseq_direction;
 	}
     ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;
