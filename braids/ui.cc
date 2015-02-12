@@ -48,12 +48,11 @@ void Ui::Init() {
   queue_.Init();
   sub_clock_ = 0;
   value_ = 0;
-  //  mode_ = MODE_SPLASH;
-  mode_ = MODE_EDIT;
   setting_ = SETTING_OSCILLATOR_SHAPE;
   last_setting_ = setting_;
   setting_index_ = 0;
   last_setting_index_ = setting_index_;
+  mode_ = MODE_SPLASH;
   // reset_enabled_ = false;
 }
 
@@ -92,13 +91,12 @@ void Ui::FlushEvents() {
 
 void Ui::RefreshDisplay() {
   switch (mode_) {
-//     case MODE_SPLASH:
-//       {
-//         char text[] = "    ";
-//         text[0] = '\x98' + (splash_frame_ & 0x7);
-//         display_.Print(text);
-//       }
-//       break;
+     case MODE_SPLASH:
+       {
+         char text[] = "Bees";
+         display_.Print(text);
+       }
+       break;
     
     case MODE_EDIT:
       {
@@ -155,15 +153,15 @@ void Ui::OnLongClick() {
         }
         if (settings.reset_type() & 1) {
            settings.Save();
-           setting_ = SETTING_OSCILLATOR_SHAPE;
-           last_setting_ = setting_;
-           mode_ = MODE_EDIT;
+           last_setting_ = SETTING_OSCILLATOR_SHAPE;
+           mode_ = MODE_SPLASH;
            setting_index_ = 0;
         }
       } else {
         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
            settings.Save();
-        }      
+        }   
+        // short-cut   
         last_setting_ = setting_;
         last_setting_index_ = setting_index_;
         setting_ = SETTING_OSCILLATOR_SHAPE;
@@ -234,10 +232,13 @@ void Ui::OnIncrement(const Event& e) {
     case MODE_MENU:
       {
         setting_index_ += e.data;
+        // allow menu to be an Ouroborus
         if (setting_index_ < 0) {
-          setting_index_ = 0;
-        } else if (setting_index_ >= SETTING_LAST) {
+          // setting_index_ = 0;
           setting_index_ = SETTING_LAST - 1;
+        } else if (setting_index_ >= SETTING_LAST) {
+          // setting_index_ = SETTING_LAST - 1;
+          setting_index_ = 0;
         }
         setting_ = settings.setting_at_index(setting_index_);
       }
@@ -264,15 +265,15 @@ void Ui::DoEvents() {
   if (queue_.idle_time() > 1000) {
     refresh_display_ = true;
   }
-//   if (queue_.idle_time() >= 50 && mode_ == MODE_SPLASH) {
-//     ++splash_frame_;
-//     if (splash_frame_ == 8) {
-//       splash_frame_ = 0;
-//       mode_ = MODE_EDIT;
-//       setting_ = SETTING_OSCILLATOR_SHAPE;
-//     }
-//     refresh_display_ = true;
-//   }
+  if (queue_.idle_time() >= 50 && mode_ == MODE_SPLASH) {
+     ++splash_frame_;
+     if (splash_frame_ == 8) {
+       splash_frame_ = 0;
+       mode_ = MODE_EDIT;
+       setting_ = SETTING_OSCILLATOR_SHAPE;
+     }
+     refresh_display_ = true;
+  }
   if (queue_.idle_time() >= 50 &&
       (setting_ == SETTING_CV_TESTER)) {
     refresh_display_ = true;

@@ -413,36 +413,34 @@ void RenderBlock() {
   uint8_t mod2_vibrato_depth = settings.GetValue(SETTING_MOD2_VIBRATO_DEPTH); // 0 to 127
   bool mod1_mod2_vibrato_depth = settings.mod1_mod2_vibrato_depth();
   bool quantize_vibrato = settings.quantize_vibrato();
+  int32_t pitch_delta1 = 0 ;
+  int32_t pitch_delta2 = 0 ;
 
-  if (quantize_vibrato) {
-     // vibrato should be bipolar
-     if (mod1_vibrato_depth) {
-        if (modulator1_mode == 2) {
-           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
-        } else {  
-           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
-        }    
-     }
-     // mod1 envelope mediates the degree of vibrato from mod2, or not.
+  // calculate vibrato amount, vibrato should be bipolar
+  if (mod1_vibrato_depth) {
+     pitch_delta1 = ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
+  }
+    
+  // mod1 envelope mediates the degree of vibrato from mod2, or not.
+  if (mod2_vibrato_depth) {
+     pitch_delta2 = ((ad2_value - 32767) * mod2_vibrato_depth) >> 11;
      if (mod1_mod2_vibrato_depth) {
-        if (mod2_vibrato_depth) {
-           int32_t pitch_delta = ((ad2_value - 32767) * mod2_vibrato_depth) >> 11;
-           pitch_delta = (pitch_delta * ad_value) >> 16;
-           if (modulator2_mode == 2) {
-              pitch -= pitch_delta;  
-           } else {
-              pitch += pitch_delta; 
-           }   
-        }
-     } else {
-        if (mod2_vibrato_depth) {
-           if (modulator2_mode == 2) {
-              pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ;  
-           } else {
-              pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; 
-           }        
-        }
+        pitch_delta2 = (pitch_delta2 * ad_value) >> 16;
      }
+  }
+
+  if (quantize_vibrato) {     
+	  if (modulator1_mode == 2) {
+		 pitch -= pitch_delta1; 
+	  } else {  
+		 pitch += pitch_delta1; 
+	  }    
+
+	  if (modulator2_mode == 2) {
+		 pitch -= pitch_delta2;
+	  } else {
+		 pitch += pitch_delta2;
+	  }        
   }
   
   if (settings.pitch_quantization() == PITCH_QUANTIZATION_QUARTER_TONE) {
@@ -450,6 +448,8 @@ void RenderBlock() {
   } else if (settings.pitch_quantization() == PITCH_QUANTIZATION_SEMITONE) {
     pitch = (pitch + 64) & 0xffffff80;
   }
+
+  // add FM
   if (meta_mod == 0) {
     pitch += settings.adc_to_fm(adc.channel(3));
   }
@@ -465,33 +465,17 @@ void RenderBlock() {
 
   // Or add vibrato here
   if (!quantize_vibrato) {
-     if (mod1_vibrato_depth) {
-        if (modulator1_mode == 2) {
-           pitch -= ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
-        } else {  
-           pitch += ((ad_value - 32767) * mod1_vibrato_depth) >> 11 ; 
-        }    
-     }
-     // mod1 envelope mediate the degree of vibrato from mod2, or not.
-     if (mod1_mod2_vibrato_depth) {
-        if (mod2_vibrato_depth) {
-           int32_t pitch_delta = ((ad2_value - 32767) * mod2_vibrato_depth) >> 11;
-           pitch_delta = (pitch_delta * ad_value) >> 16;
-           if (modulator2_mode == 2) {
-              pitch -= pitch_delta;  
-           } else {
-              pitch += pitch_delta; 
-           }   
-        }
-     } else {
-        if (mod2_vibrato_depth) {
-           if (modulator2_mode == 2) {
-              pitch -= ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ;  
-           } else {
-              pitch += ((ad2_value - 32767) * mod2_vibrato_depth) >> 11 ; 
-           }        
-        }
-     }
+	  if (modulator1_mode == 2) {
+		 pitch -= pitch_delta1; 
+	  } else {  
+		 pitch += pitch_delta1; 
+	  }    
+
+	  if (modulator2_mode == 2) {
+		 pitch -= pitch_delta2;
+	  } else {
+		 pitch += pitch_delta2;
+	  }        
   }
 
   // jitter depth now settable and voltage controllable.
