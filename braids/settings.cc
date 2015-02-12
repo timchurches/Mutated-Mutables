@@ -194,8 +194,8 @@ const char* const bits_values[] = {
 };
 
 const char* const sample_rate_values[] = {
-    "4KHZ", // 0
-    "8KHZ", // 1
+    "4K", // 0
+    "8K", // 1
     "16K",  // 2
     "24K",  // 3
     "32K",  // 4
@@ -454,8 +454,8 @@ const char* const ad_ratio_values[] = {
     "250", // 16
     "333", // 17
     "500", // 18
-    "1000", // 19
-    "5000", // 20
+    "1k", // 19
+    "5k", // 20
 };
 
 const char* const mod_shape_values[] = { 
@@ -538,21 +538,21 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 50, "LEVL", mod_depth_values },
   { 0, 8, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV1", algo_values },
-  { 1, 127, "LEN1", mod_rate_values },
+  { 1, 127, "RPT1", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV2", algo_values },
-  { 1, 127, "LEN2", mod_rate_values },
+  { 1, 127, "RPT2", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV3", algo_values },
-  { 1, 127, "LEN3", mod_rate_values },
+  { 1, 127, "RPT3", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV4", algo_values },
-  { 1, 127, "LEN4", mod_rate_values },
+  { 1, 127, "RPT4", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV5", algo_values },
-  { 1, 127, "LEN5", mod_rate_values },
+  { 1, 127, "RPT5", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV6", algo_values },
-  { 1, 127, "LEN6", mod_rate_values },
+  { 1, 127, "RPT6", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV7", algo_values },
-  { 1, 127, "LEN7", mod_rate_values },
+  { 1, 127, "RPT7", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV8", algo_values },
-  { 1, 127, "LEN8", mod_rate_values },
+  { 1, 127, "RPT8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
   { 0, 2, "SDIR", metaseq_dir_values },
   { 0, 0, "CAL.", NULL },

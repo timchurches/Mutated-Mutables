@@ -403,21 +403,21 @@ class Settings {
   //   return data_.mod2_vibrato_depth;
   // }
 
-  inline uint8_t mod1_mod2_depth() const {
-    return data_.mod1_mod2_depth;
-  }
+  // inline uint8_t mod1_mod2_depth() const {
+  //   return data_.mod1_mod2_depth;
+  // }
 
   inline bool quantize_vibrato() const {
     return data_.quantize_vibrato;
   }
 
-  inline uint8_t mod1_sync() const {
-    return data_.mod1_sync;
-  }
+  // inline uint8_t mod1_sync() const {
+  //   return data_.mod1_sync;
+  // }
 
-  inline uint8_t mod2_sync() const {
-    return data_.mod2_sync;
-  }
+  // inline uint8_t mod2_sync() const {
+  //   return data_.mod2_sync;
+  // }
 
   inline bool osc_sync() const {
     return data_.osc_sync;

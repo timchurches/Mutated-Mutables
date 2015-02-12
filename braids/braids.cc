@@ -181,7 +181,7 @@ void RenderBlock() {
   static bool current_mseq_dir = true;
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
-  static uint8_t previous_metaseq_direction = 0;
+  // static uint8_t previous_metaseq_direction = 0;
   
   // debug_pin.High();
 
@@ -259,7 +259,7 @@ void RenderBlock() {
 	 env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
   }
   // Add cross-modulation
-  int8_t mod1_mod2_depth = settings.mod1_mod2_depth();
+  int8_t mod1_mod2_depth = settings.GetValue(SETTING_MOD1_MOD2_DEPTH);
   if (mod1_mod2_depth) {
 	env2_param +=  (ad_value * mod1_mod2_depth) >> 18;
   }
@@ -524,16 +524,16 @@ void RenderBlock() {
     // reset internal modulator phase if mod1_sync or mod2_sync > 0
     // and if a trigger counter for each = the setting of mod1_sync
     // or mod2_sync (defaults to 1 thus every trigger).
-    if (settings.mod1_sync()) {
+    if (settings.GetValue(SETTING_MOD1_SYNC)) {
        mod1_sync_index += 1;
-       if (mod1_sync_index >= settings.mod1_sync()) {
+       if (mod1_sync_index >= settings.GetValue(SETTING_MOD1_SYNC)) {
           envelope.Trigger(ENV_SEGMENT_ATTACK);
           mod1_sync_index = 0 ;
        }
     }
-    if (settings.mod2_sync()) {
+    if (settings.GetValue(SETTING_MOD2_SYNC)) {
        mod2_sync_index += 1;
-       if (mod2_sync_index >= settings.mod2_sync()) {
+       if (mod2_sync_index >= settings.GetValue(SETTING_MOD2_SYNC)) {
           envelope2.Trigger(ENV_SEGMENT_ATTACK);
           mod2_sync_index = 0 ;
        }
@@ -556,10 +556,10 @@ void RenderBlock() {
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
 	     metaseq_steps_index += 1;
 		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-		 if (metaseq_direction != previous_metaseq_direction) {
-		    metaseq_index = 0;   
-			metaseq_steps_index = 0;
-		 }
+		 // if (metaseq_direction != previous_metaseq_direction) {
+		 //    metaseq_index = 0;   
+		 //    metaseq_steps_index = 0;
+		 // }
 		 if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
 			  metaseq_steps_index = 0;
 			  if (metaseq_direction == 0) {
@@ -592,7 +592,7 @@ void RenderBlock() {
 		 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
 		 osc.set_shape(metaseq_current_shape);
 		 ui.set_meta_shape(metaseq_current_shape);
-		 previous_metaseq_direction = metaseq_direction;
+		 // previous_metaseq_direction = metaseq_direction;
 	}
     ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;
