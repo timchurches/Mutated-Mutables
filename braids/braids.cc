@@ -565,7 +565,7 @@ void RenderBlock() {
 			  if (metaseq_direction == 0) {
 				 // looping
 				 metaseq_index += 1;
-				 if (metaseq_index > (metaseq_length - 1)) { 
+				 if (metaseq_index > metaseq_length) { 
 					metaseq_index = 0;
 				 }
 			  } else if (metaseq_direction == 1) {
@@ -573,8 +573,8 @@ void RenderBlock() {
 				 if (current_mseq_dir) {
 					// ascending
 					metaseq_index += 1;
-					if (metaseq_index >= (metaseq_length - 1)) {
-					   metaseq_index = metaseq_length - 1; 
+					if (metaseq_index >= metaseq_length) {
+					   metaseq_index = metaseq_length; 
 					   current_mseq_dir = !current_mseq_dir;
 					}
 				 } else {

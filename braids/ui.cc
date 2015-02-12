@@ -48,13 +48,13 @@ void Ui::Init() {
   queue_.Init();
   sub_clock_ = 0;
   value_ = 0;
-//  mode_ = MODE_SPLASH;
+  //  mode_ = MODE_SPLASH;
   mode_ = MODE_EDIT;
   setting_ = SETTING_OSCILLATOR_SHAPE;
   last_setting_ = setting_;
   setting_index_ = 0;
   last_setting_index_ = setting_index_;
-  reset_enabled_ = false;
+  // reset_enabled_ = false;
 }
 
 void Ui::Poll() {
@@ -147,18 +147,19 @@ void Ui::OnLongClick() {
     case MODE_MENU:
       if (setting_ == SETTING_CALIBRATION) {
         mode_ = MODE_CALIBRATION_STEP_1;
-      } else if (setting_ == SETTING_VERSION && !reset_enabled_) {
-        reset_enabled_ = true;
-        setting_ = SETTING_OSCILLATOR_SHAPE;
-        mode_ = MODE_EDIT;
-        setting_index_ = 0;
-      } else if (setting_ == SETTING_VERSION && reset_enabled_) {
-        settings.Reset();
-        settings.Save();
-        reset_enabled_ = false;
-        setting_ = SETTING_OSCILLATOR_SHAPE;
-        mode_ = MODE_EDIT;
-        setting_index_ = 0;
+      } else if (setting_ == SETTING_RESET_TYPE) {
+        if (settings.reset_type() == 1) {
+           settings.Reset(true);
+        } else if (settings.reset_type() == 3) {
+           settings.Reset(false);
+        }
+        if (settings.reset_type() & 1) {
+           settings.Save();
+           setting_ = SETTING_OSCILLATOR_SHAPE;
+           last_setting_ = setting_;
+           mode_ = MODE_EDIT;
+           setting_index_ = 0;
+        }
       } else {
         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
            settings.Save();

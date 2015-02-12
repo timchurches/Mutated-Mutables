@@ -189,7 +189,8 @@ enum Setting {
   SETTING_METASEQ_STEP_LENGTH8, 
   SETTING_SAMPLE_RATE,
   SETTING_METASEQ_DIRECTION,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_DIRECTION,
+  SETTING_RESET_TYPE,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_RESET_TYPE,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -256,7 +257,8 @@ struct SettingsData {
   uint8_t metaseq_step_length8;
   uint8_t sample_rate;  
   uint8_t metaseq_direction;
-  uint8_t extra_padding[27];
+  uint8_t reset_type;
+  uint8_t extra_padding[26];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -286,7 +288,7 @@ class Settings {
   
   void Init();
   void Save();
-  void Reset();
+  void Reset(bool except_cal_data);
   
   void SetValue(Setting setting, uint8_t value) {
     uint8_t* data = static_cast<uint8_t*>(static_cast<void*>(&data_));
@@ -478,6 +480,10 @@ class Settings {
   // inline uint8_t metaseq_direction() const {
   //   return data_.metaseq_direction;
   // }
+
+  inline uint8_t reset_type() const {
+    return data_.reset_type;
+  }
 
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }

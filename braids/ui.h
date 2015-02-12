@@ -124,9 +124,9 @@ class Ui {
   int16_t dac_code_c2_;
   int16_t cv_[4];
   
-//   uint8_t splash_frame_;
+  // uint8_t splash_frame_;
   bool blink_;
-  bool reset_enabled_;
+  // bool reset_enabled_;
   
   MacroOscillatorShape meta_shape_;
 

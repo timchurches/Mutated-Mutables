@@ -98,7 +98,8 @@ const SettingsData kInitSettings = {
   1,                    // metaseq_step_length8
   SAMPLE_RATE_96K,      // sample_rate
   0,                    // metaseq_direction
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  0,                    // reset_type
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -108,7 +109,7 @@ Storage<0x8020000, 4> storage;
 
 void Settings::Init() {
   if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
-    Reset();
+    Reset(false);
   }
   bool settings_within_range = true;
   for (int32_t i = 0; i <= SETTING_LAST_EDITABLE_SETTING; ++i) {
@@ -121,12 +122,22 @@ void Settings::Init() {
   }
   settings_within_range = settings_within_range && data_.magic_byte == 'B';
   if (!settings_within_range) {
-    Reset();
+    Reset(false);
   }  
 }
 
-void Settings::Reset() {
-  memcpy(&data_, &kInitSettings, sizeof(SettingsData));
+void Settings::Reset(bool except_cal_data) {
+  if (except_cal_data) {
+     int32_t saved_pitch_cv_offset = data_.pitch_cv_offset; 
+     int32_t saved_pitch_cv_scale = data_.pitch_cv_scale; 
+     int32_t saved_fm_cv_offset = data_.fm_cv_offset; 
+     memcpy(&data_, &kInitSettings, sizeof(SettingsData));
+     data_.pitch_cv_offset = saved_pitch_cv_offset; 
+     data_.pitch_cv_scale = saved_pitch_cv_scale; 
+     data_.fm_cv_offset = saved_fm_cv_offset; 
+  } else {
+     memcpy(&data_, &kInitSettings, sizeof(SettingsData));
+  }
   data_.magic_byte = 'B';
 }
 
@@ -479,21 +490,27 @@ const char* const mod_mode_values[] = {
 };
 
 const char* const metaseq_values[] = {
-    "OFF",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
+    "OFF",  // 0
+    "2",    // 1
+    "3",    // 2
+    "4",    // 3
+    "5",    // 4
+    "6",    // 5
+    "7",    // 6
+    "8",    // 7
 };
 
 const char* const metaseq_dir_values[] = {
     "LOOP", // 0
     "SWNG", // 1
     "RNDM", // 2
+};
+
+const char* const reset_type_values[] = {
+    "NO", // 0
+    "DFLT", // 1
+    "NO", // 2
+    "FULL", // 3
 };
 
 /* static */
@@ -536,7 +553,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "M1C2", boolean_values },
   { 0, 1, "M1F2", boolean_values },
   { 0, 50, "LEVL", mod_depth_values },
-  { 0, 8, "MSEQ", metaseq_values },
+  { 0, 7, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV1", algo_values },
   { 1, 127, "RPT1", mod_rate_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV2", algo_values },
@@ -555,6 +572,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "RPT8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
   { 0, 2, "SDIR", metaseq_dir_values },
+  { 0, 3, "RST ", reset_type_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "BT3y", NULL },  // Placeholder for version string
@@ -622,6 +640,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   SETTING_VERSION,
+  SETTING_RESET_TYPE,
 };
 
 /* extern */
