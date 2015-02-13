@@ -181,7 +181,6 @@ void RenderBlock() {
   static bool current_mseq_dir = true;
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
-  // static uint8_t previous_metaseq_direction = 0;
   
   // debug_pin.High();
 
@@ -408,7 +407,7 @@ void RenderBlock() {
   }
   int32_t pitch = settings.adc_to_pitch(pitch_adc_code);
   
-    // add vibrato from modulators 1 and 2 before or after quantisation
+  // add vibrato from modulators 1 and 2 before or after quantisation
   uint8_t mod1_vibrato_depth = settings.GetValue(SETTING_MOD1_VIBRATO_DEPTH); // 0 to 127
   uint8_t mod2_vibrato_depth = settings.GetValue(SETTING_MOD2_VIBRATO_DEPTH); // 0 to 127
   bool mod1_mod2_vibrato_depth = settings.mod1_mod2_vibrato_depth();
@@ -540,10 +539,6 @@ void RenderBlock() {
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
 	     metaseq_steps_index += 1;
 		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-		 // if (metaseq_direction != previous_metaseq_direction) {
-		 //    metaseq_index = 0;   
-		 //    metaseq_steps_index = 0;
-		 // }
 		 if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
 			  metaseq_steps_index = 0;
 			  if (metaseq_direction == 0) {
@@ -576,7 +571,6 @@ void RenderBlock() {
 		 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
 		 osc.set_shape(metaseq_current_shape);
 		 ui.set_meta_shape(metaseq_current_shape);
-		 // previous_metaseq_direction = metaseq_direction;
 	}
     ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;

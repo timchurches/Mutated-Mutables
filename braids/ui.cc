@@ -236,10 +236,10 @@ void Ui::OnIncrement(const Event& e) {
         setting_index_ += e.data;
         // allow menu to be an Ouroborus
         if (setting_index_ < 0) {
-          // setting_index_ = 0;
+          // setting_index_ = 0; // pre-Ouroboros
           setting_index_ = SETTING_LAST - 1;
         } else if (setting_index_ >= SETTING_LAST) {
-          // setting_index_ = SETTING_LAST - 1;
+          // setting_index_ = SETTING_LAST - 1; // pre-Ouroboros
           setting_index_ = 0;
         }
         setting_ = settings.setting_at_index(setting_index_);

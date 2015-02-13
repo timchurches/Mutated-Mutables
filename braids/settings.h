@@ -325,29 +325,9 @@ class Settings {
     return data_.vco_drift;
   }
 
-  // inline uint8_t meta_modulation() const {
-  //   return data_.meta_modulation;
-  // }
-  
   inline uint8_t trig_delay() const {
     return data_.trig_delay;
   }
-
-  // inline uint8_t mod1_attack_shape() const {
-  //   return data_.mod1_attack_shape;
-  // }
-
-  // inline uint8_t mod2_attack_shape() const {
-  //   return data_.mod2_attack_shape;
-  // }
-
-  // inline uint8_t mod1_decay_shape() const {
-  //   return data_.mod1_decay_shape;
-  // }
-
-  // inline uint8_t mod2_decay_shape() const {
-  //   return data_.mod2_decay_shape;
-  // }
 
   inline uint8_t mod1_timbre_depth() const {
     return data_.mod1_timbre_depth * 5;
@@ -356,30 +336,6 @@ class Settings {
   inline uint8_t mod2_timbre_depth() const {
     return data_.mod2_timbre_depth * 5;
   }
-
-  // inline uint8_t mod1_ad_ratio() const {
-  //   return data_.mod1_ad_ratio;
-  // }
-
-  // inline uint8_t mod2_ad_ratio() const {
-  //   return data_.mod2_ad_ratio;
-  // }
-
-  // inline uint8_t mod1_mode() const {
-  //   return data_.mod1_mode;
-  // }
-
-  // inline uint8_t mod2_mode() const {
-  //   return data_.mod2_mode;
-  // }
-
-  // inline uint8_t mod1_rate() const {
-  //   return data_.mod1_rate;
-  // }
-
-  // inline uint8_t mod2_rate() const {
-  //   return data_.mod2_rate;
-  // }
 
   inline uint8_t mod1_color_depth() const {
     return data_.mod1_color_depth * 5;
@@ -397,29 +353,9 @@ class Settings {
     return data_.mod2_level_depth * 5;
   }
 
-  // inline uint8_t mod1_vibrato_depth() const {
-  //   return data_.mod1_vibrato_depth;
-  // }
-
-  // inline uint8_t mod2_vibrato_depth() const {
-  //   return data_.mod2_vibrato_depth;
-  // }
-
-  // inline uint8_t mod1_mod2_depth() const {
-  //   return data_.mod1_mod2_depth;
-  // }
-
   inline bool quantize_vibrato() const {
     return data_.quantize_vibrato;
   }
-
-  // inline uint8_t mod1_sync() const {
-  //   return data_.mod1_sync;
-  // }
-
-  // inline uint8_t mod2_sync() const {
-  //   return data_.mod2_sync;
-  // }
 
   inline bool osc_sync() const {
     return data_.osc_sync;
@@ -440,10 +376,6 @@ class Settings {
   inline int32_t initial_gain() const {
     return (data_.initial_gain * 1310);
   }
-
-  // inline uint8_t metaseq() const {
-  //   return data_.metaseq;
-  // }
 
   inline MacroOscillatorShape metaseq_shape1() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape1);
@@ -476,10 +408,6 @@ class Settings {
   inline MacroOscillatorShape metaseq_shape8() const {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
   }
-
-  // inline uint8_t metaseq_direction() const {
-  //   return data_.metaseq_direction;
-  // }
 
   inline uint8_t reset_type() const {
     return data_.reset_type;
