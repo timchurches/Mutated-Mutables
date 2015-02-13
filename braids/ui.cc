@@ -53,7 +53,7 @@ void Ui::Init() {
   setting_index_ = 0;
   last_setting_index_ = setting_index_;
   mode_ = MODE_SPLASH;
-  // reset_enabled_ = false;
+  just_reset_ = false;
 }
 
 void Ui::Poll() {
@@ -93,7 +93,7 @@ void Ui::RefreshDisplay() {
   switch (mode_) {
      case MODE_SPLASH:
        {
-         char text[] = "Bees";
+         char text[] = "BUZZ";
          display_.Print(text);
        }
        break;
@@ -148,14 +148,17 @@ void Ui::OnLongClick() {
       } else if (setting_ == SETTING_RESET_TYPE) {
         if (settings.reset_type() == 1) {
            settings.Reset(true);
+           just_reset_ = true;
         } else if (settings.reset_type() == 3) {
            settings.Reset(false);
+           just_reset_ = true;
         }
-        if (settings.reset_type() & 1) {
+        if (just_reset_) {
            settings.Save();
+           just_reset_ = false;
            last_setting_ = SETTING_OSCILLATOR_SHAPE;
+           last_setting_index_ = 0;
            mode_ = MODE_SPLASH;
-           setting_index_ = 0;
         }
       } else {
         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
@@ -196,10 +199,9 @@ void Ui::OnClick() {
           settings.Save();
         }
       } 
-      // disable mode splash here
-      // else if (setting_ == SETTING_VERSION) {
-      //   mode_ = MODE_SPLASH;
-      // }
+      else if (setting_ == SETTING_VERSION) {
+        mode_ = MODE_SPLASH;
+      }
       break;
       
     case MODE_CALIBRATION_STEP_1:
@@ -271,6 +273,7 @@ void Ui::DoEvents() {
        splash_frame_ = 0;
        mode_ = MODE_EDIT;
        setting_ = SETTING_OSCILLATOR_SHAPE;
+       setting_index_ = 0;
      }
      refresh_display_ = true;
   }

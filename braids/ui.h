@@ -126,7 +126,7 @@ class Ui {
   
   uint8_t splash_frame_;
   bool blink_;
-  // bool reset_enabled_;
+  bool just_reset_;
   
   MacroOscillatorShape meta_shape_;
 
