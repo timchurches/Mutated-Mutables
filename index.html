@@ -193,7 +193,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <p></p>
 <p>OK, enough warnings.</p>
 
-<p>If you have access to an FTDI interface or a suitable JTAG/SWD programmer, then you can just clone or download the Bees-in-the-Trees source code (use the HEAD commit from the master branch), compile it and flash it to your Braids. Instructions regarding this are <a href="http://mutable-instruments.net/modules/braids/open">here</a>.</p>
+<p>If you have access to an FTDI interface or a suitable JTAG/SWD programmer, then you can just clone or download the Bees-in-the-Trees source code (use the HEAD commit from the master branch), compile it and flash it to your Braids. Instructions regarding this are <a href="http://mutable-instruments.net/modules/braids/open">here</a>. See also the note below about encoder direction and firmware image size.</p>
 
 <p>If you are intending to use only the audio bootloader, then you should carefully follow the following steps:</p>
 
@@ -225,9 +225,10 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured in the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>.</p>
 
 <h1>
-<a id="encoder-direction" class="anchor" href="#encoder-direction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoder direction</h1>
+<a id="encoder-direction" class="anchor" href="#encoder-direction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoder direction and firmware image size</h1>
 
 <p>Some crazy people have built DIY versions of Braids, and have used Bourns encoders in doing so. These operate in the opposite direction to those used by factory-built Braids modules. In order to accomodate this, <code>#define BACKWARDS_ENCODER</code> is set at the top of the <em>encoder.h</em> source code file. If you are compiling the source code yourself to load on a factory-built Braids, then you should ensure that this #define is commented out (place // in front of it on the same line). Failure to do that will mean that the encoder on your Braids will run backwards!</p>
+<p>The other consideration if you are compiling Bees-in-the-Trees yourself is the total size of the final firmware image. The size of the waves.bin image, as built by <em>make -f braids/makefile wav</em>, <b>must</b> be under 110,592 bytes. The other way to check is to run <em>make -f braids/makefile size</em> 
 
 <h1>
 <a id="discussion" class="anchor" href="#discussion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Discussion</h1>
