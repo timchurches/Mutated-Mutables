@@ -185,15 +185,24 @@ void RenderBlock() {
   // debug_pin.High();
 
   uint8_t meta_mod = settings.GetValue(SETTING_META_MODULATION); // FMCV setting, in fact
-  uint8_t modulator1_mode = settings.GetValue(SETTING_MOD1_MODE);
-  uint8_t modulator2_mode = settings.GetValue(SETTING_MOD2_MODE);
+  uint8_t modulators_mode[] = { settings.GetValue(SETTING_MOD1_MODE),
+                                settings.GetValue(SETTING_MOD2_MODE) };
+//  uint8_t modulator1_mode = settings.GetValue(SETTING_MOD1_MODE);
+//  uint8_t modulator2_mode = settings.GetValue(SETTING_MOD2_MODE);
 
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
-  uint32_t env_param = uint32_t (settings.GetValue(SETTING_MOD1_RATE));
-  uint32_t env_a = 0;
-  uint32_t env_d = 0;
+  uint32_t envs_param[] = { uint32_t (settings.GetValue(SETTING_MOD1_RATE)),
+                            uint32_t (settings.GetValue(SETTING_MOD2_RATE)) };
+//  uint32_t env_param = uint32_t (settings.GetValue(SETTING_MOD1_RATE));
+  uint32_t envs_a[] = { 0, 0 };
+//  uint32_t env_a = 0;
+  uint32_t envs_d[] = { 0, 0 };
+//  uint32_t env_d = 0;
+
+for (uint8_t i = 0; i < 2; ++i) { 
+
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   if (meta_mod == 2 || meta_mod == 3) {
@@ -248,10 +257,12 @@ void RenderBlock() {
 	  ad_value = envelope.Render(false, modulator1_attack_shape, modulator1_decay_shape);
   }
 
+} // i loop
+
   // TO-DO: instead of repeating code, use an array for env params and a loop!
-  uint32_t env2_param = uint32_t (settings.GetValue(SETTING_MOD2_RATE));
-  uint32_t env2_a = 0;
-  uint32_t env2_d = 0;
+//  uint32_t env2_param = uint32_t (settings.GetValue(SETTING_MOD2_RATE));
+//  uint32_t env2_a = 0;
+//  uint32_t env2_d = 0;
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   if (meta_mod == 2 || meta_mod == 4) {
