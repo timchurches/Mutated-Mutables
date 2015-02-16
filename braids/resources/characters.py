@@ -178,23 +178,23 @@ characters = {
   '\x97': 'abcdefm',
 
   # Spinner 2
-  '\x98': 'ab',
-  '\x99': 'abc',
-  '\x9A': 'bcd',
-  '\x9B': 'cde',
-  '\x9C': 'de',
-  '\x9D': 'def',
-  '\x9E': 'efa',
-  '\x9F': 'fab',
-  '\xA0': 'abcdefghjklmnp',
-  '\xFF': 'abcdefghjklmnp',
+  # '\x98': 'ab',
+  # '\x99': 'abc',
+  # '\x9A': 'bcd',
+  # '\x9B': 'cde',
+  # '\x9C': 'de',
+  # '\x9D': 'def',
+  # '\x9E': 'efa',
+  # '\x9F': 'fab',
+  # '\xA0': 'abcdefghjklmnp',
+  # '\xFF': 'abcdefghjklmnp',
   
   'null': 'null'
 }
 
 character_table = []
 # for i in xrange(256):
-for i in xrange(33,161):
+for i in xrange(33,152):
   segments = characters.get(chr(i), '')
   character_table.append(sum(MASKS[segment] for segment in segments))
   

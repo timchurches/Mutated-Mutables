@@ -93,7 +93,7 @@ void Ui::RefreshDisplay() {
   switch (mode_) {
      case MODE_SPLASH:
        {
-         char text[] = "BUZZ";
+         char text[] = "BZZZ";
          display_.Print(text);
        }
        break;
@@ -146,10 +146,10 @@ void Ui::OnLongClick() {
       if (setting_ == SETTING_CALIBRATION) {
         mode_ = MODE_CALIBRATION_STEP_1;
       } else if (setting_ == SETTING_RESET_TYPE) {
-        if (settings.reset_type() == 1) {
+        if (settings.GetValue(SETTING_RESET_TYPE) == 1) {
            settings.Reset(true);
            just_reset_ = true;
-        } else if (settings.reset_type() == 3) {
+        } else if (settings.GetValue(SETTING_RESET_TYPE) == 3) {
            settings.Reset(false);
            just_reset_ = true;
         }

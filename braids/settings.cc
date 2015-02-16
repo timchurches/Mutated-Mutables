@@ -99,7 +99,8 @@ const SettingsData kInitSettings = {
   SAMPLE_RATE_96K,      // sample_rate
   0,                    // metaseq_direction
   0,                    // reset_type
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  false,                // pitch_sample_hold
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -573,6 +574,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
   { 0, 2, "SDIR", metaseq_dir_values },
   { 0, 3, "RST ", reset_type_values },
+  { 0, 1, "FS+H", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.z", NULL },  // Placeholder for version string
@@ -613,6 +615,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_RATE_INVERSION, 
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
+  SETTING_PITCH_SAMPLE_HOLD,
   SETTING_PITCH_QUANTIZER,
   SETTING_QUANT_BEFORE_VIBRATO,
   SETTING_RESOLUTION,

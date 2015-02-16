@@ -74,6 +74,8 @@ uint8_t sync_samples[kNumBlocks][kBlockSize];
 bool trigger_detected_flag;
 volatile bool trigger_flag;
 uint16_t trigger_delay;
+static int32_t sh_pitch;
+
 
 extern "C" {
   
@@ -154,6 +156,8 @@ void Init() {
   playback_block = kNumBlocks / 2;
   render_block = 0;
   current_sample = 0;
+  
+  sh_pitch = 69 << 7;
      
   envelope.Init();
   envelope2.Init();
@@ -249,6 +253,7 @@ void RenderBlock() {
   }
 
   // TO-DO: instead of repeating code, use an array for env params and a loop!
+  // Note: tried in branch envelope-tidy-up, but resulted in bigger compiled size
   uint32_t env2_param = uint32_t (settings.GetValue(SETTING_MOD2_RATE));
   uint32_t env2_a = 0;
   uint32_t env2_d = 0;
@@ -405,7 +410,16 @@ void RenderBlock() {
       pitch_adc_code = previous_pitch_adc_code;
     }
   }
+  
   int32_t pitch = settings.adc_to_pitch(pitch_adc_code);
+
+  // Sample and hold pitch if enabled
+  if (settings.pitch_sample_hold()) {
+     if (trigger_flag) {
+        sh_pitch = pitch;
+     }
+     pitch = sh_pitch; 
+  }
   
   // add vibrato from modulators 1 and 2 before or after quantisation
   uint8_t mod1_vibrato_depth = settings.GetValue(SETTING_MOD1_VIBRATO_DEPTH); // 0 to 127

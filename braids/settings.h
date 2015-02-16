@@ -190,7 +190,8 @@ enum Setting {
   SETTING_SAMPLE_RATE,
   SETTING_METASEQ_DIRECTION,
   SETTING_RESET_TYPE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_RESET_TYPE,
+  SETTING_PITCH_SAMPLE_HOLD,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_PITCH_SAMPLE_HOLD,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -258,7 +259,8 @@ struct SettingsData {
   uint8_t sample_rate;  
   uint8_t metaseq_direction;
   uint8_t reset_type;
-  uint8_t extra_padding[26];
+  uint8_t pitch_sample_hold;
+  uint8_t extra_padding[25];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -409,8 +411,12 @@ class Settings {
     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
   }
 
-  inline uint8_t reset_type() const {
-    return data_.reset_type;
+  // inline uint8_t reset_type() const {
+  //   return data_.reset_type;
+  // }
+
+  inline bool pitch_sample_hold() const {
+    return data_.pitch_sample_hold;
   }
 
   inline const SettingsData& data() const { return data_; }
