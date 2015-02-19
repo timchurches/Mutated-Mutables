@@ -425,9 +425,9 @@ const char* const mod_depth_values[] = {
 };
 
 const char* const brightness_values[] = {
-    "\xff   ",
-    "\xff\xff  ",
-    "\xff\xff\xff\xff",
+    "LOW",
+    "MED",
+    "HIGH",
 };
 
 const char* const meta_values[] = { 

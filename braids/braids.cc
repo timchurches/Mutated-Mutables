@@ -553,7 +553,7 @@ void RenderBlock() {
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
 	     metaseq_steps_index += 1;
 		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-		 if (metaseq_steps_index == (metaseq_step_lengths[metaseq_index])) { 
+		 if (metaseq_steps_index >= (metaseq_step_lengths[metaseq_index])) { 
 			  metaseq_steps_index = 0;
 			  if (metaseq_direction == 0) {
 				 // looping
