@@ -522,14 +522,14 @@ void RenderBlock() {
     // and if a trigger counter for each = the setting of mod1_sync
     // or mod2_sync (defaults to 1 thus every trigger).
     if (settings.GetValue(SETTING_MOD1_SYNC)) {
-       mod1_sync_index += 1;
+       ++mod1_sync_index;
        if (mod1_sync_index >= settings.GetValue(SETTING_MOD1_SYNC)) {
           envelope.Trigger(ENV_SEGMENT_ATTACK);
           mod1_sync_index = 0 ;
        }
     }
     if (settings.GetValue(SETTING_MOD2_SYNC)) {
-       mod2_sync_index += 1;
+       ++mod2_sync_index;
        if (mod2_sync_index >= settings.GetValue(SETTING_MOD2_SYNC)) {
           envelope2.Trigger(ENV_SEGMENT_ATTACK);
           mod2_sync_index = 0 ;
@@ -551,13 +551,13 @@ void RenderBlock() {
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
-	     metaseq_steps_index += 1;
+	     ++metaseq_steps_index;
 		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
 		 if (metaseq_steps_index >= (metaseq_step_lengths[metaseq_index])) { 
 			  metaseq_steps_index = 0;
 			  if (metaseq_direction == 0) {
 				 // looping
-				 metaseq_index += 1;
+				 ++metaseq_index;
 				 if (metaseq_index > metaseq_length) { 
 					metaseq_index = 0;
 				 }
@@ -565,14 +565,14 @@ void RenderBlock() {
 				 // swing
 				 if (current_mseq_dir) {
 					// ascending
-					metaseq_index += 1;
+					++metaseq_index;
 					if (metaseq_index >= metaseq_length) {
 					   metaseq_index = metaseq_length; 
 					   current_mseq_dir = !current_mseq_dir;
 					}
 				 } else {
 					// descending
-					metaseq_index -= 1;
+					--metaseq_index;
 					if (metaseq_index == 0) { 
 					   current_mseq_dir = !current_mseq_dir;
 					}
