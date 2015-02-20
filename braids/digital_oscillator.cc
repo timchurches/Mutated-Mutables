@@ -1785,73 +1785,75 @@ void DigitalOscillator::RenderFilteredNoise(
   state_.svf.bp = bp;
 }
 
-void DigitalOscillator::RenderTwinPeaksNoise(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  int32_t sample;
-  int32_t y10, y20;
-  int32_t y11 = state_.pno.filter_state[0][0];
-  int32_t y12 = state_.pno.filter_state[0][1];
-  int32_t y21 = state_.pno.filter_state[1][0];
-  int32_t y22 = state_.pno.filter_state[1][1];
-  uint32_t q = 65240 + (parameter_[0] >> 7);
-  int32_t q_squared = q * q >> 17;
-  int16_t p1 = pitch_;
-
-  CONSTRAIN(p1, 0, 16383)
-  int32_t c1 = Interpolate824(lut_resonator_coefficient, p1 << 17);
-  int32_t s1 = Interpolate824(lut_resonator_scale, p1 << 17);
-  
-  int16_t p2 = pitch_ + ((parameter_[1] - 16384) >> 1);
-  CONSTRAIN(p2, 0, 16383)
-  int32_t c2 = Interpolate824(lut_resonator_coefficient, p2 << 17);
-  int32_t s2 = Interpolate824(lut_resonator_scale, p2 << 17);
-
-  c1 = c1 * q >> 16;
-  c2 = c2 * q >> 16;
-
-  int32_t makeup_gain = 8191 - (parameter_[0] >> 2);
-  
-  while (size) {    
-    sample = Random::GetSample() >> 1;
-    
-    if (sample > 0) {
-      y10 = sample * s1 >> 16;
-      y20 = sample * s2 >> 16;
-    } else {
-      y10 = -((-sample) * s1 >> 16);
-      y20 = -((-sample) * s2 >> 16);
-    }
-    
-    y10 += y11 * c1 >> 15;
-    y10 -= y12 * q_squared >> 15;
-    CLIP(y10)
-    y12 = y11;
-    y11 = y10;
-    
-    y20 += y21 * c2 >> 15;
-    y20 -= y22 * q_squared >> 15;
-    CLIP(y20)
-    y22 = y21;
-    y21 = y20;
-    
-    y10 += y20;
-    y10 += (y10 * makeup_gain >> 13);
-    CLIP(y10)
-    sample = y10;
-    sample = Interpolate88(ws_moderate_overdrive, sample + 32768);
-    
-    *buffer++ = sample;
-    *buffer++ = sample;
-    size -= 2;
-  }
-  
-  state_.pno.filter_state[0][0] = y11;
-  state_.pno.filter_state[0][1] = y12;
-  state_.pno.filter_state[1][0] = y21;
-  state_.pno.filter_state[1][1] = y22;
-}
+/*
+// void DigitalOscillator::RenderTwinPeaksNoise(
+//     const uint8_t* sync,
+//     int16_t* buffer,
+//     uint8_t size) {
+//   int32_t sample;
+//   int32_t y10, y20;
+//   int32_t y11 = state_.pno.filter_state[0][0];
+//   int32_t y12 = state_.pno.filter_state[0][1];
+//   int32_t y21 = state_.pno.filter_state[1][0];
+//   int32_t y22 = state_.pno.filter_state[1][1];
+//   uint32_t q = 65240 + (parameter_[0] >> 7);
+//   int32_t q_squared = q * q >> 17;
+//   int16_t p1 = pitch_;
+// 
+//   CONSTRAIN(p1, 0, 16383)
+//   int32_t c1 = Interpolate824(lut_resonator_coefficient, p1 << 17);
+//   int32_t s1 = Interpolate824(lut_resonator_scale, p1 << 17);
+//   
+//   int16_t p2 = pitch_ + ((parameter_[1] - 16384) >> 1);
+//   CONSTRAIN(p2, 0, 16383)
+//   int32_t c2 = Interpolate824(lut_resonator_coefficient, p2 << 17);
+//   int32_t s2 = Interpolate824(lut_resonator_scale, p2 << 17);
+// 
+//   c1 = c1 * q >> 16;
+//   c2 = c2 * q >> 16;
+// 
+//   int32_t makeup_gain = 8191 - (parameter_[0] >> 2);
+//   
+//   while (size) {    
+//     sample = Random::GetSample() >> 1;
+//     
+//     if (sample > 0) {
+//       y10 = sample * s1 >> 16;
+//       y20 = sample * s2 >> 16;
+//     } else {
+//       y10 = -((-sample) * s1 >> 16);
+//       y20 = -((-sample) * s2 >> 16);
+//     }
+//     
+//     y10 += y11 * c1 >> 15;
+//     y10 -= y12 * q_squared >> 15;
+//     CLIP(y10)
+//     y12 = y11;
+//     y11 = y10;
+//     
+//     y20 += y21 * c2 >> 15;
+//     y20 -= y22 * q_squared >> 15;
+//     CLIP(y20)
+//     y22 = y21;
+//     y21 = y20;
+//     
+//     y10 += y20;
+//     y10 += (y10 * makeup_gain >> 13);
+//     CLIP(y10)
+//     sample = y10;
+//     sample = Interpolate88(ws_moderate_overdrive, sample + 32768);
+//     
+//     *buffer++ = sample;
+//     *buffer++ = sample;
+//     size -= 2;
+//   }
+//   
+//   state_.pno.filter_state[0][0] = y11;
+//   state_.pno.filter_state[0][1] = y12;
+//   state_.pno.filter_state[1][0] = y21;
+//   state_.pno.filter_state[1][1] = y22;
+// }
+*/
 
 void DigitalOscillator::RenderClockedNoise(
     const uint8_t* sync,
@@ -2339,7 +2341,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderWaveLine,
   &DigitalOscillator::RenderWaveParaphonic,
   &DigitalOscillator::RenderFilteredNoise,
-  &DigitalOscillator::RenderTwinPeaksNoise,
+//  &DigitalOscillator::RenderTwinPeaksNoise,
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,

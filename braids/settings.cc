@@ -188,7 +188,7 @@ const char* const algo_values[] = {
     "WLIN",
     "WTx4",
     "NOIS",
-    "TWNQ",
+//    "TWNQ",
     "CLKN",
     "CLOU",
     "PRTC",
