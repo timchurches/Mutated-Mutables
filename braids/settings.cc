@@ -516,7 +516,7 @@ const char* const reset_type_values[] = {
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
