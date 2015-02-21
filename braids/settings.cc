@@ -187,6 +187,7 @@ const char* const algo_values[] = {
     "WMAP",
     "WLIN",
     "WTx4",
+    "2WAV",
     "NOIS",
 //    "TWNQ",
     "CLKN",
