@@ -56,7 +56,7 @@
 <ul>
 <li>the hardware design of all existing Braids modules is obviously fixed, and thus the firmware must work with the hardware facilities available. For example, there are four CV inputs available in Braids. Firmware changes cannot create a fifth one. </li>
 <li>the computational power of the STM32F1 processor which powers Braids is finite, and thus there is a limit to the amount and complexity of additional code and computations that can be added to the firmware while still allowing the processor to keep the audio buffer filled, in real-time.</li>
-<li>the storage space for compiled program code in flash memory is limited to exactly 108 pages of 1024 bytes each - that is, 110,592 bytes. Thus there is a hard limit to the size and complexity of the firmware for Braids. In order to remain under this firmware size limit, some features have had to be removed from Braids to make space for the enhancements described below. See <a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true">Anti-enhancements</a> below for details of what has been removed.</li>
+<li>the storage space for compiled program code in flash memory is limited to exactly 108 pages of 1024 bytes each - that is, 110,592 bytes. Thus there is a hard limit to the size and complexity of the firmware for Braids. In order to remain under this firmware size limit, some features have had to be removed from Braids to make space for the enhancements described below. See <a href="#anti-enhancements" aria-hidden="true">Anti-enhancements</a> below for details of what has been removed.</li>
 </ul>
 
 <p><img src="images/Bees-in-the-Trees.png" alt="Bees-in-the-Trees">Bees-in-the-Trees is based on the official Braids v1.7 source code, and has had the sync buffer and DAC timing bug fixes which were made to the v1.7 code in late January 2015 ported to it: thus the core oscillator code is identical to the current Braids v1.7 code. However, many changes to modulation options and other aspects have been made.</p>
@@ -430,12 +430,12 @@
 <li>Finally, the menu mode is now like an <a href-"http://en.wikipedia.org/wiki/Ouroboros"><em>Ouroboros</em></a> – instead of being a linear list starting with <code>SAVE</code> and ending with the version string, the menu items are now in a loop, so that if you are at the version string (the end), one more forward increment on the encoder will loop you back to <code>SAVE</code> (the beginning). This should make it quicker to navigate through the now rather large number of menu items. When in oscillator model selection mode, a short-click still takes you back to <code>SAVE</code>, and a long-click takes you to the position you were at in the menu loop when you last used the long-click shortcut to oscillator selection mode.</li>
 </ul>
 <p></p>
-<h3><a id="modulation-map" class="anchor" href="#modulation-map" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Modulation Matrix</h3>
+<h2><a id="modulation-map" class="anchor" href="#modulation-map" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Modulation Graph</h2>
 <p>
 <img src="images/Bees-in-Trees-schematic-v3y.png" /></p>
 
-<h1>
-<a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Anti-enhancements</h1>
+<h2>
+<a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Anti-enhancements</h2>
 
 <p>These changes were required in order to free up space in the firmware storage for the enhancements described above.</p>
 
@@ -534,7 +534,19 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <ul>
 <li><a href="#acknowledgements">Acknowledgements</a></li>
-<li> <a href="#anti-enhancements">Anti-enhancements</a></li>
+<li><a href="#Bees-in-the-Trees">Bees-in-the-Trees</a></li>
+   <ul>
+   <li><a href="#Bees-in-the-Trees-audience">Intended audience for Bees-in-the-Trees</a>
+      <ul>
+      <li><a href="#Dislike-menu-diving">But I hate menu-diving</a></li>
+      </ul></li>
+   <li><a href="#TLDR">TL;DR</a></li>
+   <li><a href="#Bees-in-the-Trees-enhancements">Bees-in-the-Trees: the gory details of all the changes made to the official Braids firmware</a></li>   
+   <li><a href="#modulation-map">The Modulation Graph</a></li>
+   <li><a href="#anti-enhancements">Anti-enhancements</a></li>
+   </ul>
+<li><a href="#installation-and-de-installation">Installation and De-installation</a></li>
+
 </ul>
        
           <a href="https://github.com/timchurches/Mutated-Mutables/zipball/master" class="button">
