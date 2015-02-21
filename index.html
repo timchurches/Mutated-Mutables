@@ -69,7 +69,10 @@
 
 <p>Bees-in-the-Trees is intended for expert users of the Braids module. It, and this documentation, presumes a good understanding of the way in which Braids running the  official, factory firmware works. If you have only recently obtained your Braids module, then it is strongly recommended that you spend some time (days, weeks, months) thoroughly familiarising yourself with it before trying Bees-in-the-Trees. Braids is a complex, deep module - it isn't called a <b><em>MacroOscillator</em></b> for nothing! Bees-in-the-Trees only makes it more complex. Also, this documentation is intended to be a <em>meta-manual</em>, to be read in conjunction with or as an adjunct to the <a href="http://mutable-instruments.net/modules/braids/manual">official Braids manual</a>.</p>
 
-<h2>tl;dr</h2>
+<h2>
+<a id="TL-DR" class="anchor" href="#TLDR" aria-hidden="true"><span class="octicon octicon-link"></span>TL;DR</h2>
+
+<p>For those short of time or attention span, here is a summary table of the many settings which Bees-in-the-Trees makes available. If you want more detail about what each one does and how best to use it, then read on after the table.</p>
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;margin:0px auto;}
@@ -77,90 +80,275 @@
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#039;background-color:#b9c9fe;}
 .tg .tg-vn4c{background-color:#D2E4FC}
 .tg .tg-e3zv{font-weight:bold}
+.tg .tg-vv7f{background-color:#D2E4FC;font-weight:bold}
 </style>
 <table class="tg">
   <tr>
-    <th class="tg-e3zv">Setting</th>
+    <th class="tg-031e">Setting</th>
     <th class="tg-e3zv">Purpose</th>
     <th class="tg-e3zv">Values</th>
   </tr>
   <tr>
-    <td class="tg-vn4c">SAVE</td>
+    <td class="tg-vv7f">SAVE</td>
     <td class="tg-vn4c">Saves settings to flash storage, switches to oscillator selection mode</td>
-    <td class="tg-vn4c"></td>
+    <td class="tg-vn4c">Oscillator models</td>
   </tr>
   <tr>
-    <td class="tg-031e">LEVL</td>
+    <td class="tg-e3zv">LEVL</td>
     <td class="tg-031e">Initial level (gain, volume). </td>
     <td class="tg-031e">0 to 250</td>
   </tr>
   <tr>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
+    <td class="tg-vv7f">FMCV</td>
+    <td class="tg-vn4c">Select purpose/destination of FM CV input</td>
+    <td class="tg-vn4c">FREQ, META, RATE, RAT1, RAT2, LEVL, JITR, BITS, SRAT, SMUT, DIRT, FLTH</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">MOD1</td>
+    <td class="tg-031e">Internal modulator 1 mode</td>
+    <td class="tg-031e">OFF, LFO, ENV-, ENV+</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RAT1</td>
+    <td class="tg-vn4c">Internal modulator 1 rate (LFO frequency or envelope duration)</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇑SH1</td>
+    <td class="tg-031e">Shape of rising arm of LFO or attack part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇓SH1</td>
+    <td class="tg-vn4c">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇑⇓1</td>
+    <td class="tg-031e">Ratio of rising/attack LFO/envelope duration to falling/decay duration, as a percentage</td>
+    <td class="tg-031e">2, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 11, 125, 143, 166, 200, 250, 33, 500, 1k, 5k</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1SY</td>
+    <td class="tg-vn4c">Modulator 1 sync/phase reset</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1→T</td>
+    <td class="tg-031e">Modulator 1 timbre modulation depth</td>
+    <td class="tg-031e">0 to 250</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1→C</td>
+    <td class="tg-vn4c">Modulator 1 colour modulation depth</td>
+    <td class="tg-vn4c">0 to 250</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1→L</td>
+    <td class="tg-031e">Modulator 1 level (gain, volume) modulation depth</td>
+    <td class="tg-031e">0 to 250</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1→F</td>
+    <td class="tg-vn4c">Modulator 1 frequency (oscillator pitch) modulation depth</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1→2</td>
+    <td class="tg-031e">Modulator 1 depth of modulation of Modulator 2 rate (frequency/duration)</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">MOD2</td>
+    <td class="tg-vn4c">Internal modulator 2 mode</td>
+    <td class="tg-vn4c">OFF, LFO, ENV-, ENV+</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">RAT2</td>
+    <td class="tg-031e">Internal modulator 2 rate (LFO frequency or envelope duration)</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇑SH2</td>
+    <td class="tg-vn4c">Shape of rising arm of LFO or attack part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇓SH2</td>
+    <td class="tg-031e">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇑⇓2</td>
+    <td class="tg-vn4c">Ratio of rising/attack LFO/envelope duration to falling/decay duration, as a percentage</td>
+    <td class="tg-vn4c">2, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 11, 125, 143, 166, 200, 250, 33, 500, 1k, 5k</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M2SY</td>
+    <td class="tg-031e">Modulator 2 sync/phase reset</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M2→T</td>
+    <td class="tg-vn4c">Modulator 2 timbre modulation depth</td>
+    <td class="tg-vn4c">0 to 250</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M2→C</td>
+    <td class="tg-031e">Modulator 2 colour modulation depth</td>
+    <td class="tg-031e">0 to 250</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M2→L</td>
+    <td class="tg-vn4c">Modulator 2 level (gain, volume) modulation depth</td>
+    <td class="tg-vn4c">0 to 250</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M2→F</td>
+    <td class="tg-031e">Modulator 2 frequency (oscillator pitch) modulation depth</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1T2</td>
+    <td class="tg-vn4c">Modulator 1 amplitude modulation of Modulator 2 timbre modulation</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1C2</td>
+    <td class="tg-031e">Modulator 1 amplitude modulation of Modulator 2 colour modulation</td>
+    <td class="tg-031e">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1F2</td>
+    <td class="tg-vn4c">Modulator 1 amplitude modulation of Modulator 2 oscillator pitch modulation</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">MSEQ</td>
+    <td class="tg-031e">Meta-sequencer enable/sequence length</td>
+    <td class="tg-031e">OFF, 2, 3, 4, 5, 6, 7, 8</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">SDIR</td>
+    <td class="tg-vn4c">Sequence direction</td>
+    <td class="tg-vn4c">LOOP, SWNG, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">WAV1</td>
+    <td class="tg-031e">Meta-sequence step 1 oscillator model</td>
+    <td class="tg-031e">Oscillator models</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RPT1</td>
+    <td class="tg-vn4c">Meta-sequence step 1 repeat count</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">...</td>
+    <td class="tg-031e">WAVn, RPTn where n=2 to 7</td>
+    <td class="tg-031e">...</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">WAV8</td>
+    <td class="tg-vn4c">Meta-sequence step 8 oscillator model</td>
+    <td class="tg-vn4c">Oscillator models</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">RPT8</td>
+    <td class="tg-031e">Meta-sequence step 8 repeat count</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RANG</td>
+    <td class="tg-vn4c">Oscillator frequency range</td>
+    <td class="tg-vn4c">EXT, FREE, XTND, 440, LFO</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">OCTV</td>
+    <td class="tg-031e">Oscillator octave offset</td>
+    <td class="tg-031e">-2, -1, 0, 1, 2</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">FS+H</td>
+    <td class="tg-vn4c">Frequency (oscillator pitch) sample and hold</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">QNTS</td>
+    <td class="tg-031e">Frequency (oscillator pitch) quantisation</td>
+    <td class="tg-031e">OFF, QTR, SEMI</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">QVIB</td>
+    <td class="tg-vn4c">Quantise internal vibrato</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">OSYN</td>
+    <td class="tg-031e">Oscillator phase sync/reset</td>
+    <td class="tg-031e">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">TDLY</td>
+    <td class="tg-vn4c">Trigger delay time</td>
+    <td class="tg-vn4c">NONE, 125u, 250u, 500u, 1ms, 2ms, 4ms</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">RINV</td>
+    <td class="tg-031e">Internal modulator rate inversion</td>
+    <td class="tg-031e">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">BRIG</td>
+    <td class="tg-vn4c">Display brightness</td>
+    <td class="tg-vn4c">LOW, MED, HIGH</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">CAL.</td>
+    <td class="tg-031e">Oscillator pitch tracking calibration</td>
+    <td class="tg-031e"></td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">CV tester</td>
+    <td class="tg-vn4c">Control voltage display dials</td>
     <td class="tg-vn4c"></td>
   </tr>
   <tr>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
+    <td class="tg-e3zv">RST</td>
+    <td class="tg-031e">Settings reset</td>
+    <td class="tg-031e">NO, DFLT, NO, FULL</td>
   </tr>
   <tr>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-  </tr>
-  <tr>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-  </tr>
-  <tr>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
+    <td class="tg-vv7f">v3.0</td>
+    <td class="tg-vn4c">Bees-in-the-Trees firmware version</td>
     <td class="tg-vn4c"></td>
   </tr>
   <tr>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
+    <td class="tg-e3zv">BITS</td>
+    <td class="tg-031e">Bit-crushing</td>
+    <td class="tg-031e">2BIT, 3BIT, 4BIT, 6BIT, 8BIT, 12B, 16B</td>
   </tr>
   <tr>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
+    <td class="tg-vv7f">SRAT</td>
+    <td class="tg-vn4c">Output signal sample rate</td>
+    <td class="tg-vn4c">4K, 8K, 16K, 24K, 32K, 48K, 96K</td>
   </tr>
   <tr>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
+    <td class="tg-e3zv">JITR</td>
+    <td class="tg-031e">Oscillator drift/jitter</td>
+    <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-  </tr>
-  <tr>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-  </tr>
-  <tr>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-    <td class="tg-vn4c"></td>
-  </tr>
-  <tr>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
-    <td class="tg-031e"></td>
+    <td class="tg-vv7f">TSRC</td>
+    <td class="tg-vn4c">Trigger source</td>
+    <td class="tg-vn4c">EXT, AUTO</td>
   </tr>
 </table>
-
 
 <h2>
 <a id="Bees-in-the-Trees-enhancements" class="anchor" href="#Bees-in-the-Trees-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changes to the factory Braids firmware made by Bees-in-the-Trees</h2>
 
-<p>The following documentation relates to Bees-in-the-Trees version 3.z</p>
+<p>The following documentation relates to Bees-in-the-Trees version 3.0</p>
 
 <ul>
 <li>The <code>WAVE</code> menu setting has been renamed <code>SAVE</code>. With the Braids firmware, clicking on <code>WAVE</code> takes you back to oscillator model selection mode, with a side-effect of saving all your settings. In Bees-in-the-Trees, clicking (or long-clicking, see below) on <code>SAVE</code> saves all your settings, with a side-effect of taking you back to oscillator model selection mode. In other words, the behaviour is the same, but the name was changed to emphasise the save aspect, because in Bees-in-the-Trees, there is also a long-click shortcut to toggle between menu mode and oscillator model selection mode (see below).</li> 
