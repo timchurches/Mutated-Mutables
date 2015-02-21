@@ -577,7 +577,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "FS+H", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v3.z", NULL },  // Placeholder for version string
+  { 0, 0, "v3.0", NULL },  // Placeholder for version string
 };
 
 /* static */
