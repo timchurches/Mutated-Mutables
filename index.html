@@ -499,7 +499,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li>Go crazy with it.</li>
 </ol>
 
-<p>You shouldn’t need to manually reset the stored settings if you follow this procedure – Your Braids should do that automatically when it boots up after installing the Bees-in-the-Trees code (and likewise when you re-install the latest v1.7 or later factory firmware).<.p>
+<p>You shouldn’t need to manually reset the stored settings if you follow this procedure – your Braids should do that automatically when it boots up after installing the Bees-in-the-Trees code (and likewise when you re-install the latest v1.7 or later factory firmware).<.p>
 
 <p>However, if your Braids does seem confused, you can trigger a manual settings reset in Braids v1.7 firmware by navigating to the version string right at the end of the menu choices, and doing a long-click on the encoder. Warning: this also resets your calibration data, so you’ll need to re-calibrate yet again.</p>
 
@@ -511,11 +511,16 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li>Re-calibrate it.</li>
 </ol>
 
+<h2>
+<a id="bug-reports" class="anchor" href="#bug-reports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bug reports</a></h2>
+
+If you encounter a bug or anomalous behaviour while using Bees-in-the-Trees, please report it via email to tim.churches@gmail.com However, in order to fix bugs or problems, they must be reproducible, and to that end, it would be helpful if you could report as many as possible of the settings which you were using when you encountered the bug, and provide details of any other external inputs or modulation. Cutting-and-pasting the <a href="#TL-DR">TL;DR table of settings</a> above into the body of an email message and then annotating or editing that list is a handy way of documenting settings.
+
 <h1>
 <a id="to-do-and-roadmap" class="anchor" href="#to-do-and-roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>TO-DO and Roadmap</h1>
 
 <ul>
-<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change.</li>
+<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change. Due to it being a form of non-linear FM, perhaps?</li>
 <li>PENDING: Prevent the LFO frequency or the total envelope duration from changing when the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. Did I mention that integer arithmetic is a pain in the arse?</li>
 </ul>
 <p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured in the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>.</p>
@@ -523,7 +528,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <h1>
 <a id="encoder-direction" class="anchor" href="#encoder-direction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoder direction and firmware image size</h1>
 
-<p>Some crazy people have built DIY versions of Braids, and have used Bourns encoders in doing so. These operate in the opposite direction to those used by factory-built Braids modules. In order to accomodate this, <code>#define BACKWARDS_ENCODER</code> is set at the top of the <em>encoder.h</em> source code file. If you are compiling the source code yourself to load on a factory-built Braids, then you should ensure that this #define is commented out (place // in front of it on the same line). Failure to do that will mean that the encoder on your Braids will run backwards!</p>
+<p>Some crazy people (including me!) have built DIY versions of Braids, and have used Bourns encoders in doing so. These operate in the opposite direction to those used by factory-built Braids modules. In order to accomodate this, <code>#define BACKWARDS_ENCODER</code> is set at the top of the <em>encoder.h</em> source code file. If you are compiling the source code yourself to load on a factory-built Braids, then you should ensure that this #define is commented out (place // in front of it on the same line). Failure to do that will mean that the encoder on your Braids will run backwards!</p>
 <p>The other consideration if you are compiling Bees-in-the-Trees yourself is the total size of the final compiled and linked firmware image. The size of the waves.bin image, as built by <em>make -f braids/makefile wav</em>, <b>must</b> be under 110,592 bytes. The other way to check is to run <em>make -f braids/makefile size</em> and then <em>cat build/braids/braids.size</em>. Add the first two numbers (the ones under text and data). That will give the total size of the binary image - the number should be exactly the same as the size in bytes of the wave.bin file. That size <b>must</b> be under 110,592, otherwise the saved settings will, after 10 or 11 save cycles, over-write the tail end of executable image and your Braids will probably hang, or at least misbehave badly. My recommendation is to use the J Snyder package for the EABI ARM GCC compiler recommended by Olivier Gillet (which includes v4.7.3 of arm-none-eabi-gcc, that's what I use), but later versions may also work - but you must keep an eye on the size of the compiled and linked binary image! Be aware that Bees-in-the-Trees uses almost all the available flash storage space when compiled - it is a tight fit!
 
 <h1>
@@ -553,6 +558,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li><a href="#anti-enhancements">Anti-enhancements</a></li>
 <li><a href="#installation-and-de-installation">Installation and De-installation</a></li>
 <li><a href="#obligatory-warnings">Obligatory warnings</a></li>
+<li><a href="#bug-reports">Bug reports</a></li>
 <li><a href="#to-do-and-roadmap">TO-DO and Roadmap</a></li>
 <li><a href="#encoder-direction">Encoder direction and firmware image size</a></li>
 <li><a href="#discussion">Discussion</a></li>
