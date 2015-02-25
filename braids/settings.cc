@@ -444,6 +444,7 @@ const char* const meta_values[] = {
     "DIRT", // 10 = SRAT + JITR
     "FLTH", // 11 = BITS + SRAT
     "FCKD", // 12 = BITS + SRAT + JITR
+    "HARM", // 13 = harmonic intervals
 };
 
 const char* const ad_ratio_values[] = { 
@@ -521,7 +522,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 12, "FMCV", meta_values },
+  { 0, 13, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },

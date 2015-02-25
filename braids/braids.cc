@@ -466,7 +466,20 @@ void RenderBlock() {
   if (meta_mod == 0) {
     pitch += settings.adc_to_fm(adc.channel(3));
   }
+  
   pitch += internal_adc.value() >> 8;
+
+  // or harmonic intervals 
+  if (meta_mod == 13) {
+     int32_t harmonic_multiplier = settings.adc_to_fm(adc.channel(3)) >> 9;
+     if (harmonic_multiplier < 1) {
+	    harmonic_multiplier = 0;
+     } else if (harmonic_multiplier > 6) {
+        harmonic_multiplier = 6;
+     }
+     pitch += 1536 * harmonic_multiplier;
+  }
+
   
   // Check if the pitch has changed to cause an auto-retrigger
   int32_t pitch_delta = pitch - previous_pitch;
