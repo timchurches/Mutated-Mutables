@@ -176,6 +176,9 @@ const uint16_t bit_reduction_masks[] = {
 
 const uint16_t decimation_factors[] = { 24, 12, 6, 4, 3, 2, 1 };
 
+const uint16_t log2_table[] = { 1000, 1585, 2000, 2322, 2585, 2807, 3000,
+                                3170, 3322, 3459, 3585, 3700, 3807, 3907, 4000 };
+                                
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static int32_t previous_pitch = 0;
@@ -470,16 +473,17 @@ void RenderBlock() {
   pitch += internal_adc.value() >> 8;
 
   // or harmonic intervals 
-  if (meta_mod == 13) {
-     int32_t harmonic_multiplier = settings.adc_to_fm(adc.channel(3)) >> 9;
-     if (harmonic_multiplier < 1) {
+  if (meta_mod == 6) {
+     int32_t harmonic_multiplier = settings.adc_to_fm(adc.channel(3)) >> 8;
+     if (harmonic_multiplier < 0) {
 	    harmonic_multiplier = 0;
-     } else if (harmonic_multiplier > 6) {
-        harmonic_multiplier = 6;
+     } else if (harmonic_multiplier > 15) {
+        harmonic_multiplier = 15;
      }
-     pitch += 1536 * harmonic_multiplier;
+     if (harmonic_multiplier) {
+        pitch += 1536 * log2_table[harmonic_multiplier - 1] / 1000;
+     }
   }
-
   
   // Check if the pitch has changed to cause an auto-retrigger
   int32_t pitch_delta = pitch - previous_pitch;
@@ -507,7 +511,7 @@ void RenderBlock() {
   // jitter depth now settable and voltage controllable.
   // TO-DO jitter still causes pitch to sharpen slightly - why?
   int32_t vco_drift = settings.vco_drift();
-  if (meta_mod == 6 || meta_mod == 9 || meta_mod == 10 || meta_mod == 12) {
+  if (meta_mod == 7 || meta_mod == 10 || meta_mod == 11 || meta_mod == 13) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
@@ -644,7 +648,7 @@ void RenderBlock() {
 
   // Voltage control of bit crushing
   uint8_t bits_value = settings.resolution();
-  if (meta_mod == 7 || meta_mod == 9 || meta_mod >= 11 ) {
+  if (meta_mod == 8 || meta_mod == 10 || meta_mod >= 12 ) {
      bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (bits_value < 0) {
 	    bits_value = 0 ;
@@ -655,7 +659,7 @@ void RenderBlock() {
 
   // Voltage control of sample rate decimation
   uint8_t sample_rate_value = settings.data().sample_rate;
-  if (meta_mod == 8 || meta_mod >= 10 ) {
+  if (meta_mod == 9 || meta_mod >= 11 ) {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (sample_rate_value < 0) {
 	    sample_rate_value = 0 ;

@@ -437,14 +437,14 @@ const char* const meta_values[] = {
     "RAT1", // 3
     "RAT2", // 4
     "LEVL", // 5
-    "JITR", // 6
-    "BITS", // 7
-    "SRAT", // 8
-    "SMUT", // 9 = BITS + JITR
-    "DIRT", // 10 = SRAT + JITR
-    "FLTH", // 11 = BITS + SRAT
-    "FCKD", // 12 = BITS + SRAT + JITR
-    "HARM", // 13 = harmonic intervals
+    "HARM", // 6 = harmonic intervals
+    "JITR", // 7 was 6
+    "BITS", // 8 was 7
+    "SRAT", // 9 was 8
+    "SMUT", // 10 = BITS + JITR was 9
+    "DIRT", // 11 = SRAT + JITR was 10
+    "FLTH", // 12 = BITS + SRAT was 11
+    "FCKD", // 13 = BITS + SRAT + JITR was 12
 };
 
 const char* const ad_ratio_values[] = { 
