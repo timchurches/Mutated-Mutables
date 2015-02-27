@@ -437,14 +437,15 @@ const char* const meta_values[] = {
     "RAT1", // 3
     "RAT2", // 4
     "LEVL", // 5
-    "HARM", // 6 = harmonic intervals
-    "JITR", // 7 was 6
-    "BITS", // 8 was 7
-    "SRAT", // 9 was 8
-    "SMUT", // 10 = BITS + JITR was 9
-    "DIRT", // 11 = SRAT + JITR was 10
-    "FLTH", // 12 = BITS + SRAT was 11
-    "FCKD", // 13 = BITS + SRAT + JITR was 12
+    "HARM", // 6 = harmonic series
+    "PYTH", // 7 = Pythagorean just intonation C major scale
+    "JITR", // 8 was 8
+    "BITS", // 9 was 8
+    "SRAT", // 10 was 9
+    "SMUT", // 11 = BITS + JITR was 10
+    "DIRT", // 12 = SRAT + JITR was 11
+    "FLTH", // 13 = BITS + SRAT was 12
+    "FCKD", // 14 = BITS + SRAT + JITR was 13
 };
 
 const char* const ad_ratio_values[] = { 
@@ -522,7 +523,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 13, "FMCV", meta_values },
+  { 0, 14, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
