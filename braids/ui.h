@@ -63,17 +63,17 @@ class Ui {
   void Print(const char* text) {
     display_.Print(text);
   }
-
-  void PrintDebugInteger(uint16_t x) {
-    char buffer[5];
-    buffer[4] = '\0';
-    for (uint16_t i = 0; i < 4; ++i) {
-      buffer[3 - i] = '0' + (x % 10);
-      x /= 10;
-    }
-    Print(buffer);
-  }
-  
+/*
+//   void PrintDebugInteger(uint16_t x) {
+//     char buffer[5];
+//     buffer[4] = '\0';
+//     for (uint16_t i = 0; i < 4; ++i) {
+//       buffer[3 - i] = '0' + (x % 10);
+//       x /= 10;
+//     }
+//     Print(buffer);
+//   }
+*/  
   inline void UpdateCv(
       int16_t cv_param,
       int16_t cv_color,

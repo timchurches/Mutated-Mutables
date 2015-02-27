@@ -100,8 +100,7 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_direction
   0,                    // reset_type
   false,                // pitch_sample_hold
-  15000,                // metaseq_note1
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -577,7 +576,6 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 2, "SDIR", metaseq_dir_values },
   { 0, 3, "RST ", reset_type_values },
   { 0, 1, "FS+H", boolean_values },
-  { 0, 0, "NOT1", NULL },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.1", NULL },  // Placeholder for version string
@@ -616,7 +614,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ_DIRECTION, 
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_STEP_LENGTH1, 
-  SETTING_METASEQ_NOTE1,
   SETTING_METASEQ_SHAPE2, 
   SETTING_METASEQ_STEP_LENGTH2, 
   SETTING_METASEQ_SHAPE3, 
