@@ -120,6 +120,8 @@ void Ui::RefreshDisplay() {
             }
           }
           display_.Print(text);
+        } else if (setting_ == SETTING_METASEQ_NOTE1) {
+            display_.PrintDebugInteger(braids::Current_Pitch());
         } else {
           display_.Print(settings.metadata(setting_).name);
         }

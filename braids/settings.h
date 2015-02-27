@@ -191,7 +191,8 @@ enum Setting {
   SETTING_METASEQ_DIRECTION,
   SETTING_RESET_TYPE,
   SETTING_PITCH_SAMPLE_HOLD,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_PITCH_SAMPLE_HOLD,
+  SETTING_METASEQ_NOTE1,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_NOTE1,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -260,7 +261,8 @@ struct SettingsData {
   uint8_t metaseq_direction;
   uint8_t reset_type;
   uint8_t pitch_sample_hold;
-  uint8_t extra_padding[25];
+  uint16_t metaseq_note1;
+  uint8_t extra_padding[23];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -417,6 +419,10 @@ class Settings {
 
   inline bool pitch_sample_hold() const {
     return data_.pitch_sample_hold;
+  }
+
+  inline uint16_t metaseq_note1() const {
+    return data_.metaseq_note1;
   }
 
   inline const SettingsData& data() const { return data_; }
