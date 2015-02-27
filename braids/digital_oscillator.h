@@ -92,7 +92,7 @@ enum DigitalOscillatorShape {
   
   OSC_SHAPE_FILTERED_NOISE,
   OSC_SHAPE_TWIN_PEAKS_NOISE,
-  OSC_SHAPE_CLOCKED_NOISE,
+  // OSC_SHAPE_CLOCKED_NOISE,
   OSC_SHAPE_GRANULAR_CLOUD,
   OSC_SHAPE_PARTICLE_NOISE,
   OSC_SHAPE_SILENCE,
@@ -226,7 +226,7 @@ union DigitalOscillatorState {
   SvfState svf;
   AdditiveState add;
   // DigitalModulationState dmd;
-  ClockedNoiseState clk;
+  // ClockedNoiseState clk;
   HatState hat;
   uint32_t modulator_phase;
 };
@@ -311,7 +311,7 @@ class DigitalOscillator {
   
   void RenderTwinPeaksNoise(const uint8_t*, int16_t*, uint8_t);
   void RenderFilteredNoise(const uint8_t*, int16_t*, uint8_t);
-  void RenderClockedNoise(const uint8_t*, int16_t*, uint8_t);
+  // void RenderClockedNoise(const uint8_t*, int16_t*, uint8_t);
   void RenderGranularCloud(const uint8_t*, int16_t*, uint8_t);
   void RenderParticleNoise(const uint8_t*, int16_t*, uint8_t);
   

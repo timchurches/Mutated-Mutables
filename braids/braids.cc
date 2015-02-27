@@ -181,6 +181,7 @@ const uint16_t log2_table[] = { 1000, 1585, 2000, 2322, 2585, 2807, 3000,
                                 
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
+  static uint16_t previous_fm_adc_code = 0;
   static int32_t previous_pitch = 0;
   static int32_t previous_shape = 0;
   static uint8_t metaseq_steps_index = 0;
@@ -474,14 +475,25 @@ void RenderBlock() {
 
   // or harmonic intervals 
   if (meta_mod == 6) {
-     int32_t harmonic_multiplier = settings.adc_to_fm(adc.channel(3)) >> 8;
-     if (harmonic_multiplier < 0) {
-	    harmonic_multiplier = 0;
+     // Apply hysteresis to ADC reading to prevent a single bit error to move
+     // the quantized pitch up and down the quantization boundary.
+     uint16_t fm_adc_code = adc.channel(3);
+     if ((fm_adc_code > previous_fm_adc_code + 4) ||
+         (fm_adc_code < previous_fm_adc_code - 4)) {
+        previous_fm_adc_code = fm_adc_code;
+     } else {
+        fm_adc_code = previous_fm_adc_code;
+     }
+     int32_t harmonic_multiplier = settings.adc_to_fm(fm_adc_code) >> 8;
+     if (harmonic_multiplier < -15) {
+	    harmonic_multiplier = -15;
      } else if (harmonic_multiplier > 15) {
         harmonic_multiplier = 15;
      }
-     if (harmonic_multiplier) {
+     if (harmonic_multiplier > 0) {
         pitch += 1536 * log2_table[harmonic_multiplier - 1] / 1000;
+     } else if (harmonic_multiplier < 0) {
+        pitch -= 1536 * log2_table[-1 - harmonic_multiplier] / 1000;
      }
   }
   

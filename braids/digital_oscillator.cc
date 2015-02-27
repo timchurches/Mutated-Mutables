@@ -1853,74 +1853,76 @@ void DigitalOscillator::RenderTwinPeaksNoise(
   state_.pno.filter_state[1][1] = y22;
 }
 
-void DigitalOscillator::RenderClockedNoise(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  ClockedNoiseState* state = &state_.clk;
-  
-  if ((parameter_[1] > previous_parameter_[1] + 64) ||
-      (parameter_[1] < previous_parameter_[1] - 64)) {
-    previous_parameter_[1] = parameter_[1];
-  }
-  if ((parameter_[0] > previous_parameter_[0] + 16) ||
-      (parameter_[0] < previous_parameter_[0] - 16)) {
-    previous_parameter_[0] = parameter_[0];
-  }
-  
-  
-  if (strike_) {
-    state->seed = Random::GetWord();
-    strike_ = false;
-  }
-  
-  // Shift the range of the Coarse knob to reach higher clock rates, close
-  // to the sample rate.
-  uint32_t phase = phase_;
-  uint32_t phase_increment = phase_increment_;
-  for (uint8_t i = 0; i < 3; ++i) {
-    if (phase_increment < (1UL << 31)) {
-      phase_increment <<= 1;
-    }
-  }
-  
-  // Compute the period of the random generator.
-  state->cycle_phase_increment = ComputePhaseIncrement(
-      previous_parameter_[0] - 16384) << 1;
-  
-  // Compute the number of quantization steps
-  uint32_t num_steps = 1 + (previous_parameter_[1] >> 10);
-  if (num_steps == 1) {
-    num_steps = 2;
-  }
-  uint32_t quantizer_divider = 65536 / num_steps;
-  while (size--) {
-    phase += phase_increment;
-    if (*sync++) {
-      phase = 0;
-    }
-    
-    // Clock.
-    if (phase < phase_increment) {
-      state->rng_state = state->rng_state * 1664525L + 1013904223L;
-      state->cycle_phase += state->cycle_phase_increment;
-      // Enforce period
-      if (state->cycle_phase < state->cycle_phase_increment) {
-        state->rng_state = state->seed;
-        // Make the period an integer.
-        state->cycle_phase = state->cycle_phase_increment;
-      }
-      uint16_t sample = state->rng_state;
-      sample -= sample % quantizer_divider;
-      sample += quantizer_divider >> 1;
-      state->sample = sample;
-      // Make the clock rate an exact divisor of the sample rate.
-      phase = phase_increment;
-    }
-    *buffer++ = state->sample;
-  }
-  phase_ = phase;
-}
+/*
+// void DigitalOscillator::RenderClockedNoise(
+//     const uint8_t* sync,
+//     int16_t* buffer,
+//     uint8_t size) {
+//   ClockedNoiseState* state = &state_.clk;
+//   
+//   if ((parameter_[1] > previous_parameter_[1] + 64) ||
+//       (parameter_[1] < previous_parameter_[1] - 64)) {
+//     previous_parameter_[1] = parameter_[1];
+//   }
+//   if ((parameter_[0] > previous_parameter_[0] + 16) ||
+//       (parameter_[0] < previous_parameter_[0] - 16)) {
+//     previous_parameter_[0] = parameter_[0];
+//   }
+//   
+//   
+//   if (strike_) {
+//     state->seed = Random::GetWord();
+//     strike_ = false;
+//   }
+//   
+//   // Shift the range of the Coarse knob to reach higher clock rates, close
+//   // to the sample rate.
+//   uint32_t phase = phase_;
+//   uint32_t phase_increment = phase_increment_;
+//   for (uint8_t i = 0; i < 3; ++i) {
+//     if (phase_increment < (1UL << 31)) {
+//       phase_increment <<= 1;
+//     }
+//   }
+//   
+//   // Compute the period of the random generator.
+//   state->cycle_phase_increment = ComputePhaseIncrement(
+//       previous_parameter_[0] - 16384) << 1;
+//   
+//   // Compute the number of quantization steps
+//   uint32_t num_steps = 1 + (previous_parameter_[1] >> 10);
+//   if (num_steps == 1) {
+//     num_steps = 2;
+//   }
+//   uint32_t quantizer_divider = 65536 / num_steps;
+//   while (size--) {
+//     phase += phase_increment;
+//     if (*sync++) {
+//       phase = 0;
+//     }
+//     
+//     // Clock.
+//     if (phase < phase_increment) {
+//       state->rng_state = state->rng_state * 1664525L + 1013904223L;
+//       state->cycle_phase += state->cycle_phase_increment;
+//       // Enforce period
+//       if (state->cycle_phase < state->cycle_phase_increment) {
+//         state->rng_state = state->seed;
+//         // Make the period an integer.
+//         state->cycle_phase = state->cycle_phase_increment;
+//       }
+//       uint16_t sample = state->rng_state;
+//       sample -= sample % quantizer_divider;
+//       sample += quantizer_divider >> 1;
+//       state->sample = sample;
+//       // Make the clock rate an exact divisor of the sample rate.
+//       phase = phase_increment;
+//     }
+//     *buffer++ = state->sample;
+//   }
+//   phase_ = phase;
+// }
+*/
 
 void DigitalOscillator::RenderGranularCloud(
     const uint8_t* sync,
@@ -2340,7 +2342,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderWaveParaphonic,
   &DigitalOscillator::RenderFilteredNoise,
   &DigitalOscillator::RenderTwinPeaksNoise,
-  &DigitalOscillator::RenderClockedNoise,
+  // &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,
   &DigitalOscillator::RenderSilence,

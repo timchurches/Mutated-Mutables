@@ -189,7 +189,7 @@ const char* const algo_values[] = {
     "WTx4",
     "NOIS",
     "TWNQ",
-    "CLKN",
+    // "CLKN",
     "CLOU",
     "PRTC",
     "ZERO", // this is the RenderSilence digital model 
