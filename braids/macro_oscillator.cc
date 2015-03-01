@@ -421,8 +421,8 @@ MacroOscillator::RenderFn MacroOscillator::fn_table_[] = {
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
-  // &MacroOscillator::RenderDigital, // was Clocked noise
-  &MacroOscillator::RenderDigital,
+  // &MacroOscillator::RenderDigital, // was clocked noise
+  // &MacroOscillator::RenderDigital, // was granular cloud
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,

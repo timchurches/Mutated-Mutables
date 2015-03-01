@@ -100,7 +100,15 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_direction
   0,                    // reset_type
   false,                // pitch_sample_hold
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  0,                    // metaseq_note1
+  0,                    // metaseq_note2
+  0,                    // metaseq_note3
+  0,                    // metaseq_note4
+  0,                    // metaseq_note5
+  0,                    // metaseq_note6
+  0,                    // metaseq_note7
+  0,                    // metaseq_note8
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -190,7 +198,7 @@ const char* const algo_values[] = {
     "NOIS",
     "TWNQ",
     // "CLKN",
-    "CLOU",
+    // "CLOU",
     "PRTC",
     "ZERO", // this is the RenderSilence digital model 
 };
@@ -515,6 +523,7 @@ const char* const reset_type_values[] = {
     "FULL", // 3
 };
 
+
 /* static */
 const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "SAVE", algo_values },
@@ -576,6 +585,14 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 2, "SDIR", metaseq_dir_values },
   { 0, 3, "RST ", reset_type_values },
   { 0, 1, "FS+H", boolean_values },
+  { 0, 127, "NOT1", mod_rate_values },
+  { 0, 127, "NOT2", mod_rate_values },
+  { 0, 127, "NOT3", mod_rate_values },
+  { 0, 127, "NOT4", mod_rate_values },
+  { 0, 127, "NOT5", mod_rate_values },
+  { 0, 127, "NOT6", mod_rate_values },
+  { 0, 127, "NOT7", mod_rate_values },
+  { 0, 127, "NOT8", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.1", NULL },  // Placeholder for version string
@@ -613,20 +630,28 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ,
   SETTING_METASEQ_DIRECTION, 
   SETTING_METASEQ_SHAPE1, 
+  SETTING_METASEQ_NOTE1,
   SETTING_METASEQ_STEP_LENGTH1, 
   SETTING_METASEQ_SHAPE2, 
+  SETTING_METASEQ_NOTE2,
   SETTING_METASEQ_STEP_LENGTH2, 
   SETTING_METASEQ_SHAPE3, 
+  SETTING_METASEQ_NOTE3,
   SETTING_METASEQ_STEP_LENGTH3, 
   SETTING_METASEQ_SHAPE4, 
+  SETTING_METASEQ_NOTE4,
   SETTING_METASEQ_STEP_LENGTH4, 
   SETTING_METASEQ_SHAPE5, 
+  SETTING_METASEQ_NOTE5,
   SETTING_METASEQ_STEP_LENGTH5, 
   SETTING_METASEQ_SHAPE6, 
+  SETTING_METASEQ_NOTE6,
   SETTING_METASEQ_STEP_LENGTH6, 
   SETTING_METASEQ_SHAPE7, 
+  SETTING_METASEQ_NOTE7,
   SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
+  SETTING_METASEQ_NOTE8,
   SETTING_METASEQ_STEP_LENGTH8, 
   SETTING_OSC_SYNC,
   SETTING_RATE_INVERSION, 

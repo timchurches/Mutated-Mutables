@@ -185,6 +185,7 @@ void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
   static uint16_t previous_fm_adc_code = 0;
   static int32_t previous_pitch = 0;
+  static int32_t metaseq_pitch_delta = 0;
   static int32_t previous_shape = 0;
   static uint8_t metaseq_steps_index = 0;
   static int8_t metaseq_index = 0;
@@ -538,6 +539,72 @@ void RenderBlock() {
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
   }
 
+  // meta-sequencer
+  if (trigger_flag && metaseq_length) {
+	 MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
+						   settings.metaseq_shape2(), settings.metaseq_shape3(),
+						   settings.metaseq_shape4(), settings.metaseq_shape5(),
+						   settings.metaseq_shape6(), settings.metaseq_shape7(),
+						   settings.metaseq_shape8() };                   
+	 uint8_t metaseq_step_lengths[8] = { 
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
+						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
+	 uint8_t metaseq_notes[8] = { 
+						   settings.GetValue(SETTING_METASEQ_NOTE1),
+						   settings.GetValue(SETTING_METASEQ_NOTE2),   
+						   settings.GetValue(SETTING_METASEQ_NOTE3),
+						   settings.GetValue(SETTING_METASEQ_NOTE4),
+						   settings.GetValue(SETTING_METASEQ_NOTE5),
+						   settings.GetValue(SETTING_METASEQ_NOTE6),
+						   settings.GetValue(SETTING_METASEQ_NOTE7),
+						   settings.GetValue(SETTING_METASEQ_NOTE8) };
+	 ++metaseq_steps_index;
+	 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
+	 if (metaseq_steps_index >= (metaseq_step_lengths[metaseq_index])) { 
+	    metaseq_steps_index = 0;
+		if (metaseq_direction == 0) {
+		   // looping
+		   ++metaseq_index;
+		   if (metaseq_index > metaseq_length) { 
+		      metaseq_index = 0;
+		   }
+		} else if (metaseq_direction == 1) {
+		   // swing
+		   if (current_mseq_dir) {
+		      // ascending
+			  ++metaseq_index;
+			  if (metaseq_index >= metaseq_length) {
+			     metaseq_index = metaseq_length; 
+				 current_mseq_dir = !current_mseq_dir;
+			  }
+		   } else {
+			  // descending
+			  --metaseq_index;
+			  if (metaseq_index == 0) { 
+			     current_mseq_dir = !current_mseq_dir;
+			  }
+		   }             
+		} else if (metaseq_direction == 2) {
+		  // random
+		  metaseq_index = uint8_t(Random::GetWord() >> 29);
+		}
+     }
+	 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
+	 osc.set_shape(metaseq_current_shape);
+	 ui.set_meta_shape(metaseq_current_shape);
+	 metaseq_pitch_delta = int32_t(metaseq_notes[metaseq_index]) * 128;
+  } // end meta-sequencer
+
+  if (metaseq_length) {
+     pitch += metaseq_pitch_delta;
+  }
+
   // clip the pitch to prevent bad things from happening.
   if (pitch > 32767) {
     pitch = 32767;
@@ -566,57 +633,6 @@ void RenderBlock() {
           mod2_sync_index = 0 ;
        }
     }
-    // meta-sequencer
-	if (metaseq_length) {
-		 MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
-						   settings.metaseq_shape2(), settings.metaseq_shape3(),
-						   settings.metaseq_shape4(), settings.metaseq_shape5(),
-						   settings.metaseq_shape6(), settings.metaseq_shape7(),
-						   settings.metaseq_shape8() };                   
-		 uint8_t metaseq_step_lengths[8] = { 
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
-	     ++metaseq_steps_index;
-		 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-		 if (metaseq_steps_index >= (metaseq_step_lengths[metaseq_index])) { 
-			  metaseq_steps_index = 0;
-			  if (metaseq_direction == 0) {
-				 // looping
-				 ++metaseq_index;
-				 if (metaseq_index > metaseq_length) { 
-					metaseq_index = 0;
-				 }
-			  } else if (metaseq_direction == 1) {
-				 // swing
-				 if (current_mseq_dir) {
-					// ascending
-					++metaseq_index;
-					if (metaseq_index >= metaseq_length) {
-					   metaseq_index = metaseq_length; 
-					   current_mseq_dir = !current_mseq_dir;
-					}
-				 } else {
-					// descending
-					--metaseq_index;
-					if (metaseq_index == 0) { 
-					   current_mseq_dir = !current_mseq_dir;
-					}
-				}             
-			  } else if (metaseq_direction == 2) {
-				 // random
-				 metaseq_index = uint8_t(Random::GetWord() >> 29);
-			  }
-		 }
-		 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
-		 osc.set_shape(metaseq_current_shape);
-		 ui.set_meta_shape(metaseq_current_shape);
-	}
     ui.StepMarquee(); // retained because this is what causes the CV tester to blink on each trigger
     trigger_flag = false;
   }

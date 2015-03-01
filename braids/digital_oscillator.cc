@@ -1924,66 +1924,68 @@ void DigitalOscillator::RenderTwinPeaksNoise(
 // }
 */
 
-void DigitalOscillator::RenderGranularCloud(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  
-  for (size_t i = 0; i < 4; ++i) {
-    Grain* g = &state_.grain[i];
-    // If a grain has reached the end of its envelope, reset it.
-    if (g->envelope_phase > (1 << 24) ||
-        g->envelope_phase_increment == 0) {
-      g->envelope_phase_increment = 0;
-      if ((Random::GetWord() & 0xffff) < 0x4000) {
-        g->envelope_phase_increment = \
-            lut_granular_envelope_rate[parameter_[0] >> 7] << 3;
-        g->envelope_phase = 0;
-        g->phase_increment = phase_increment_;
-        int32_t pitch_mod = Random::GetSample() * parameter_[1] >> 16;
-        int32_t phi = phase_increment_ >> 8;
-        if (pitch_mod < 0) {
-          g->phase_increment += phi * (pitch_mod >> 8);
-        } else {
-          g->phase_increment += phi * (pitch_mod >> 7);
-        }
-      }
-    }
-  }
-  
-  // TODO(pichenettes): Check if it's possible to interpolate envelope
-  // increment too!
-  while (size--) {
-    int32_t sample = 0;
-    state_.grain[0].phase += state_.grain[0].phase_increment;
-    state_.grain[0].envelope_phase += state_.grain[0].envelope_phase_increment;
-    sample += Interpolate824(wav_sine, state_.grain[0].phase) * \
-        lut_granular_envelope[state_.grain[0].envelope_phase >> 16] >> 17;
-
-    state_.grain[1].phase += state_.grain[1].phase_increment;
-    state_.grain[1].envelope_phase += state_.grain[1].envelope_phase_increment;
-    sample += Interpolate824(wav_sine, state_.grain[1].phase) * \
-        lut_granular_envelope[state_.grain[1].envelope_phase >> 16] >> 17;
-
-    state_.grain[2].phase += state_.grain[2].phase_increment;
-    state_.grain[2].envelope_phase += state_.grain[2].envelope_phase_increment;
-    sample += Interpolate824(wav_sine, state_.grain[2].phase) * \
-        lut_granular_envelope[state_.grain[2].envelope_phase >> 16] >> 17;
-
-    state_.grain[3].phase += state_.grain[3].phase_increment;
-    state_.grain[3].envelope_phase += state_.grain[3].envelope_phase_increment;
-    sample += Interpolate824(wav_sine, state_.grain[3].phase) * \
-        lut_granular_envelope[state_.grain[3].envelope_phase >> 16] >> 17;
-    
-    if (sample < -32768) {
-      sample = -32768;
-    }
-    if (sample > 32767) {
-      sample = 32767;
-    }
-    *buffer++ = sample;
-  } 
-}
+/*
+// void DigitalOscillator::RenderGranularCloud(
+//     const uint8_t* sync,
+//     int16_t* buffer,
+//     uint8_t size) {
+//   
+//   for (size_t i = 0; i < 4; ++i) {
+//     Grain* g = &state_.grain[i];
+//     // If a grain has reached the end of its envelope, reset it.
+//     if (g->envelope_phase > (1 << 24) ||
+//         g->envelope_phase_increment == 0) {
+//       g->envelope_phase_increment = 0;
+//       if ((Random::GetWord() & 0xffff) < 0x4000) {
+//         g->envelope_phase_increment = \
+//             lut_granular_envelope_rate[parameter_[0] >> 7] << 3;
+//         g->envelope_phase = 0;
+//         g->phase_increment = phase_increment_;
+//         int32_t pitch_mod = Random::GetSample() * parameter_[1] >> 16;
+//         int32_t phi = phase_increment_ >> 8;
+//         if (pitch_mod < 0) {
+//           g->phase_increment += phi * (pitch_mod >> 8);
+//         } else {
+//           g->phase_increment += phi * (pitch_mod >> 7);
+//         }
+//       }
+//     }
+//   }
+//   
+//   // TODO(pichenettes): Check if it's possible to interpolate envelope
+//   // increment too!
+//   while (size--) {
+//     int32_t sample = 0;
+//     state_.grain[0].phase += state_.grain[0].phase_increment;
+//     state_.grain[0].envelope_phase += state_.grain[0].envelope_phase_increment;
+//     sample += Interpolate824(wav_sine, state_.grain[0].phase) * \
+//         lut_granular_envelope[state_.grain[0].envelope_phase >> 16] >> 17;
+// 
+//     state_.grain[1].phase += state_.grain[1].phase_increment;
+//     state_.grain[1].envelope_phase += state_.grain[1].envelope_phase_increment;
+//     sample += Interpolate824(wav_sine, state_.grain[1].phase) * \
+//         lut_granular_envelope[state_.grain[1].envelope_phase >> 16] >> 17;
+// 
+//     state_.grain[2].phase += state_.grain[2].phase_increment;
+//     state_.grain[2].envelope_phase += state_.grain[2].envelope_phase_increment;
+//     sample += Interpolate824(wav_sine, state_.grain[2].phase) * \
+//         lut_granular_envelope[state_.grain[2].envelope_phase >> 16] >> 17;
+// 
+//     state_.grain[3].phase += state_.grain[3].phase_increment;
+//     state_.grain[3].envelope_phase += state_.grain[3].envelope_phase_increment;
+//     sample += Interpolate824(wav_sine, state_.grain[3].phase) * \
+//         lut_granular_envelope[state_.grain[3].envelope_phase >> 16] >> 17;
+//     
+//     if (sample < -32768) {
+//       sample = -32768;
+//     }
+//     if (sample > 32767) {
+//       sample = 32767;
+//     }
+//     *buffer++ = sample;
+//   } 
+// }
+*/
 
 static const uint16_t kParticleNoiseDecay = 64763;
 static const int32_t kResonanceSquared = 32768 * 0.996 * 0.996;
@@ -2343,7 +2345,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderFilteredNoise,
   &DigitalOscillator::RenderTwinPeaksNoise,
   // &DigitalOscillator::RenderClockedNoise,
-  &DigitalOscillator::RenderGranularCloud,
+  // &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,
   &DigitalOscillator::RenderSilence,
 };

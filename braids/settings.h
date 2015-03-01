@@ -84,7 +84,7 @@ enum MacroOscillatorShape {
   MACRO_OSC_SHAPE_FILTERED_NOISE,
   MACRO_OSC_SHAPE_TWIN_PEAKS_NOISE,
   // MACRO_OSC_SHAPE_CLOCKED_NOISE,
-  MACRO_OSC_SHAPE_GRANULAR_CLOUD,
+  // MACRO_OSC_SHAPE_GRANULAR_CLOUD,
   MACRO_OSC_SHAPE_PARTICLE_NOISE,
   
   MACRO_OSC_SHAPE_SILENCE,
@@ -191,7 +191,15 @@ enum Setting {
   SETTING_METASEQ_DIRECTION,
   SETTING_RESET_TYPE,
   SETTING_PITCH_SAMPLE_HOLD,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_PITCH_SAMPLE_HOLD,
+  SETTING_METASEQ_NOTE1, 
+  SETTING_METASEQ_NOTE2, 
+  SETTING_METASEQ_NOTE3, 
+  SETTING_METASEQ_NOTE4, 
+  SETTING_METASEQ_NOTE5, 
+  SETTING_METASEQ_NOTE6, 
+  SETTING_METASEQ_NOTE7, 
+  SETTING_METASEQ_NOTE8, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_NOTE8,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -260,7 +268,15 @@ struct SettingsData {
   uint8_t metaseq_direction;
   uint8_t reset_type;
   uint8_t pitch_sample_hold;
-  uint8_t extra_padding[25];
+  uint8_t metaseq_note1;
+  uint8_t metaseq_note2;
+  uint8_t metaseq_note3;
+  uint8_t metaseq_note4;
+  uint8_t metaseq_note5;
+  uint8_t metaseq_note6;
+  uint8_t metaseq_note7;
+  uint8_t metaseq_note8;
+  uint8_t extra_padding[17];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
