@@ -1785,207 +1785,205 @@ void DigitalOscillator::RenderFilteredNoise(
   state_.svf.bp = bp;
 }
 
-void DigitalOscillator::RenderTwinPeaksNoise(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  int32_t sample;
-  int32_t y10, y20;
-  int32_t y11 = state_.pno.filter_state[0][0];
-  int32_t y12 = state_.pno.filter_state[0][1];
-  int32_t y21 = state_.pno.filter_state[1][0];
-  int32_t y22 = state_.pno.filter_state[1][1];
-  uint32_t q = 65240 + (parameter_[0] >> 7);
-  int32_t q_squared = q * q >> 17;
-  int16_t p1 = pitch_;
+/*
+// void DigitalOscillator::RenderTwinPeaksNoise(
+//     const uint8_t* sync,
+//     int16_t* buffer,
+//     uint8_t size) {
+//   int32_t sample;
+//   int32_t y10, y20;
+//   int32_t y11 = state_.pno.filter_state[0][0];
+//   int32_t y12 = state_.pno.filter_state[0][1];
+//   int32_t y21 = state_.pno.filter_state[1][0];
+//   int32_t y22 = state_.pno.filter_state[1][1];
+//   uint32_t q = 65240 + (parameter_[0] >> 7);
+//   int32_t q_squared = q * q >> 17;
+//   int16_t p1 = pitch_;
+// 
+//   CONSTRAIN(p1, 0, 16383)
+//   int32_t c1 = Interpolate824(lut_resonator_coefficient, p1 << 17);
+//   int32_t s1 = Interpolate824(lut_resonator_scale, p1 << 17);
+//   
+//   int16_t p2 = pitch_ + ((parameter_[1] - 16384) >> 1);
+//   CONSTRAIN(p2, 0, 16383)
+//   int32_t c2 = Interpolate824(lut_resonator_coefficient, p2 << 17);
+//   int32_t s2 = Interpolate824(lut_resonator_scale, p2 << 17);
+// 
+//   c1 = c1 * q >> 16;
+//   c2 = c2 * q >> 16;
+// 
+//   int32_t makeup_gain = 8191 - (parameter_[0] >> 2);
+//   
+//   while (size) {    
+//     sample = Random::GetSample() >> 1;
+//     
+//     if (sample > 0) {
+//       y10 = sample * s1 >> 16;
+//       y20 = sample * s2 >> 16;
+//     } else {
+//       y10 = -((-sample) * s1 >> 16);
+//       y20 = -((-sample) * s2 >> 16);
+//     }
+//     
+//     y10 += y11 * c1 >> 15;
+//     y10 -= y12 * q_squared >> 15;
+//     CLIP(y10)
+//     y12 = y11;
+//     y11 = y10;
+//     
+//     y20 += y21 * c2 >> 15;
+//     y20 -= y22 * q_squared >> 15;
+//     CLIP(y20)
+//     y22 = y21;
+//     y21 = y20;
+//     
+//     y10 += y20;
+//     y10 += (y10 * makeup_gain >> 13);
+//     CLIP(y10)
+//     sample = y10;
+//     sample = Interpolate88(ws_moderate_overdrive, sample + 32768);
+//     
+//     *buffer++ = sample;
+//     *buffer++ = sample;
+//     size -= 2;
+//   }
+//   
+//   state_.pno.filter_state[0][0] = y11;
+//   state_.pno.filter_state[0][1] = y12;
+//   state_.pno.filter_state[1][0] = y21;
+//   state_.pno.filter_state[1][1] = y22;
+// }
+*/
 
-  CONSTRAIN(p1, 0, 16383)
-  int32_t c1 = Interpolate824(lut_resonator_coefficient, p1 << 17);
-  int32_t s1 = Interpolate824(lut_resonator_scale, p1 << 17);
-  
-  int16_t p2 = pitch_ + ((parameter_[1] - 16384) >> 1);
-  CONSTRAIN(p2, 0, 16383)
-  int32_t c2 = Interpolate824(lut_resonator_coefficient, p2 << 17);
-  int32_t s2 = Interpolate824(lut_resonator_scale, p2 << 17);
-
-  c1 = c1 * q >> 16;
-  c2 = c2 * q >> 16;
-
-  int32_t makeup_gain = 8191 - (parameter_[0] >> 2);
-  
-  while (size) {    
-    sample = Random::GetSample() >> 1;
-    
-    if (sample > 0) {
-      y10 = sample * s1 >> 16;
-      y20 = sample * s2 >> 16;
-    } else {
-      y10 = -((-sample) * s1 >> 16);
-      y20 = -((-sample) * s2 >> 16);
-    }
-    
-    y10 += y11 * c1 >> 15;
-    y10 -= y12 * q_squared >> 15;
-    CLIP(y10)
-    y12 = y11;
-    y11 = y10;
-    
-    y20 += y21 * c2 >> 15;
-    y20 -= y22 * q_squared >> 15;
-    CLIP(y20)
-    y22 = y21;
-    y21 = y20;
-    
-    y10 += y20;
-    y10 += (y10 * makeup_gain >> 13);
-    CLIP(y10)
-    sample = y10;
-    sample = Interpolate88(ws_moderate_overdrive, sample + 32768);
-    
-    *buffer++ = sample;
-    *buffer++ = sample;
-    size -= 2;
-  }
-  
-  state_.pno.filter_state[0][0] = y11;
-  state_.pno.filter_state[0][1] = y12;
-  state_.pno.filter_state[1][0] = y21;
-  state_.pno.filter_state[1][1] = y22;
+void DigitalOscillator::RenderClockedNoise(
+     const uint8_t* sync,
+     int16_t* buffer,
+     uint8_t size) {
+   ClockedNoiseState* state = &state_.clk;
+   
+   if ((parameter_[1] > previous_parameter_[1] + 64) ||
+       (parameter_[1] < previous_parameter_[1] - 64)) {
+     previous_parameter_[1] = parameter_[1];
+   }
+   if ((parameter_[0] > previous_parameter_[0] + 16) ||
+       (parameter_[0] < previous_parameter_[0] - 16)) {
+     previous_parameter_[0] = parameter_[0];
+   }
+   
+   
+   if (strike_) {
+     state->seed = Random::GetWord();
+     strike_ = false;
+   }
+   
+   // Shift the range of the Coarse knob to reach higher clock rates, close
+   // to the sample rate.
+   uint32_t phase = phase_;
+   uint32_t phase_increment = phase_increment_;
+   for (uint8_t i = 0; i < 3; ++i) {
+     if (phase_increment < (1UL << 31)) {
+       phase_increment <<= 1;
+     }
+   }
+   
+   // Compute the period of the random generator.
+   state->cycle_phase_increment = ComputePhaseIncrement(
+       previous_parameter_[0] - 16384) << 1;
+   
+   // Compute the number of quantization steps
+   uint32_t num_steps = 1 + (previous_parameter_[1] >> 10);
+   if (num_steps == 1) {
+     num_steps = 2;
+   }
+   uint32_t quantizer_divider = 65536 / num_steps;
+   while (size--) {
+     phase += phase_increment;
+     if (*sync++) {
+       phase = 0;
+     }
+     
+     // Clock.
+     if (phase < phase_increment) {
+       state->rng_state = state->rng_state * 1664525L + 1013904223L;
+       state->cycle_phase += state->cycle_phase_increment;
+       // Enforce period
+       if (state->cycle_phase < state->cycle_phase_increment) {
+         state->rng_state = state->seed;
+         // Make the period an integer.
+         state->cycle_phase = state->cycle_phase_increment;
+       }
+       uint16_t sample = state->rng_state;
+       sample -= sample % quantizer_divider;
+       sample += quantizer_divider >> 1;
+       state->sample = sample;
+       // Make the clock rate an exact divisor of the sample rate.
+       phase = phase_increment;
+     }
+     *buffer++ = state->sample;
+   }
+   phase_ = phase;
 }
 
-/*
-// void DigitalOscillator::RenderClockedNoise(
-//     const uint8_t* sync,
-//     int16_t* buffer,
-//     uint8_t size) {
-//   ClockedNoiseState* state = &state_.clk;
-//   
-//   if ((parameter_[1] > previous_parameter_[1] + 64) ||
-//       (parameter_[1] < previous_parameter_[1] - 64)) {
-//     previous_parameter_[1] = parameter_[1];
-//   }
-//   if ((parameter_[0] > previous_parameter_[0] + 16) ||
-//       (parameter_[0] < previous_parameter_[0] - 16)) {
-//     previous_parameter_[0] = parameter_[0];
-//   }
-//   
-//   
-//   if (strike_) {
-//     state->seed = Random::GetWord();
-//     strike_ = false;
-//   }
-//   
-//   // Shift the range of the Coarse knob to reach higher clock rates, close
-//   // to the sample rate.
-//   uint32_t phase = phase_;
-//   uint32_t phase_increment = phase_increment_;
-//   for (uint8_t i = 0; i < 3; ++i) {
-//     if (phase_increment < (1UL << 31)) {
-//       phase_increment <<= 1;
-//     }
-//   }
-//   
-//   // Compute the period of the random generator.
-//   state->cycle_phase_increment = ComputePhaseIncrement(
-//       previous_parameter_[0] - 16384) << 1;
-//   
-//   // Compute the number of quantization steps
-//   uint32_t num_steps = 1 + (previous_parameter_[1] >> 10);
-//   if (num_steps == 1) {
-//     num_steps = 2;
-//   }
-//   uint32_t quantizer_divider = 65536 / num_steps;
-//   while (size--) {
-//     phase += phase_increment;
-//     if (*sync++) {
-//       phase = 0;
-//     }
-//     
-//     // Clock.
-//     if (phase < phase_increment) {
-//       state->rng_state = state->rng_state * 1664525L + 1013904223L;
-//       state->cycle_phase += state->cycle_phase_increment;
-//       // Enforce period
-//       if (state->cycle_phase < state->cycle_phase_increment) {
-//         state->rng_state = state->seed;
-//         // Make the period an integer.
-//         state->cycle_phase = state->cycle_phase_increment;
-//       }
-//       uint16_t sample = state->rng_state;
-//       sample -= sample % quantizer_divider;
-//       sample += quantizer_divider >> 1;
-//       state->sample = sample;
-//       // Make the clock rate an exact divisor of the sample rate.
-//       phase = phase_increment;
-//     }
-//     *buffer++ = state->sample;
-//   }
-//   phase_ = phase;
-// }
-*/
-
-/*
-// void DigitalOscillator::RenderGranularCloud(
-//     const uint8_t* sync,
-//     int16_t* buffer,
-//     uint8_t size) {
-//   
-//   for (size_t i = 0; i < 4; ++i) {
-//     Grain* g = &state_.grain[i];
-//     // If a grain has reached the end of its envelope, reset it.
-//     if (g->envelope_phase > (1 << 24) ||
-//         g->envelope_phase_increment == 0) {
-//       g->envelope_phase_increment = 0;
-//       if ((Random::GetWord() & 0xffff) < 0x4000) {
-//         g->envelope_phase_increment = \
-//             lut_granular_envelope_rate[parameter_[0] >> 7] << 3;
-//         g->envelope_phase = 0;
-//         g->phase_increment = phase_increment_;
-//         int32_t pitch_mod = Random::GetSample() * parameter_[1] >> 16;
-//         int32_t phi = phase_increment_ >> 8;
-//         if (pitch_mod < 0) {
-//           g->phase_increment += phi * (pitch_mod >> 8);
-//         } else {
-//           g->phase_increment += phi * (pitch_mod >> 7);
-//         }
-//       }
-//     }
-//   }
-//   
-//   // TODO(pichenettes): Check if it's possible to interpolate envelope
-//   // increment too!
-//   while (size--) {
-//     int32_t sample = 0;
-//     state_.grain[0].phase += state_.grain[0].phase_increment;
-//     state_.grain[0].envelope_phase += state_.grain[0].envelope_phase_increment;
-//     sample += Interpolate824(wav_sine, state_.grain[0].phase) * \
-//         lut_granular_envelope[state_.grain[0].envelope_phase >> 16] >> 17;
-// 
-//     state_.grain[1].phase += state_.grain[1].phase_increment;
-//     state_.grain[1].envelope_phase += state_.grain[1].envelope_phase_increment;
-//     sample += Interpolate824(wav_sine, state_.grain[1].phase) * \
-//         lut_granular_envelope[state_.grain[1].envelope_phase >> 16] >> 17;
-// 
-//     state_.grain[2].phase += state_.grain[2].phase_increment;
-//     state_.grain[2].envelope_phase += state_.grain[2].envelope_phase_increment;
-//     sample += Interpolate824(wav_sine, state_.grain[2].phase) * \
-//         lut_granular_envelope[state_.grain[2].envelope_phase >> 16] >> 17;
-// 
-//     state_.grain[3].phase += state_.grain[3].phase_increment;
-//     state_.grain[3].envelope_phase += state_.grain[3].envelope_phase_increment;
-//     sample += Interpolate824(wav_sine, state_.grain[3].phase) * \
-//         lut_granular_envelope[state_.grain[3].envelope_phase >> 16] >> 17;
-//     
-//     if (sample < -32768) {
-//       sample = -32768;
-//     }
-//     if (sample > 32767) {
-//       sample = 32767;
-//     }
-//     *buffer++ = sample;
-//   } 
-// }
-*/
+void DigitalOscillator::RenderGranularCloud(
+     const uint8_t* sync,
+     int16_t* buffer,
+     uint8_t size) {
+   
+   for (size_t i = 0; i < 4; ++i) {
+     Grain* g = &state_.grain[i];
+     // If a grain has reached the end of its envelope, reset it.
+     if (g->envelope_phase > (1 << 24) ||
+         g->envelope_phase_increment == 0) {
+       g->envelope_phase_increment = 0;
+       if ((Random::GetWord() & 0xffff) < 0x4000) {
+         g->envelope_phase_increment = \
+             lut_granular_envelope_rate[parameter_[0] >> 7] << 3;
+         g->envelope_phase = 0;
+         g->phase_increment = phase_increment_;
+         int32_t pitch_mod = Random::GetSample() * parameter_[1] >> 16;
+         int32_t phi = phase_increment_ >> 8;
+         if (pitch_mod < 0) {
+           g->phase_increment += phi * (pitch_mod >> 8);
+         } else {
+           g->phase_increment += phi * (pitch_mod >> 7);
+         }
+       }
+     }
+   }
+   
+   // TODO(pichenettes): Check if it's possible to interpolate envelope
+   // increment too!
+   while (size--) {
+     int32_t sample = 0;
+     state_.grain[0].phase += state_.grain[0].phase_increment;
+     state_.grain[0].envelope_phase += state_.grain[0].envelope_phase_increment;
+     sample += Interpolate824(wav_sine, state_.grain[0].phase) * \
+         lut_granular_envelope[state_.grain[0].envelope_phase >> 16] >> 17;
+ 
+     state_.grain[1].phase += state_.grain[1].phase_increment;
+     state_.grain[1].envelope_phase += state_.grain[1].envelope_phase_increment;
+     sample += Interpolate824(wav_sine, state_.grain[1].phase) * \
+         lut_granular_envelope[state_.grain[1].envelope_phase >> 16] >> 17;
+ 
+     state_.grain[2].phase += state_.grain[2].phase_increment;
+     state_.grain[2].envelope_phase += state_.grain[2].envelope_phase_increment;
+     sample += Interpolate824(wav_sine, state_.grain[2].phase) * \
+         lut_granular_envelope[state_.grain[2].envelope_phase >> 16] >> 17;
+ 
+     state_.grain[3].phase += state_.grain[3].phase_increment;
+     state_.grain[3].envelope_phase += state_.grain[3].envelope_phase_increment;
+     sample += Interpolate824(wav_sine, state_.grain[3].phase) * \
+         lut_granular_envelope[state_.grain[3].envelope_phase >> 16] >> 17;
+     
+     if (sample < -32768) {
+       sample = -32768;
+     }
+     if (sample > 32767) {
+       sample = 32767;
+     }
+     *buffer++ = sample;
+   } 
+}
 
 static const uint16_t kParticleNoiseDecay = 64763;
 static const int32_t kResonanceSquared = 32768 * 0.996 * 0.996;
@@ -2343,9 +2341,9 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderWaveLine,
   &DigitalOscillator::RenderWaveParaphonic,
   &DigitalOscillator::RenderFilteredNoise,
-  &DigitalOscillator::RenderTwinPeaksNoise,
-  // &DigitalOscillator::RenderClockedNoise,
-  // &DigitalOscillator::RenderGranularCloud,
+  // &DigitalOscillator::RenderTwinPeaksNoise,
+  &DigitalOscillator::RenderClockedNoise,
+  &DigitalOscillator::RenderGranularCloud,
   &DigitalOscillator::RenderParticleNoise,
   &DigitalOscillator::RenderSilence,
 };

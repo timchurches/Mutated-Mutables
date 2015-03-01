@@ -196,9 +196,9 @@ const char* const algo_values[] = {
     "WLIN",
     "WTx4",
     "NOIS",
-    "TWNQ",
-    // "CLKN",
-    // "CLOU",
+    // "TWNQ",
+    "CLKN",
+    "CLOU",
     "PRTC",
     "ZERO", // this is the RenderSilence digital model 
 };
@@ -595,7 +595,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "NOT8", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v3.1", NULL },  // Placeholder for version string
+  { 0, 0, "v3.2", NULL },  // Placeholder for version string
 };
 
 /* static */
