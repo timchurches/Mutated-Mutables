@@ -76,7 +76,7 @@ const SettingsData kInitSettings = {
   1,                    // mod2_sync
   false,                // osc_sync
   false,                // mod1_mod2_timbre_depth
-  false,                // mod1_mod2_color_depth
+  63,                   // fine_tune, was mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
   50,                   // initial_gain = 65535
   0,                    // metaseq
@@ -561,7 +561,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M2SY", mod_rate_values },
   { 0, 1, "OSYN", boolean_values },
   { 0, 1, "M1T2", boolean_values },
-  { 0, 1, "M1C2", boolean_values },
+  { 0, 127, "FTUN", mod_rate_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
   { 0, 50, "LEVL", mod_depth_values },
   { 0, 7, "MSEQ", metaseq_values },
@@ -625,7 +625,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
   SETTING_MOD1_MOD2_TIMBRE_DEPTH,
-  SETTING_MOD1_MOD2_COLOR_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_METASEQ,
   SETTING_METASEQ_DIRECTION, 
@@ -660,6 +659,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_CV_TESTER,
   SETTING_PITCH_RANGE,
   SETTING_PITCH_OCTAVE,
+  SETTING_FINE_TUNE,
   SETTING_PITCH_SAMPLE_HOLD,
   SETTING_PITCH_QUANTIZER,
   SETTING_QUANT_BEFORE_VIBRATO,

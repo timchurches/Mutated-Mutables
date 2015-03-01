@@ -167,7 +167,7 @@ enum Setting {
   SETTING_MOD2_SYNC,
   SETTING_OSC_SYNC,
   SETTING_MOD1_MOD2_TIMBRE_DEPTH,
-  SETTING_MOD1_MOD2_COLOR_DEPTH,
+  SETTING_FINE_TUNE,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_INITIAL_GAIN,
   SETTING_METASEQ,
@@ -244,7 +244,7 @@ struct SettingsData {
   uint8_t mod2_sync; 
   uint8_t osc_sync; 
   uint8_t mod1_mod2_timbre_depth; 
-  uint8_t mod1_mod2_color_depth; 
+  uint8_t fine_tune; // was mod1_mod2_color_depth 
   uint8_t mod1_mod2_vibrato_depth; 
   uint8_t initial_gain; 
   uint8_t metaseq;
@@ -383,8 +383,8 @@ class Settings {
     return data_.mod1_mod2_timbre_depth;
   }
 
-  inline bool mod1_mod2_color_depth() const {
-    return data_.mod1_mod2_color_depth;
+  inline int32_t fine_tune() const {
+    return data_.fine_tune - 63;
   }
 
   inline bool mod1_mod2_vibrato_depth() const {

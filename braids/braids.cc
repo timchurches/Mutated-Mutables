@@ -354,21 +354,12 @@ void RenderBlock() {
   } else {
 	 parameter_2 += (ad_value * settings.mod1_color_depth()) >> 9;
   }
-  if (settings.mod1_mod2_color_depth()) {   
-	 int32_t color_delta = (ad2_value * settings.mod2_color_depth()) >> 9;
-	 color_delta = (color_delta * ad_value) >> 16;
-	 if (modulator2_mode == 2) {  
-		parameter_2 -= color_delta;
-	 } else {
-		parameter_2 += color_delta;
-	 }
+  if (modulator2_mode == 2) {  
+	 parameter_2 -= (ad2_value * settings.mod2_color_depth()) >> 9;
   } else {
-	 if (modulator2_mode == 2) {  
-		parameter_2 -= (ad2_value * settings.mod2_color_depth()) >> 9;
-	 } else {
-		parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
-	 }
+	 parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
   }
+
   // clip
   if (parameter_2 > 32767) {
 	parameter_2 = 32767;
@@ -605,6 +596,9 @@ void RenderBlock() {
      pitch += metaseq_pitch_delta;
   }
 
+  // add software fine tune
+  pitch += settings.fine_tune();
+  
   // clip the pitch to prevent bad things from happening.
   if (pitch > 32767) {
     pitch = 32767;
