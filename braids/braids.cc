@@ -532,32 +532,34 @@ void RenderBlock() {
 
   // meta-sequencer
   if (trigger_flag && metaseq_length) {
-	 MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
-						   settings.metaseq_shape2(), settings.metaseq_shape3(),
-						   settings.metaseq_shape4(), settings.metaseq_shape5(),
-						   settings.metaseq_shape6(), settings.metaseq_shape7(),
-						   settings.metaseq_shape8() };                   
-	 uint8_t metaseq_step_lengths[8] = { 
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
-						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
-	 uint8_t metaseq_notes[8] = { 
-						   settings.GetValue(SETTING_METASEQ_NOTE1),
-						   settings.GetValue(SETTING_METASEQ_NOTE2),   
-						   settings.GetValue(SETTING_METASEQ_NOTE3),
-						   settings.GetValue(SETTING_METASEQ_NOTE4),
-						   settings.GetValue(SETTING_METASEQ_NOTE5),
-						   settings.GetValue(SETTING_METASEQ_NOTE6),
-						   settings.GetValue(SETTING_METASEQ_NOTE7),
-						   settings.GetValue(SETTING_METASEQ_NOTE8) };
+/*
+// 	 MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
+// 						   settings.metaseq_shape2(), settings.metaseq_shape3(),
+// 						   settings.metaseq_shape4(), settings.metaseq_shape5(),
+// 						   settings.metaseq_shape6(), settings.metaseq_shape7(),
+// 						   settings.metaseq_shape8() };                   
+// 	 uint8_t metaseq_step_lengths[8] = { 
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
+// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
+// 	 uint8_t metaseq_notes[8] = { 
+// 						   settings.GetValue(SETTING_METASEQ_NOTE1),
+// 						   settings.GetValue(SETTING_METASEQ_NOTE2),   
+// 						   settings.GetValue(SETTING_METASEQ_NOTE3),
+// 						   settings.GetValue(SETTING_METASEQ_NOTE4),
+// 						   settings.GetValue(SETTING_METASEQ_NOTE5),
+// 						   settings.GetValue(SETTING_METASEQ_NOTE6),
+// 						   settings.GetValue(SETTING_METASEQ_NOTE7),
+// 						   settings.GetValue(SETTING_METASEQ_NOTE8) };
+*/
 	 ++metaseq_steps_index;
 	 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-	 if (metaseq_steps_index >= (metaseq_step_lengths[metaseq_index])) { 
+	 if (metaseq_steps_index >= (settings.metaseq_step_length(metaseq_index))) { 
 	    metaseq_steps_index = 0;
 		if (metaseq_direction == 0) {
 		   // looping
@@ -586,10 +588,10 @@ void RenderBlock() {
 		  metaseq_index = uint8_t(Random::GetWord() >> 29);
 		}
      }
-	 MacroOscillatorShape metaseq_current_shape = metaseq_shapes[metaseq_index];
+	 MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
 	 osc.set_shape(metaseq_current_shape);
 	 ui.set_meta_shape(metaseq_current_shape);
-	 metaseq_pitch_delta = int32_t(metaseq_notes[metaseq_index]) * 128;
+	 metaseq_pitch_delta = settings.metaseq_note(metaseq_index) * 128;
   } // end meta-sequencer
 
   if (metaseq_length) {

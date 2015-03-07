@@ -395,41 +395,51 @@ class Settings {
     return (data_.initial_gain * 1310);
   }
 
-  inline MacroOscillatorShape metaseq_shape1() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape1);
+  inline uint8_t metaseq_step_length(uint8_t i) const {
+    return GetValue(Setting(SETTING_METASEQ_STEP_LENGTH1 + i * 2));
   }
 
-  inline MacroOscillatorShape metaseq_shape2() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape2);
+  inline int32_t metaseq_note(uint8_t i) const {
+    return int32_t(GetValue(Setting(SETTING_METASEQ_NOTE1 + i)));
   }
 
-  inline MacroOscillatorShape metaseq_shape3() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape3);
+  inline MacroOscillatorShape metaseq_shape(uint8_t i) const {
+    return static_cast<MacroOscillatorShape>(GetValue(Setting(SETTING_METASEQ_SHAPE1 + i * 2)));
   }
 
-  inline MacroOscillatorShape metaseq_shape4() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape4);
-  }
-   
-  inline MacroOscillatorShape metaseq_shape5() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape5);
-  }
-
-  inline MacroOscillatorShape metaseq_shape6() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape6);
-  }
-
-  inline MacroOscillatorShape metaseq_shape7() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape7);
-  }
-
-  inline MacroOscillatorShape metaseq_shape8() const {
-    return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
-  }
-
-  // inline uint8_t reset_type() const {
-  //   return data_.reset_type;
-  // }
+/*
+//   inline MacroOscillatorShape metaseq_shape1() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape1);
+//   }
+// 
+//   inline MacroOscillatorShape metaseq_shape2() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape2);
+//   }
+// 
+//   inline MacroOscillatorShape metaseq_shape3() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape3);
+//   }
+// 
+//   inline MacroOscillatorShape metaseq_shape4() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape4);
+//   }
+//    
+//   inline MacroOscillatorShape metaseq_shape5() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape5);
+//   }
+// 
+//   inline MacroOscillatorShape metaseq_shape6() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape6);
+//   }
+// 
+//   inline MacroOscillatorShape metaseq_shape7() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape7);
+//   }
+// 
+//   inline MacroOscillatorShape metaseq_shape8() const {
+//     return static_cast<MacroOscillatorShape>(data_.metaseq_shape8);
+//   }
+*/
 
   inline bool pitch_sample_hold() const {
     return data_.pitch_sample_hold;
