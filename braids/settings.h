@@ -166,7 +166,7 @@ enum Setting {
   SETTING_MOD1_SYNC,
   SETTING_MOD2_SYNC,
   SETTING_OSC_SYNC,
-  SETTING_MOD1_MOD2_TIMBRE_DEPTH,
+  SETTING_METASEQ_PARAMETER_DEST, 
   SETTING_FINE_TUNE,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_INITIAL_GAIN,
@@ -199,7 +199,15 @@ enum Setting {
   SETTING_METASEQ_NOTE6, 
   SETTING_METASEQ_NOTE7, 
   SETTING_METASEQ_NOTE8, 
-  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_NOTE8,
+  SETTING_METASEQ_PARAMETER1, 
+  SETTING_METASEQ_PARAMETER2, 
+  SETTING_METASEQ_PARAMETER3, 
+  SETTING_METASEQ_PARAMETER4, 
+  SETTING_METASEQ_PARAMETER5, 
+  SETTING_METASEQ_PARAMETER6, 
+  SETTING_METASEQ_PARAMETER7, 
+  SETTING_METASEQ_PARAMETER8, 
+  SETTING_LAST_EDITABLE_SETTING = SETTING_METASEQ_PARAMETER8,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -243,7 +251,7 @@ struct SettingsData {
   uint8_t mod1_sync; 
   uint8_t mod2_sync; 
   uint8_t osc_sync; 
-  uint8_t mod1_mod2_timbre_depth; 
+  uint8_t metaseq_parameter_dest; // was mod1_mod2_timbre_depth 
   uint8_t fine_tune; // was mod1_mod2_color_depth 
   uint8_t mod1_mod2_vibrato_depth; 
   uint8_t initial_gain; 
@@ -276,7 +284,15 @@ struct SettingsData {
   uint8_t metaseq_note6;
   uint8_t metaseq_note7;
   uint8_t metaseq_note8;
-  uint8_t extra_padding[17];
+  uint8_t metaseq_parameter1;
+  uint8_t metaseq_parameter2;
+  uint8_t metaseq_parameter3;
+  uint8_t metaseq_parameter4;
+  uint8_t metaseq_parameter5;
+  uint8_t metaseq_parameter6;
+  uint8_t metaseq_parameter7;
+  uint8_t metaseq_parameter8;
+  uint8_t extra_padding[9];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -379,10 +395,6 @@ class Settings {
     return data_.osc_sync;
   }
 
-  inline bool mod1_mod2_timbre_depth() const {
-    return data_.mod1_mod2_timbre_depth;
-  }
-
   inline int32_t fine_tune() const {
     return data_.fine_tune - 63;
   }
@@ -405,6 +417,10 @@ class Settings {
 
   inline MacroOscillatorShape metaseq_shape(uint8_t i) const {
     return static_cast<MacroOscillatorShape>(GetValue(Setting(SETTING_METASEQ_SHAPE1 + i * 2)));
+  }
+
+  inline uint8_t metaseq_parameter(uint8_t i) const {
+    return GetValue(Setting(SETTING_METASEQ_PARAMETER1 + i)) * 5;
   }
 
 /*

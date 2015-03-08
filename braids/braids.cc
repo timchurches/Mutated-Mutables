@@ -192,6 +192,7 @@ void RenderBlock() {
   static bool current_mseq_dir = true;
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
+  static uint8_t metaseq_parameter = 0;
   
   // debug_pin.High();
 
@@ -318,6 +319,47 @@ void RenderBlock() {
 	  ad2_value = envelope2.Render(false, modulator2_attack_shape, modulator2_decay_shape);
   }
 
+  // meta-sequencer
+  uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
+  if (trigger_flag && metaseq_length) {
+	 ++metaseq_steps_index;
+	 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
+	 if (metaseq_steps_index >= (settings.metaseq_step_length(metaseq_index))) { 
+	    metaseq_steps_index = 0;
+		if (metaseq_direction == 0) {
+		   // looping
+		   ++metaseq_index;
+		   if (metaseq_index > metaseq_length) { 
+		      metaseq_index = 0;
+		   }
+		} else if (metaseq_direction == 1) {
+		   // swing
+		   if (current_mseq_dir) {
+		      // ascending
+			  ++metaseq_index;
+			  if (metaseq_index >= metaseq_length) {
+			     metaseq_index = metaseq_length; 
+				 current_mseq_dir = !current_mseq_dir;
+			  }
+		   } else {
+			  // descending
+			  --metaseq_index;
+			  if (metaseq_index == 0) { 
+			     current_mseq_dir = !current_mseq_dir;
+			  }
+		   }             
+		} else if (metaseq_direction == 2) {
+		  // random
+		  metaseq_index = uint8_t(Random::GetWord() >> 29);
+		}
+     }
+	 MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
+	 osc.set_shape(metaseq_current_shape);
+	 ui.set_meta_shape(metaseq_current_shape);
+	 metaseq_pitch_delta = settings.metaseq_note(metaseq_index) * 128;
+     metaseq_parameter = settings.metaseq_parameter(metaseq_index) ;
+  } // end meta-sequencer
+
   // modulate timbre
   int32_t parameter_1 = adc.channel(0) << 3; 
   if (modulator1_mode == 2) {
@@ -325,20 +367,14 @@ void RenderBlock() {
   } else {
 	 parameter_1 += (ad_value * settings.mod1_timbre_depth()) >> 9;
   }  
-  if (settings.mod1_mod2_timbre_depth()) {   
-	 int32_t timbre_delta = (ad2_value * settings.mod2_timbre_depth()) >> 9;
-	 timbre_delta = (timbre_delta * ad_value) >> 16;
-	 if (modulator2_mode == 2) {  
-		parameter_1 -= timbre_delta;
-	 } else {
-		parameter_1 += timbre_delta;
-	 }
+  if (modulator2_mode == 2) {  
+     parameter_1 -= (ad2_value * settings.mod2_timbre_depth()) >> 9;
   } else {
-	 if (modulator2_mode == 2) {  
-		parameter_1 -= (ad2_value * settings.mod2_timbre_depth()) >> 9;
-	 } else {
-		parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
-	 }
+     parameter_1 += (ad2_value * settings.mod2_timbre_depth()) >> 9;
+  }
+  // scale the gain by the meta-sequencer parameter if applicable
+  if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 1)) {
+     parameter_1 = (parameter_1 * metaseq_parameter) >> 7;
   }
   // clip
   if (parameter_1 > 32767) {
@@ -359,7 +395,10 @@ void RenderBlock() {
   } else {
 	 parameter_2 += (ad2_value * settings.mod2_color_depth()) >> 9;
   }
-
+  // scale the gain by the meta-sequencer parameter if applicable
+  if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 2)) {
+     parameter_2 = (parameter_2 * metaseq_parameter) >> 7;
+  }
   // clip
   if (parameter_2 > 32767) {
 	parameter_2 = 32767;
@@ -372,7 +411,6 @@ void RenderBlock() {
 
   // meta_modulation no longer a boolean  
   // meta-sequencer over-rides FMCV=META and the WAVE setting
-  uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
   if (!metaseq_length) {
 	  if (meta_mod == 1) {
 		int32_t shape = adc.channel(3);
@@ -530,70 +568,6 @@ void RenderBlock() {
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
   }
 
-  // meta-sequencer
-  if (trigger_flag && metaseq_length) {
-/*
-// 	 MacroOscillatorShape metaseq_shapes[8] = { settings.metaseq_shape1(),
-// 						   settings.metaseq_shape2(), settings.metaseq_shape3(),
-// 						   settings.metaseq_shape4(), settings.metaseq_shape5(),
-// 						   settings.metaseq_shape6(), settings.metaseq_shape7(),
-// 						   settings.metaseq_shape8() };                   
-// 	 uint8_t metaseq_step_lengths[8] = { 
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH1),
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH2),   
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH3),
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH4),
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH5),
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH6),
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH7),
-// 						   settings.GetValue(SETTING_METASEQ_STEP_LENGTH8) };
-// 	 uint8_t metaseq_notes[8] = { 
-// 						   settings.GetValue(SETTING_METASEQ_NOTE1),
-// 						   settings.GetValue(SETTING_METASEQ_NOTE2),   
-// 						   settings.GetValue(SETTING_METASEQ_NOTE3),
-// 						   settings.GetValue(SETTING_METASEQ_NOTE4),
-// 						   settings.GetValue(SETTING_METASEQ_NOTE5),
-// 						   settings.GetValue(SETTING_METASEQ_NOTE6),
-// 						   settings.GetValue(SETTING_METASEQ_NOTE7),
-// 						   settings.GetValue(SETTING_METASEQ_NOTE8) };
-*/
-	 ++metaseq_steps_index;
-	 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-	 if (metaseq_steps_index >= (settings.metaseq_step_length(metaseq_index))) { 
-	    metaseq_steps_index = 0;
-		if (metaseq_direction == 0) {
-		   // looping
-		   ++metaseq_index;
-		   if (metaseq_index > metaseq_length) { 
-		      metaseq_index = 0;
-		   }
-		} else if (metaseq_direction == 1) {
-		   // swing
-		   if (current_mseq_dir) {
-		      // ascending
-			  ++metaseq_index;
-			  if (metaseq_index >= metaseq_length) {
-			     metaseq_index = metaseq_length; 
-				 current_mseq_dir = !current_mseq_dir;
-			  }
-		   } else {
-			  // descending
-			  --metaseq_index;
-			  if (metaseq_index == 0) { 
-			     current_mseq_dir = !current_mseq_dir;
-			  }
-		   }             
-		} else if (metaseq_direction == 2) {
-		  // random
-		  metaseq_index = uint8_t(Random::GetWord() >> 29);
-		}
-     }
-	 MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
-	 osc.set_shape(metaseq_current_shape);
-	 ui.set_meta_shape(metaseq_current_shape);
-	 metaseq_pitch_delta = settings.metaseq_note(metaseq_index) * 128;
-  } // end meta-sequencer
-
   if (metaseq_length) {
      pitch += metaseq_pitch_delta;
   }
@@ -663,6 +637,10 @@ void RenderBlock() {
      gain -= (ad2_value * mod2_level_depth) >> 8;
   } else if (modulator2_mode == 3) {
      gain += (ad2_value * mod2_level_depth) >> 8;
+  }
+  // scale the gain by the meta-sequencer parameter if applicable
+  if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 4)) {
+     gain = (gain * metaseq_parameter) >> 7;
   }
   // clip the gain  
   if (gain > 65535) {

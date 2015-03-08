@@ -75,7 +75,7 @@ const SettingsData kInitSettings = {
   1,                    // mod1_sync
   1,                    // mod2_sync
   false,                // osc_sync
-  false,                // mod1_mod2_timbre_depth
+  0,                    // metaseq_parameter_dest, mod1_mod2_timbre_depth
   63,                   // fine_tune, was mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
   50,                   // initial_gain = 65535
@@ -108,7 +108,15 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_note6
   0,                    // metaseq_note7
   0,                    // metaseq_note8
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  0,                    // metaseq_parameter1
+  0,                    // metaseq_parameter2
+  0,                    // metaseq_parameter3
+  0,                    // metaseq_parameter4
+  0,                    // metaseq_parameter5
+  0,                    // metaseq_parameter6
+  0,                    // metaseq_parameter7
+  0,                    // metaseq_parameter8
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -523,6 +531,17 @@ const char* const reset_type_values[] = {
     "FULL", // 3
 };
 
+const char* const metaseq_parameter_dest_values[] = {
+    "NONE", // 0
+    "TIMB", // 1
+    "COLR", // 2
+    "T+C",  // 3
+    "LEVL", // 4
+    "T+L",  // 5
+    "C+L",  // 6
+    "TLC",  // 7
+};
+
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
@@ -560,7 +579,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M1SY", mod_rate_values },
   { 0, 127, "M2SY", mod_rate_values },
   { 0, 1, "OSYN", boolean_values },
-  { 0, 1, "M1T2", boolean_values },
+  { 0, 1, "MSPD", metaseq_parameter_dest_values }, // was M1T2
   { 0, 127, "FTUN", mod_rate_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
   { 0, 50, "LEVL", mod_depth_values },
@@ -593,6 +612,14 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "NOT6", mod_rate_values },
   { 0, 127, "NOT7", mod_rate_values },
   { 0, 127, "NOT8", mod_rate_values },
+  { 0, 127, "PAR1", mod_rate_values },
+  { 0, 127, "PAR2", mod_rate_values },
+  { 0, 127, "PAR3", mod_rate_values },
+  { 0, 127, "PAR4", mod_rate_values },
+  { 0, 127, "PAR5", mod_rate_values },
+  { 0, 127, "PAR6", mod_rate_values },
+  { 0, 127, "PAR7", mod_rate_values },
+  { 0, 127, "PAR8", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.3", NULL },  // Placeholder for version string
@@ -624,33 +651,41 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_COLOR_DEPTH,
   SETTING_MOD2_LEVEL_DEPTH,
   SETTING_MOD2_VIBRATO_DEPTH,
-  SETTING_MOD1_MOD2_TIMBRE_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_METASEQ,
   SETTING_METASEQ_DIRECTION, 
+  SETTING_METASEQ_PARAMETER_DEST,
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_NOTE1,
+  SETTING_METASEQ_PARAMETER1,
   SETTING_METASEQ_STEP_LENGTH1, 
   SETTING_METASEQ_SHAPE2, 
   SETTING_METASEQ_NOTE2,
+  SETTING_METASEQ_PARAMETER2,
   SETTING_METASEQ_STEP_LENGTH2, 
   SETTING_METASEQ_SHAPE3, 
   SETTING_METASEQ_NOTE3,
+  SETTING_METASEQ_PARAMETER3,
   SETTING_METASEQ_STEP_LENGTH3, 
   SETTING_METASEQ_SHAPE4, 
   SETTING_METASEQ_NOTE4,
+  SETTING_METASEQ_PARAMETER4,
   SETTING_METASEQ_STEP_LENGTH4, 
   SETTING_METASEQ_SHAPE5, 
   SETTING_METASEQ_NOTE5,
+  SETTING_METASEQ_PARAMETER5,
   SETTING_METASEQ_STEP_LENGTH5, 
   SETTING_METASEQ_SHAPE6, 
   SETTING_METASEQ_NOTE6,
+  SETTING_METASEQ_PARAMETER6,
   SETTING_METASEQ_STEP_LENGTH6, 
   SETTING_METASEQ_SHAPE7, 
   SETTING_METASEQ_NOTE7,
+  SETTING_METASEQ_PARAMETER7,
   SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
   SETTING_METASEQ_NOTE8,
+  SETTING_METASEQ_PARAMETER8,
   SETTING_METASEQ_STEP_LENGTH8, 
   SETTING_OSC_SYNC,
   SETTING_RATE_INVERSION, 
