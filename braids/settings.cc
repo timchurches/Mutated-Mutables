@@ -108,14 +108,14 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_note6
   0,                    // metaseq_note7
   0,                    // metaseq_note8
-  0,                    // metaseq_parameter1
-  0,                    // metaseq_parameter2
-  0,                    // metaseq_parameter3
-  0,                    // metaseq_parameter4
-  0,                    // metaseq_parameter5
-  0,                    // metaseq_parameter6
-  0,                    // metaseq_parameter7
-  0,                    // metaseq_parameter8
+  127,                  // metaseq_parameter1
+  127,                  // metaseq_parameter2
+  127,                  // metaseq_parameter3
+  127,                  // metaseq_parameter4
+  127,                  // metaseq_parameter5
+  127,                  // metaseq_parameter6
+  127,                  // metaseq_parameter7
+  127,                  // metaseq_parameter8
   { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
@@ -585,10 +585,10 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M1SY", mod_rate_values },
   { 0, 127, "M2SY", mod_rate_values },
   { 0, 1, "OSYN", boolean_values },
-  { 0, 1, "MSPD", metaseq_parameter_dest_values }, // was M1T2
+  { 0, 7, "MSPD", metaseq_parameter_dest_values }, // was M1T2
   { 0, 127, "FTUN", mod_rate_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
-  { 0, 50, "LEVL", mod_rate_values },
+  { 0, 127, "LEVL", mod_rate_values },
   { 0, 7, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV1", algo_values },
   { 1, 127, "RPT1", mod_rate_values },
@@ -662,37 +662,37 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ_DIRECTION, 
   SETTING_METASEQ_PARAMETER_DEST,
   SETTING_METASEQ_SHAPE1, 
-  SETTING_METASEQ_NOTE1,
-  SETTING_METASEQ_PARAMETER1,
-  SETTING_METASEQ_STEP_LENGTH1, 
   SETTING_METASEQ_SHAPE2, 
-  SETTING_METASEQ_NOTE2,
-  SETTING_METASEQ_PARAMETER2,
-  SETTING_METASEQ_STEP_LENGTH2, 
   SETTING_METASEQ_SHAPE3, 
-  SETTING_METASEQ_NOTE3,
-  SETTING_METASEQ_PARAMETER3,
-  SETTING_METASEQ_STEP_LENGTH3, 
   SETTING_METASEQ_SHAPE4, 
-  SETTING_METASEQ_NOTE4,
-  SETTING_METASEQ_PARAMETER4,
-  SETTING_METASEQ_STEP_LENGTH4, 
   SETTING_METASEQ_SHAPE5, 
-  SETTING_METASEQ_NOTE5,
-  SETTING_METASEQ_PARAMETER5,
-  SETTING_METASEQ_STEP_LENGTH5, 
   SETTING_METASEQ_SHAPE6, 
-  SETTING_METASEQ_NOTE6,
-  SETTING_METASEQ_PARAMETER6,
-  SETTING_METASEQ_STEP_LENGTH6, 
   SETTING_METASEQ_SHAPE7, 
-  SETTING_METASEQ_NOTE7,
-  SETTING_METASEQ_PARAMETER7,
-  SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_SHAPE8, 
+  SETTING_METASEQ_NOTE1,
+  SETTING_METASEQ_NOTE2,
+  SETTING_METASEQ_NOTE3,
+  SETTING_METASEQ_NOTE4,
+  SETTING_METASEQ_NOTE5,
+  SETTING_METASEQ_NOTE6,
+  SETTING_METASEQ_NOTE7,
   SETTING_METASEQ_NOTE8,
-  SETTING_METASEQ_PARAMETER8,
+  SETTING_METASEQ_STEP_LENGTH1, 
+  SETTING_METASEQ_STEP_LENGTH2, 
+  SETTING_METASEQ_STEP_LENGTH3, 
+  SETTING_METASEQ_STEP_LENGTH4, 
+  SETTING_METASEQ_STEP_LENGTH5, 
+  SETTING_METASEQ_STEP_LENGTH6, 
+  SETTING_METASEQ_STEP_LENGTH7, 
   SETTING_METASEQ_STEP_LENGTH8, 
+  SETTING_METASEQ_PARAMETER1,
+  SETTING_METASEQ_PARAMETER2,
+  SETTING_METASEQ_PARAMETER3,
+  SETTING_METASEQ_PARAMETER4,
+  SETTING_METASEQ_PARAMETER5,
+  SETTING_METASEQ_PARAMETER6,
+  SETTING_METASEQ_PARAMETER7,
+  SETTING_METASEQ_PARAMETER8,
   SETTING_OSC_SYNC,
   SETTING_RATE_INVERSION, 
   SETTING_BRIGHTNESS, 
