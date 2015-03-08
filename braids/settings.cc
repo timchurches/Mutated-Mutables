@@ -58,8 +58,8 @@ const SettingsData kInitSettings = {
   0,                    // mod2_decay_shape
   0,                    // mod1_timbre_depth
   0,                    // mod2_timbre_depth
-  10,                   // mod1_ad_ratio
-  10,                   // mod2_ad_ratio
+  63,                   // mod1_ad_ratio
+  63,                   // mod2_ad_ratio
   0,                    // mod1_mode
   0,                    // mod2_mode  
   20,                   // mod1_rate
@@ -75,7 +75,7 @@ const SettingsData kInitSettings = {
   1,                    // mod1_sync
   1,                    // mod2_sync
   false,                // osc_sync
-  0,                    // metaseq_parameter_dest, mod1_mod2_timbre_depth
+  0,                    // metaseq_parameter_dest, was mod1_mod2_timbre_depth
   63,                   // fine_tune, was mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
   50,                   // initial_gain = 65535
@@ -386,59 +386,61 @@ const char* const trig_delay_values[] = {
     "4ms"
 };
 
-const char* const mod_depth_values[] = {
-    "0",
-    "5",
-    "10",
-    "15",
-    "20",
-    "25",
-    "30",
-    "35",
-    "40",
-    "45",
-    "50",
-    "55",
-    "60",
-    "65",
-    "70",
-    "75",
-    "80",
-    "85",
-    "90",
-    "95",
-    "100",
-    "105",
-    "110",
-    "115",
-    "120",
-    "125",
-    "130",    
-    "135",
-    "140",    
-    "145",
-    "150",
-    "155",
-    "160",    
-    "165",
-    "170",    
-    "175",
-    "180",    
-    "185",
-    "190",    
-    "195",
-    "200",    
-    "205",
-    "210",    
-    "215",
-    "220",    
-    "225",
-    "230",    
-    "235",
-    "240",    
-    "245",
-    "250",
-};
+/*
+// const char* const mod_depth_values[] = {
+//     "0",
+//     "5",
+//     "10",
+//     "15",
+//     "20",
+//     "25",
+//     "30",
+//     "35",
+//     "40",
+//     "45",
+//     "50",
+//     "55",
+//     "60",
+//     "65",
+//     "70",
+//     "75",
+//     "80",
+//     "85",
+//     "90",
+//     "95",
+//     "100",
+//     "105",
+//     "110",
+//     "115",
+//     "120",
+//     "125",
+//     "130",    
+//     "135",
+//     "140",    
+//     "145",
+//     "150",
+//     "155",
+//     "160",    
+//     "165",
+//     "170",    
+//     "175",
+//     "180",    
+//     "185",
+//     "190",    
+//     "195",
+//     "200",    
+//     "205",
+//     "210",    
+//     "215",
+//     "220",    
+//     "225",
+//     "230",    
+//     "235",
+//     "240",    
+//     "245",
+//     "250",
+// };
+*/
 
 const char* const brightness_values[] = {
     "LOW",
@@ -463,29 +465,31 @@ const char* const meta_values[] = {
     "FCKD", // 13 = BITS + SRAT + JITR was 12
 };
 
-const char* const ad_ratio_values[] = { 
-    "2", // 0
-    "10", // 1
-    "20", // 2
-    "30", // 3
-    "40", // 4
-    "50", // 5
-    "60", // 6
-    "70", // 7
-    "80", // 8
-    "90", // 9
-    "100", // 10
-    "111", // 11
-    "125", // 12
-    "143", // 13
-    "166", // 14
-    "200", // 15
-    "250", // 16
-    "333", // 17
-    "500", // 18
-    "1k", // 19
-    "5k", // 20
-};
+/*
+// const char* const ad_ratio_values[] = { 
+//     "2", // 0
+//     "10", // 1
+//     "20", // 2
+//     "30", // 3
+//     "40", // 4
+//     "50", // 5
+//     "60", // 6
+//     "70", // 7
+//     "80", // 8
+//     "90", // 9
+//     "100", // 10
+//     "111", // 11
+//     "125", // 12
+//     "143", // 13
+//     "166", // 14
+//     "200", // 15
+//     "250", // 16
+//     "333", // 17
+//     "500", // 18
+//     "1k", // 19
+//     "5k", // 20
+// };
+*/
 
 const char* const mod_shape_values[] = { 
     "EXPO",  // 0 exponentially-curved triangle
@@ -560,18 +564,20 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 9, "\x83" "SH2", mod_shape_values },
   { 0, 9, "\x82" "SH1", mod_shape_values },
   { 0, 9, "\x82" "SH2", mod_shape_values },
-  { 0, 50, "M1" "\x85" "T", mod_depth_values },
-  { 0, 50, "M2" "\x85" "T", mod_depth_values },
-  { 0, 20, "\x83" "\x82" "1", ad_ratio_values },
-  { 0, 20, "\x83" "\x82" "2", ad_ratio_values },
+  { 0, 127, "M1" "\x85" "T", mod_rate_values },
+  { 0, 127, "M2" "\x85" "T", mod_rate_values },
+  // { 0, 20, "\x83" "\x82" "1", ad_ratio_values },
+  // { 0, 20, "\x83" "\x82" "2", ad_ratio_values },
+  { 0, 127, "\x83" "\x82" "1", mod_rate_values },
+  { 0, 127, "\x83" "\x82" "2", mod_rate_values },
   { 0, 3, "MOD1", mod_mode_values },
   { 0, 3, "MOD2", mod_mode_values },
   { 0, 127, "RAT1", mod_rate_values },
   { 0, 127, "RAT2", mod_rate_values },
-  { 0, 50, "M1" "\x85" "C", mod_depth_values },
-  { 0, 50, "M2" "\x85" "C", mod_depth_values },
-  { 0, 50, "M1" "\x85" "L", mod_depth_values },
-  { 0, 50, "M2" "\x85" "L", mod_depth_values },
+  { 0, 127, "M1" "\x85" "C", mod_rate_values },
+  { 0, 127, "M2" "\x85" "C", mod_rate_values },
+  { 0, 127, "M1" "\x85" "L", mod_rate_values },
+  { 0, 127, "M2" "\x85" "L", mod_rate_values },
   { 0, 127, "M1" "\x85" "F", mod_rate_values },
   { 0, 127, "M2" "\x85" "F", mod_rate_values },
   { 0, 127, "M1" "\x85" "2", mod_rate_values },
@@ -582,7 +588,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "MSPD", metaseq_parameter_dest_values }, // was M1T2
   { 0, 127, "FTUN", mod_rate_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
-  { 0, 50, "LEVL", mod_depth_values },
+  { 0, 50, "LEVL", mod_rate_values },
   { 0, 7, "MSEQ", metaseq_values },
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV1", algo_values },
   { 1, 127, "RPT1", mod_rate_values },

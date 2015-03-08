@@ -222,25 +222,31 @@ void RenderBlock() {
   if (modulator1_mode == 1 && settings.rate_inversion()) {
 	 env_param = 127 - env_param ;
   }  
-  // attack and decay parameters, default to FM voltage reading.
-  env_a = env_param;
-  env_d = env_param;
-  // These are ratios of attack to decay, from A/D = 0.02 
-  // through to A/D=0.9, then A=D, then D/A = 0.9 down to 0.02
-  // as listed in ad_ratio_values in settings.cc
-  uint8_t modulator1_ad_ratio = settings.GetValue(SETTING_MOD1_AD_RATIO);
-  if (modulator1_ad_ratio == 0) {
-   env_a = (env_param * 2) / 100; 
-  } 
-  else if (modulator1_ad_ratio > 0 && modulator1_ad_ratio < 10) {
-	env_a = (env_param * 10 * modulator1_ad_ratio) / 100; 
-  } 
-  else if (modulator1_ad_ratio > 10 && modulator1_ad_ratio < 20) {
-	env_d = (env_param * 10 * (20 - modulator1_ad_ratio)) / 100; 
-  } 
-  else if (modulator1_ad_ratio == 20) {
-	env_d = (env_param * 2) / 100; 
-  } 
+
+//   // attack and decay parameters, default to FM voltage reading.
+//   env_a = env_param;
+//   env_d = env_param;
+
+  // These are ratios of attack to decay, from A/D = 0 to 127
+  env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_param * 2) >> 8; 
+  env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_param * 2) >> 8;  
+
+//   // These are ratios of attack to decay, from A/D = 0.02 
+//   // through to A/D=0.9, then A=D, then D/A = 0.9 down to 0.02
+//   // as listed in ad_ratio_values in settings.cc
+//   uint8_t modulator1_ad_ratio = settings.GetValue(SETTING_MOD1_AD_RATIO);
+//   if (modulator1_ad_ratio == 0) {
+//    env_a = (env_param * 2) / 100; 
+//   } 
+//   else if (modulator1_ad_ratio > 0 && modulator1_ad_ratio < 10) {
+// 	env_a = (env_param * 10 * modulator1_ad_ratio) / 100; 
+//   } 
+//   else if (modulator1_ad_ratio > 10 && modulator1_ad_ratio < 20) {
+// 	env_d = (env_param * 10 * (20 - modulator1_ad_ratio)) / 100; 
+//   } 
+//   else if (modulator1_ad_ratio == 20) {
+// 	env_d = (env_param * 2) / 100; 
+//   } 
 
   // now set the attack and decay parameters 
   // using the modified attack and decay values
@@ -285,22 +291,28 @@ void RenderBlock() {
   if (modulator2_mode == 1 && settings.rate_inversion()) { 
 	 env2_param = 127 - env2_param ;
   }  
-  env2_a = env2_param;
-  env2_d = env2_param;
-  // Repeat for envelope2
-  uint8_t modulator2_ad_ratio = settings.GetValue(SETTING_MOD2_AD_RATIO);
-  if (modulator2_ad_ratio == 0) {
-	env2_a = (env2_param * 2) / 100; 
-  } 
-  else if (modulator2_ad_ratio > 0 && modulator2_ad_ratio < 10) {
-	env2_a = (env2_param * 10 * modulator2_ad_ratio) / 100; 
-  } 
-  else if (modulator2_ad_ratio > 10 && modulator2_ad_ratio < 20) {
-	env2_d = (env2_param * 10 * (20 - modulator2_ad_ratio)) / 100; 
-  } 
-  else if (modulator2_ad_ratio == 20) {
-	env2_d = (env2_param * 2) / 100; 
-  }     
+
+  // These are ratios of attack to decay, from A/D = 0 to 127
+  env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_param * 2) >> 8; 
+  env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_param * 2) >> 8;  
+
+//   env2_a = env2_param;
+//   env2_d = env2_param;
+//   // Repeat for envelope2
+//   uint8_t modulator2_ad_ratio = settings.GetValue(SETTING_MOD2_AD_RATIO);
+//   if (modulator2_ad_ratio == 0) {
+// 	env2_a = (env2_param * 2) / 100; 
+//   } 
+//   else if (modulator2_ad_ratio > 0 && modulator2_ad_ratio < 10) {
+// 	env2_a = (env2_param * 10 * modulator2_ad_ratio) / 100; 
+//   } 
+//   else if (modulator2_ad_ratio > 10 && modulator2_ad_ratio < 20) {
+// 	env2_d = (env2_param * 10 * (20 - modulator2_ad_ratio)) / 100; 
+//   } 
+//   else if (modulator2_ad_ratio == 20) {
+// 	env2_d = (env2_param * 2) / 100; 
+//   }    
+ 
   // now set the attack and decay parameters 
   // using the modified attack and decay values
   envelope2.Update(env2_a, env2_d, 0, 0);  

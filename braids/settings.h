@@ -364,27 +364,27 @@ class Settings {
   }
 
   inline uint8_t mod1_timbre_depth() const {
-    return data_.mod1_timbre_depth * 5;
+    return data_.mod1_timbre_depth * 2;
   }
 
   inline uint8_t mod2_timbre_depth() const {
-    return data_.mod2_timbre_depth * 5;
+    return data_.mod2_timbre_depth * 2;
   }
 
   inline uint8_t mod1_color_depth() const {
-    return data_.mod1_color_depth * 5;
+    return data_.mod1_color_depth * 2;
   }
 
   inline uint8_t mod2_color_depth() const {
-    return data_.mod2_color_depth * 5;
+    return data_.mod2_color_depth * 2;
   }
 
   inline uint8_t mod1_level_depth() const {
-    return data_.mod1_level_depth * 5;
+    return data_.mod1_level_depth * 2;
   }
 
   inline uint8_t mod2_level_depth() const {
-    return data_.mod2_level_depth * 5;
+    return data_.mod2_level_depth * 2;
   }
 
   inline bool quantize_vibrato() const {
@@ -404,7 +404,7 @@ class Settings {
   }
   
   inline int32_t initial_gain() const {
-    return (data_.initial_gain * 1310);
+    return (data_.initial_gain * 516);
   }
 
   inline uint8_t metaseq_step_length(uint8_t i) const {
