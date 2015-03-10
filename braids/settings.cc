@@ -628,7 +628,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PAR8", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v3.3", NULL },  // Placeholder for version string
+  { 0, 0, "v3.4", NULL },  // Placeholder for version string
 };
 
 /* static */
