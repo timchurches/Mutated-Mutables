@@ -116,7 +116,9 @@ const SettingsData kInitSettings = {
   127,                  // metaseq_parameter6
   127,                  // metaseq_parameter7
   127,                  // metaseq_parameter8
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  1,                    // metaseq_clock_div
+  1,                    // turing_clock_div
+  { 0, 0, 0, 0, 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -626,6 +628,8 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PAR6", mod_rate_values },
   { 0, 127, "PAR7", mod_rate_values },
   { 0, 127, "PAR8", mod_rate_values },
+  { 1, 127, "MSDV", mod_rate_values },
+  { 1, 127, "TUDV", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.4", NULL },  // Placeholder for version string
@@ -659,6 +663,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_MOD2_VIBRATO_DEPTH,
   SETTING_MOD1_MOD2_VIBRATO_DEPTH,
   SETTING_METASEQ,
+  SETTING_METASEQ_CLOCK_DIV,
   SETTING_METASEQ_DIRECTION, 
   SETTING_METASEQ_SHAPE1, 
   SETTING_METASEQ_SHAPE2, 
@@ -709,6 +714,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_RESOLUTION,
   SETTING_SAMPLE_RATE,
   SETTING_VCO_DRIFT,
+  SETTING_TURING_CLOCK_DIV,
   SETTING_RESET_TYPE,
   SETTING_VERSION,
 };

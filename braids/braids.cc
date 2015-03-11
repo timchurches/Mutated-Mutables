@@ -187,6 +187,7 @@ void RenderBlock() {
   static int32_t previous_pitch = 0;
   static int32_t metaseq_pitch_delta = 0;
   static int32_t previous_shape = 0;
+  static uint8_t metaseq_div_counter = 0;
   static uint8_t metaseq_steps_index = 0;
   static int8_t metaseq_index = 0;
   static bool current_mseq_dir = true;
@@ -297,42 +298,46 @@ void RenderBlock() {
   // meta-sequencer
   uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
   if (trigger_flag && metaseq_length) {
-	 ++metaseq_steps_index;
-	 uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
-	 if (metaseq_steps_index >= (settings.metaseq_step_length(metaseq_index))) { 
-	    metaseq_steps_index = 0;
-		if (metaseq_direction == 0) {
-		   // looping
-		   ++metaseq_index;
-		   if (metaseq_index > metaseq_length) { 
-		      metaseq_index = 0;
+     ++metaseq_div_counter;
+     if (metaseq_div_counter >= settings.GetValue(SETTING_METASEQ_CLOCK_DIV) {
+        metaseq_div_counter = 0;
+	    ++metaseq_steps_index;
+	    uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
+	    if (metaseq_steps_index >= (settings.metaseq_step_length(metaseq_index))) { 
+	       metaseq_steps_index = 0;
+		   if (metaseq_direction == 0) {
+		      // looping
+		      ++metaseq_index;
+		      if (metaseq_index > metaseq_length) { 
+		         metaseq_index = 0;
+		      }
+		   } else if (metaseq_direction == 1) {
+		      // swing
+		      if (current_mseq_dir) {
+		         // ascending
+			     ++metaseq_index;
+			     if (metaseq_index >= metaseq_length) {
+			        metaseq_index = metaseq_length; 
+				    current_mseq_dir = !current_mseq_dir;
+			     }
+		      } else {
+			     // descending
+			     --metaseq_index;
+			     if (metaseq_index == 0) { 
+			        current_mseq_dir = !current_mseq_dir;
+			      }
+		       }             
+		   } else if (metaseq_direction == 2) {
+		     // random
+		     metaseq_index = uint8_t(Random::GetWord() >> 29);
 		   }
-		} else if (metaseq_direction == 1) {
-		   // swing
-		   if (current_mseq_dir) {
-		      // ascending
-			  ++metaseq_index;
-			  if (metaseq_index >= metaseq_length) {
-			     metaseq_index = metaseq_length; 
-				 current_mseq_dir = !current_mseq_dir;
-			  }
-		   } else {
-			  // descending
-			  --metaseq_index;
-			  if (metaseq_index == 0) { 
-			     current_mseq_dir = !current_mseq_dir;
-			  }
-		   }             
-		} else if (metaseq_direction == 2) {
-		  // random
-		  metaseq_index = uint8_t(Random::GetWord() >> 29);
-		}
+        }
+	    MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
+	    osc.set_shape(metaseq_current_shape);
+	    ui.set_meta_shape(metaseq_current_shape);
+	    metaseq_pitch_delta = settings.metaseq_note(metaseq_index) * 128;
+        metaseq_parameter = settings.metaseq_parameter(metaseq_index) ;
      }
-	 MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
-	 osc.set_shape(metaseq_current_shape);
-	 ui.set_meta_shape(metaseq_current_shape);
-	 metaseq_pitch_delta = settings.metaseq_note(metaseq_index) * 128;
-     metaseq_parameter = settings.metaseq_parameter(metaseq_index) ;
   } // end meta-sequencer
 
   // modulate timbre
