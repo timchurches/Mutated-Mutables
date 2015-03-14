@@ -333,7 +333,13 @@ void RenderBlock() {
 		       }             
 		   } else if (metaseq_direction == 2) {
 		     // random
-		     metaseq_index = uint8_t(Random::GetWord() >> 29);
+		     if (metaseq_length < 3) {
+		        metaseq_index = uint8_t(Random::GetWord() >> 31);
+		     } else if (metaseq_length < 7) {
+			    metaseq_index = uint8_t(Random::GetWord() >> 30);
+		     } else {
+		        metaseq_index = uint8_t(Random::GetWord() >> 29);
+		     }
 		   }
         }
 	    MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
