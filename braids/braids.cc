@@ -194,6 +194,9 @@ void RenderBlock() {
   static uint8_t mod1_sync_index = 0;
   static uint8_t mod2_sync_index = 0;
   static uint8_t metaseq_parameter = 0;
+  static uint8_t turing_div_counter = 0;
+  static uint32_t turing_shift_register = 0;
+  static int32_t turing_pitch_delta = 0;
   
   // debug_pin.High();
 
@@ -339,6 +342,28 @@ void RenderBlock() {
         metaseq_parameter = settings.metaseq_parameter(metaseq_index) ;
      }
   } // end meta-sequencer
+
+  // Turing machine
+  uint8_t turing_length = settings.GetValue(SETTING_TURING_LENGTH);
+  if (trigger_flag && turing_length) {
+     ++turing_div_counter;
+     if (turing_div_counter >= settings.GetValue(SETTING_TURING_CLOCK_DIV) {
+        turing_div_counter = 0;
+        // decide whether to flip the MSB
+        if ((Random::GetWord() >> 25) < settings.GetValue(SETTING_TURING_CLOCK_DIV)) {
+           // bit-flip the MSB
+           turing_shift_register ^= 1 << 32;
+        }
+        // read the LSB
+        unit32_t turing_lsb = turing_shift_register & 1;
+        // rotate the shift register
+        turing_shift_register = turing_shift_register >> 1;
+        // add back the LSB into the MSB postion
+        turing_shift_register = turing_shift_register | turing_lsb << 32;       
+        // read the window and calculate pitch increment
+        turing_pitch_delta = (turing_shift_register & 15) * 128 ;
+     }
+  } // end Turing machine
 
   // modulate timbre
   int32_t parameter_1 = adc.channel(0) << 3; 
@@ -550,6 +575,10 @@ void RenderBlock() {
 
   if (metaseq_length) {
      pitch += metaseq_pitch_delta;
+  }
+
+  if (turing_length) {
+     pitch += turing_pitch_delta;
   }
 
   // add software fine tune
