@@ -121,7 +121,8 @@ const SettingsData kInitSettings = {
   0,                    // turing_length
   1,                    // turing_window
   0,                    // turing_prob
-  { 0, 0, 0, 0 },
+  false,                // turing_init
+  { 0, 0, 0 },
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -551,13 +552,15 @@ const char* const metaseq_parameter_dest_values[] = {
     "TLC",  // 7
 };
 
-const char* const turing_length_values[] = {
-    "OFF", // 0
-    "8", // 1
-    "16", // 2
-    "24",  // 3
-    "32", // 4
-};
+/*
+// const char* const turing_length_values[] = {
+//     "OFF", // 0
+//     "8", // 1
+//     "16", // 2
+//     "24",  // 3
+//     "32", // 4
+// };
+*/
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
@@ -640,9 +643,10 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PAR8", mod_rate_values },
   { 1, 127, "MSDV", mod_rate_values },
   { 1, 127, "TUDV", mod_rate_values },
-  { 0, 4, "TRNG", turing_length_values },
-  { 2, 6, "TWND", mod_rate_values },
+  { 0, 32, "TRNG", mod_rate_values },
+  { 2, 5, "TWND", mod_rate_values },
   { 0, 127, "TPRB", mod_rate_values },
+  { 0, 1, "TINT", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.4", NULL },  // Placeholder for version string
@@ -731,6 +735,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_TURING_WINDOW,
   SETTING_TURING_PROB,  
   SETTING_TURING_CLOCK_DIV,
+  SETTING_TURING_INIT,
   SETTING_RESET_TYPE,
   SETTING_VERSION,
 };

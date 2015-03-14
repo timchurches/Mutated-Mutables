@@ -212,7 +212,8 @@ enum Setting {
   SETTING_TURING_LENGTH,
   SETTING_TURING_WINDOW,
   SETTING_TURING_PROB,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_TURING_PROB,
+  SETTING_TURING_INIT,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_TURING_INIT,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -302,7 +303,8 @@ struct SettingsData {
   uint8_t turing_length;
   uint8_t turing_window;
   uint8_t turing_prob;
-  uint8_t extra_padding[4];
+  uint8_t turing_init;
+  uint8_t extra_padding[3];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -436,6 +438,11 @@ class Settings {
   inline bool pitch_sample_hold() const {
     return data_.pitch_sample_hold;
   }
+  
+  inline bool turing_init() const {
+    return data_.turing_init;
+  }
+
 
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }

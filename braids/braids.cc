@@ -195,6 +195,7 @@ void RenderBlock() {
   static uint8_t mod2_sync_index = 0;
   static uint8_t metaseq_parameter = 0;
   static uint8_t turing_div_counter = 0;
+  static uint8_t turing_bit_position = 0;
   static uint32_t turing_shift_register = 0;
   static int32_t turing_pitch_delta = 0;
   
@@ -302,7 +303,7 @@ void RenderBlock() {
   uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
   if (trigger_flag && metaseq_length) {
      ++metaseq_div_counter;
-     if (metaseq_div_counter >= settings.GetValue(SETTING_METASEQ_CLOCK_DIV) {
+     if (metaseq_div_counter >= settings.GetValue(SETTING_METASEQ_CLOCK_DIV)) {
         metaseq_div_counter = 0;
 	    ++metaseq_steps_index;
 	    uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
@@ -343,25 +344,37 @@ void RenderBlock() {
      }
   } // end meta-sequencer
 
+  // uint8_t c_major_scale[16] = { 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26 };
+  // uint8_t c_major_scale[16] = { 0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26 };
+  uint8_t c_major_scale[16] = { 0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 35 };
+
   // Turing machine
   uint8_t turing_length = settings.GetValue(SETTING_TURING_LENGTH);
   if (trigger_flag && turing_length) {
      ++turing_div_counter;
-     if (turing_div_counter >= settings.GetValue(SETTING_TURING_CLOCK_DIV) {
+     if (turing_div_counter >= settings.GetValue(SETTING_TURING_CLOCK_DIV)) {
         turing_div_counter = 0;
+        ++turing_bit_position;
         // decide whether to flip the MSB
-        if ((Random::GetWord() >> 25) < settings.GetValue(SETTING_TURING_CLOCK_DIV)) {
-           // bit-flip the MSB
-           turing_shift_register ^= 1 << 32;
+        if (turing_bit_position >= turing_length) {
+           turing_bit_position = 0;
+           if (settings.turing_init()) {
+              turing_shift_register = Random::GetWord();
+           }
+           if ((Random::GetWord() >> 25) < settings.GetValue(SETTING_TURING_PROB)) {
+              // bit-flip the MSB
+              turing_shift_register ^= 1 << (turing_length - 1);
+           }
         }
         // read the LSB
-        unit32_t turing_lsb = turing_shift_register & 1;
+        uint32_t turing_lsb = turing_shift_register & 1;
         // rotate the shift register
         turing_shift_register = turing_shift_register >> 1;
         // add back the LSB into the MSB postion
-        turing_shift_register = turing_shift_register | turing_lsb << 32;       
+        turing_shift_register = turing_shift_register | turing_lsb << (turing_length - 1);       
         // read the window and calculate pitch increment
-        turing_pitch_delta = (turing_shift_register & 15) * 128 ;
+        uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
+        turing_pitch_delta = c_major_scale[turing_value] * 128 ;
      }
   } // end Turing machine
 
