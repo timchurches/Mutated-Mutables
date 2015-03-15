@@ -347,7 +347,12 @@
   <tr>
     <td class="tg-e3zv">TRNG</td>
     <td class="tg-031e">Turing Machine shift register length</td>
-    <td class="tg-031e">1 to 4 bits</td>
+    <td class="tg-031e">0 to 32 bits, 0 means OFF</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">TWND</td>
+    <td class="tg-031e">Turing Machine read window</td>
+    <td class="tg-031e">1 to 4 bits, reads from little end of the shift register</td>
   </tr>
   <tr>
     <td class="tg-e3zv">TPRB</td>
@@ -366,7 +371,7 @@
   </tr>
     <td class="tg-e3zv">TINT</td>
     <td class="tg-031e">Turing Machine shift register re-initialise divider</td>
-    <td class="tg-031e">OFF or ON</td>
+    <td class="tg-031e">OFF or ON, ON re-seeds the shift register with a new random number (hence random bits) at the start of each shift register cycle.</td>
   </tr>
   <tr>
     <td class="tg-e3zv">RST</td>
