@@ -551,14 +551,16 @@ const char* const metaseq_parameter_dest_values[] = {
     "T+L",  // 5
     "C+L",  // 6
     "TLC",  // 7
-    "SCAL", // 8
-    "T+S",  // 9
-    "C+S",  // 10
-    "TCS",  // 11
-    "L+S",  // 12
-    "TLS",  // 13
-    "CLS",  // 14
-    "TLCS",  // 15
+/*
+//     "SCAL", // 8
+//     "T+S",  // 9
+//     "C+S",  // 10
+//     "TCS",  // 11
+//     "L+S",  // 12
+//     "TLS",  // 13
+//     "CLS",  // 14
+//     "TLCS",  // 15
+*/
 };
 
 const char* const musical_scale_values[] = {
@@ -610,7 +612,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M1SY", mod_rate_values },
   { 0, 127, "M2SY", mod_rate_values },
   { 0, 1, "OSYN", boolean_values },
-  { 0, 15, "MSPD", metaseq_parameter_dest_values }, // was M1T2
+  { 0, 7, "MSPD", metaseq_parameter_dest_values }, // was M1T2
   { 0, 127, "FTUN", mod_rate_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
   { 0, 127, "LEVL", mod_rate_values },

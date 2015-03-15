@@ -398,11 +398,14 @@ void RenderBlock() {
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
         // convert into a pitch increment
-        if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 4)) {
-           turing_pitch_delta = musical_scales[(((metaseq_parameter & 7) * 16) + turing_value)] * 128 ;
-        } else {
-           turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
-        }
+        turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
+        /*
+        // if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 4)) {
+        //    turing_pitch_delta = musical_scales[(((metaseq_parameter & 7) * 16) + turing_value)] * 128 ;
+        // } else {
+        //    turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
+        // }
+        */
      }
   } // end Turing machine
 
