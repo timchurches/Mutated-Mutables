@@ -551,6 +551,14 @@ const char* const metaseq_parameter_dest_values[] = {
     "T+L",  // 5
     "C+L",  // 6
     "TLC",  // 7
+    "SCAL", // 8
+    "T+S",  // 9
+    "C+S",  // 10
+    "TCS",  // 11
+    "L+S",  // 12
+    "TLS",  // 13
+    "CLS",  // 14
+    "TLCS",  // 15
 };
 
 const char* const musical_scale_values[] = {
@@ -559,10 +567,9 @@ const char* const musical_scale_values[] = {
     "DOR",  // 2=Dorian
     "PHRY", // 3=Phrygian
     "LYD",  // 4=Lydian
-    "MIXO", // 5=Mixolydian
-    "AEOL", // 6=Aeolian
-    "LOCR", // 7=Locrian
-    "PENT", // 8=Pentatonic    	
+    "AEOL", // 5=Aeolian
+    "LOCR", // 6=Locrian
+    "PENT", // 7=Pentatonic    	
 };
 
 /* static */
@@ -603,7 +610,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M1SY", mod_rate_values },
   { 0, 127, "M2SY", mod_rate_values },
   { 0, 1, "OSYN", boolean_values },
-  { 0, 7, "MSPD", metaseq_parameter_dest_values }, // was M1T2
+  { 0, 15, "MSPD", metaseq_parameter_dest_values }, // was M1T2
   { 0, 127, "FTUN", mod_rate_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
   { 0, 127, "LEVL", mod_rate_values },
@@ -647,10 +654,10 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MSDV", mod_rate_values },
   { 1, 127, "TUDV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 2, 4, "TWND", mod_rate_values },
+  { 1, 4, "TWND", mod_rate_values },
   { 0, 127, "TPRB", mod_rate_values },
   { 0, 1, "TINT", boolean_values },
-  { 0, 8, "SCAL", musical_scale_values },
+  { 0, 7, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.4", NULL },  // Placeholder for version string

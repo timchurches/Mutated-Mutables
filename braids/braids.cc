@@ -187,7 +187,6 @@ const uint8_t musical_scales[] =
        0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22, 24, 26, // Dorian
        0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, // Phrygian
        0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26, // Lydian
-       0, 2, 4, 5, 7, 9, 10, 12, 14, 16, 17, 19, 21, 22, 24, 26, // Mixolydian
        0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, // Aeolian
        0, 1, 3, 5, 6, 8, 10, 12, 13, 15, 17, 18, 20, 22, 24, 25, // Locrian
        0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 35, };  // Pentatonic
@@ -201,6 +200,7 @@ void RenderBlock() {
   static int32_t previous_shape = 0;
   static uint8_t metaseq_div_counter = 0;
   static uint8_t metaseq_steps_index = 0;
+  static uint8_t prev_metaseq_direction = 0;
   static int8_t metaseq_index = 0;
   static bool current_mseq_dir = true;
   static uint8_t mod1_sync_index = 0;
@@ -317,8 +317,14 @@ void RenderBlock() {
      ++metaseq_div_counter;
      if (metaseq_div_counter >= settings.GetValue(SETTING_METASEQ_CLOCK_DIV)) {
         metaseq_div_counter = 0;
-	    ++metaseq_steps_index;
 	    uint8_t metaseq_direction = settings.GetValue(SETTING_METASEQ_DIRECTION);
+        if (metaseq_direction != prev_metaseq_direction) {
+           prev_metaseq_direction = metaseq_direction;
+           metaseq_steps_index = 0;
+           metaseq_index = 0;
+           current_mseq_dir = true;
+        }
+	    ++metaseq_steps_index;
 	    if (metaseq_steps_index >= (settings.metaseq_step_length(metaseq_index))) { 
 	       metaseq_steps_index = 0;
 		   if (metaseq_direction == 0) {
@@ -351,6 +357,9 @@ void RenderBlock() {
 			    metaseq_index = uint8_t(Random::GetWord() >> 30);
 		     } else {
 		        metaseq_index = uint8_t(Random::GetWord() >> 29);
+		     }
+		     if (metaseq_index > metaseq_length) {
+		        metaseq_index = 0;
 		     }
 		   }
         }
@@ -389,7 +398,11 @@ void RenderBlock() {
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
         // convert into a pitch increment
-        turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
+        if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 4)) {
+           turing_pitch_delta = musical_scales[(((metaseq_parameter & 7) * 16) + turing_value)] * 128 ;
+        } else {
+           turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
+        }
      }
   } // end Turing machine
 
