@@ -421,11 +421,11 @@ MacroOscillator::RenderFn MacroOscillator::fn_table_[] = {
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
-  &MacroOscillator::RenderDigital, // was clocked noise
-  &MacroOscillator::RenderDigital, // was granular cloud
+  &MacroOscillator::RenderDigital, 
+  &MacroOscillator::RenderDigital, 
   &MacroOscillator::RenderDigital,
   // &MacroOscillator::RenderDigital, // was twin peaks noise
-  &MacroOscillator::RenderDigital,
+  // &MacroOscillator::RenderDigital, // was FilteredNoise
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,

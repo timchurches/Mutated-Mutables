@@ -1740,50 +1740,52 @@ void DigitalOscillator::RenderWaveParaphonic(
 
 }
 
-void DigitalOscillator::RenderFilteredNoise(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  int32_t f = Interpolate824(lut_svf_cutoff, pitch_ << 17);
-  int32_t damp = Interpolate824(lut_svf_damp, parameter_[0] << 17);
-  int32_t scale = Interpolate824(lut_svf_scale, parameter_[0] << 17);
-  int32_t bp = state_.svf.bp;
-  int32_t lp = state_.svf.lp;
-  int32_t bp_gain, lp_gain, hp_gain;
-  
-  // Morph between LP, BP, HP.
-  if (parameter_[1] < 16384) {
-    bp_gain = parameter_[1];
-    lp_gain = 16384 - bp_gain;
-    hp_gain = 0;
-  } else {
-    bp_gain = 32767 - parameter_[1];
-    hp_gain = parameter_[1] - 16384;
-    lp_gain = 0;
-  }
-  
-  int32_t gain_correction = f > scale ? scale * 32767 / f : 32767;
-  while (size--) {
-    int32_t notch, hp, in;
-    
-    in = Random::GetSample() >> 1;
-    notch = in - (bp * damp >> 15);
-    lp += f * bp >> 15;
-    CLIP(lp)
-    hp = notch - lp;
-    bp += f * hp >> 15;
-    
-    int32_t result = 0;
-    result += (lp_gain * lp) >> 14;
-    result += (bp_gain * bp) >> 14;
-    result += (hp_gain * hp) >> 14;
-    CLIP(result)
-    result = result * gain_correction >> 15;
-    *buffer++ = Interpolate88(ws_moderate_overdrive, result + 32768);
-  }
-  state_.svf.lp = lp;
-  state_.svf.bp = bp;
-}
+/*
+// void DigitalOscillator::RenderFilteredNoise(
+//     const uint8_t* sync,
+//     int16_t* buffer,
+//     uint8_t size) {
+//   int32_t f = Interpolate824(lut_svf_cutoff, pitch_ << 17);
+//   int32_t damp = Interpolate824(lut_svf_damp, parameter_[0] << 17);
+//   int32_t scale = Interpolate824(lut_svf_scale, parameter_[0] << 17);
+//   int32_t bp = state_.svf.bp;
+//   int32_t lp = state_.svf.lp;
+//   int32_t bp_gain, lp_gain, hp_gain;
+//   
+//   // Morph between LP, BP, HP.
+//   if (parameter_[1] < 16384) {
+//     bp_gain = parameter_[1];
+//     lp_gain = 16384 - bp_gain;
+//     hp_gain = 0;
+//   } else {
+//     bp_gain = 32767 - parameter_[1];
+//     hp_gain = parameter_[1] - 16384;
+//     lp_gain = 0;
+//   }
+//   
+//   int32_t gain_correction = f > scale ? scale * 32767 / f : 32767;
+//   while (size--) {
+//     int32_t notch, hp, in;
+//     
+//     in = Random::GetSample() >> 1;
+//     notch = in - (bp * damp >> 15);
+//     lp += f * bp >> 15;
+//     CLIP(lp)
+//     hp = notch - lp;
+//     bp += f * hp >> 15;
+//     
+//     int32_t result = 0;
+//     result += (lp_gain * lp) >> 14;
+//     result += (bp_gain * bp) >> 14;
+//     result += (hp_gain * hp) >> 14;
+//     CLIP(result)
+//     result = result * gain_correction >> 15;
+//     *buffer++ = Interpolate88(ws_moderate_overdrive, result + 32768);
+//   }
+//   state_.svf.lp = lp;
+//   state_.svf.bp = bp;
+// }
+*/
 
 /*
 // void DigitalOscillator::RenderTwinPeaksNoise(
@@ -2340,7 +2342,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderWaveMap,
   &DigitalOscillator::RenderWaveLine,
   &DigitalOscillator::RenderWaveParaphonic,
-  &DigitalOscillator::RenderFilteredNoise,
+  // &DigitalOscillator::RenderFilteredNoise,
   // &DigitalOscillator::RenderTwinPeaksNoise,
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,

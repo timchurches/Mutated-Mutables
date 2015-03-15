@@ -180,6 +180,18 @@ const uint16_t decimation_factors[] = { 24, 12, 6, 4, 3, 2, 1 };
 // following R code: round(log2(1:16)*1024)
 const uint16_t log2_table[] = { 0, 1024, 1623, 2048, 2378, 2647, 2875, 3072, 3246,
                                 3402, 3542, 3671, 3789, 3899, 4001, 4096 };
+
+const uint8_t musical_scales[] = 
+     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, // chromatic
+       0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26, // Ionian
+       0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22, 24, 26, // Dorian
+       0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, // Phrygian
+       0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26, // Lydian
+       0, 2, 4, 5, 7, 9, 10, 12, 14, 16, 17, 19, 21, 22, 24, 26, // Mixolydian
+       0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, // Aeolian
+       0, 1, 3, 5, 6, 8, 10, 12, 13, 15, 17, 18, 20, 22, 24, 25, // Locrian
+       0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 35, };  // Pentatonic
+
                                 
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
@@ -349,11 +361,7 @@ void RenderBlock() {
         metaseq_parameter = settings.metaseq_parameter(metaseq_index) ;
      }
   } // end meta-sequencer
-
-  // uint8_t c_major_scale[16] = { 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26 };
-  // uint8_t c_major_scale[16] = { 0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26 };
-  uint8_t c_major_scale[16] = { 0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 35 };
-
+  
   // Turing machine
   uint8_t turing_length = settings.GetValue(SETTING_TURING_LENGTH);
   if (trigger_flag && turing_length) {
@@ -380,7 +388,8 @@ void RenderBlock() {
         turing_shift_register = turing_shift_register | turing_lsb << (turing_length - 1);       
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
-        turing_pitch_delta = c_major_scale[turing_value] * 128 ;
+        // convert into a pitch increment
+        turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
      }
   } // end Turing machine
 
