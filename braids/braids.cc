@@ -382,10 +382,12 @@ void RenderBlock() {
         if (turing_bit_position >= turing_length) {
            turing_bit_position = 0;
            // re-initialise the shift register with random data if required
-           ++turing_init_counter;
-           if (turing_init_counter >= settings.GetValue(SETTING_TURING_INIT)) {
-              turing_init_counter = 0;
-              turing_shift_register = Random::GetWord();
+           if (settings.GetValue(SETTING_TURING_INIT)) {
+              ++turing_init_counter;
+              if (turing_init_counter >= settings.GetValue(SETTING_TURING_INIT)) {
+                 turing_init_counter = 0;
+                 turing_shift_register = Random::GetWord();
+              }
            }
         }
         // decide whether to flip the MSB
