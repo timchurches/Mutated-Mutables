@@ -236,13 +236,13 @@
   </tr>
   <tr>
     <td class="tg-e3zv">SDIR</td>
-    <td class="tg-e3zv">Sequence direction</td>
-    <td class="tg-vn4c">LOOP, SWNG, RNDM</td>
+    <td class="tg-031e">Sequence direction</td>
+    <td class="tg-031e">LOOP, SWNG, RNDM</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">WAV1...WAV8</td>
-    <td class="tg-031e">Meta-sequence steps 1 through 8 oscillator model</td>
-    <td class="tg-031e">Oscillator models</td>
+    <td class="tg-vv7f">WAV1...WAV8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 oscillator model</td>
+    <td class="tg-vn4c">Oscillator models</td>
   </tr>
   <tr>
     <td class="tg-e3zv">NOT1...NOT8</td>
@@ -260,9 +260,9 @@
     <td class="tg-031e">NONE, TIMB, COLR, T+C, LEVL, T+L, C+L, TLC</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">PAR1...PAR8</td>
-    <td class="tg-031e">Meta-sequence steps 1 through 8 parameter</td>
-    <td class="tg-031e">1 to 127</td>
+    <td class="tg-vv7f">PAR1...PAR8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 parameter</td>
+    <td class="tg-vn4c">1 to 127</td>
   </tr>
   <tr>
     <td class="tg-e3zv">OSYN</td>
@@ -270,9 +270,9 @@
     <td class="tg-031e">OFF, ON</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">RINV</td>
-    <td class="tg-031e">Internal modulator rate inversion</td>
-    <td class="tg-031e">OFF, ON</td>
+    <td class="tg-vv7f">RINV</td>
+    <td class="tg-vn4c">Internal modulator rate inversion</td>
+    <td class="tg-vn4c">OFF, ON</td>
   </tr>
   <tr>
     <td class="tg-vv7f">BRIG</td>
@@ -290,14 +290,14 @@
     <td class="tg-vn4c"></td>
   </tr>
   <tr>
-    <td class="tg-vv7f">RANG</td>
-    <td class="tg-vn4c">Oscillator frequency range</td>
-    <td class="tg-vn4c">EXT, FREE, XTND, 440, LFO</td>
+    <td class="tg-e3zv">RANG</td>
+    <td class="tg-031e">Oscillator frequency range</td>
+    <td class="tg-031e">EXT, FREE, XTND, 440, LFO</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">OCTV</td>
-    <td class="tg-031e">Oscillator octave offset</td>
-    <td class="tg-031e">-2, -1, 0, 1, 2</td>
+    <td class="tg-vv7f">OCTV</td>
+    <td class="tg-vn4c">Oscillator octave offset</td>
+    <td class="tg-vn4c">-2, -1, 0, 1, 2</td>
   </tr>
   <tr>
     <td class="tg-e3zv">FTUN</td>
@@ -320,9 +320,9 @@
     <td class="tg-vn4c">OFF, ON</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">TDLY</td>
-    <td class="tg-vn4c">Trigger delay time</td>
-    <td class="tg-vn4c">NONE, 125u, 250u, 500u, 1ms, 2ms, 4ms</td>
+    <td class="tg-e3zv">TDLY</td>
+    <td class="tg-031e">Trigger delay time</td>
+    <td class="tg-031e">NONE, 125u, 250u, 500u, 1ms, 2ms, 4ms</td>
   </tr>
   <tr>
     <td class="tg-vv7f">TSRC</td>
@@ -345,43 +345,43 @@
     <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">TRNG</td>
-    <td class="tg-031e">Turing Machine shift register length</td>
-    <td class="tg-031e">0 to 32 bits, 0 means OFF</td>
+    <td class="tg-vv7f">TRNG</td>
+    <td class="tg-vn4c">Turing Machine shift register length</td>
+    <td class="tg-vn4c">0 to 32 bits, 0 means OFF</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">TWND</td>
+    <td class="tg-e3zv">WIND</td>
     <td class="tg-031e">Turing Machine read window</td>
     <td class="tg-031e">1 to 4 bits, reads from little end of the shift register</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">TPRB</td>
-    <td class="tg-031e">Turing Machine probability of flipping the MSB (most significant bit)</td>
-    <td class="tg-031e">0 to 127, with an implicit divisor of 127, so that 0 is <em>p</em>=0, 127 is <em>p</em>=1.0</td>
+    <td class="tg-vv7f">PROB</td>
+    <td class="tg-vn4c">Turing Machine probability of flipping the MSB (most significant bit)</td>
+    <td class="tg-vn4c">0 to 64, with an implicit divisor of 64, so that 0 is <em>p</em>=0, 64 is <em>p</em>=1.0</td>
   </tr>
     <td class="tg-e3zv">TUDV</td>
     <td class="tg-031e">Turing Machine clock/trigger divider</td>
     <td class="tg-031e">1 to 127</td>
   </tr>
   </tr>
-    <td class="tg-e3zv">SCAL</td>
-    <td class="tg-031e">Musical scale/mode used by Turing Machine</td>
-    <td class="tg-031e">CHRM (chromatic), ION (Ionian), DOR (Dorian), PHRY (Phrygian), LTD (Lydian), AEOL (Aeolian), LOCR (Locrian), PENT (Pentatonic)</td>
+    <td class="tg-vv7f">SCAL</td>
+    <td class="tg-vn4c">Musical scale/mode used by Turing Machine</td>
+    <td class="tg-vn4c">CHRM (chromatic), ION (Ionian), DOR (Dorian), PHRY (Phrygian), LTD (Lydian), AEOL (Aeolian), LOCR (Locrian), PENT (Pentatonic)</td>
   </tr>
   </tr>
     <td class="tg-e3zv">TINT</td>
     <td class="tg-031e">Turing Machine shift register re-initialise divider</td>
-    <td class="tg-031e">OFF or ON, ON re-seeds the shift register with a new random number (hence random bits) at the start of each shift register cycle.</td>
+    <td class="tg-031e">0 to 127, 0 is OFF, <em>n</em> re-seeds the shift register with a new random number (hence random bits) on the <em>n</em>th cycle of the shift register cycle.</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">RST</td>
-    <td class="tg-031e">Settings reset</td>
-    <td class="tg-031e">NO, DFLT, NO, FULL</td>
+    <td class="tg-vv7f">RST</td>
+    <td class="tg-vn4c">Settings reset</td>
+    <td class="tg-vn4c">NO, DFLT, NO, FULL</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">v3.4</td>
-    <td class="tg-vn4c">Bees-in-the-Trees firmware version</td>
-    <td class="tg-vn4c"></td>
+    <td class="tg-e3zv">v3.4</td>
+    <td class="tg-031e">Bees-in-the-Trees firmware version</td>
+    <td class="tg-031e"></td>
   </tr>
 </table>
 
