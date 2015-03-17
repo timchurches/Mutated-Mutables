@@ -572,6 +572,7 @@ const char* const musical_scale_values[] = {
     "AEOL", // 5=Aeolian
     "LOCR", // 6=Locrian
     "PENT", // 7=Pentatonic    	
+    "HARM", // 8=Harmonic    	
 };
 
 /* static */
@@ -656,10 +657,10 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MSDV", mod_rate_values },
   { 1, 127, "TUDV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 1, 4, "TWND", mod_rate_values },
-  { 0, 127, "TPRB", mod_rate_values },
-  { 0, 1, "TINT", boolean_values },
-  { 0, 7, "SCAL", musical_scale_values },
+  { 1, 4, "WIND", mod_rate_values },
+  { 0, 64, "PROB", mod_rate_values },
+  { 0, 127, "TINT", mod_rate_values },
+  { 0, 8, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.4", NULL },  // Placeholder for version string

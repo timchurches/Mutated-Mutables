@@ -441,11 +441,6 @@ class Settings {
     return data_.pitch_sample_hold;
   }
   
-  inline bool turing_init() const {
-    return data_.turing_init;
-  }
-
-
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }
   

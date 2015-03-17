@@ -190,7 +190,6 @@ const uint8_t musical_scales[] =
        0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, // Aeolian
        0, 1, 3, 5, 6, 8, 10, 12, 13, 15, 17, 18, 20, 22, 24, 25, // Locrian
        0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 35, };  // Pentatonic
-
                                 
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
@@ -207,6 +206,7 @@ void RenderBlock() {
   static uint8_t mod2_sync_index = 0;
   static uint8_t metaseq_parameter = 0;
   static uint8_t turing_div_counter = 0;
+  static uint8_t turing_init_counter = 0;
   static uint8_t turing_bit_position = 0;
   static uint32_t turing_shift_register = 0;
   static int32_t turing_pitch_delta = 0;
@@ -378,34 +378,45 @@ void RenderBlock() {
      if (turing_div_counter >= settings.GetValue(SETTING_TURING_CLOCK_DIV)) {
         turing_div_counter = 0;
         ++turing_bit_position;
-        // decide whether to flip the MSB
+        // reset bit index if required
         if (turing_bit_position >= turing_length) {
            turing_bit_position = 0;
-           if (settings.turing_init()) {
+           // re-initialise the shift register with random data if required
+           ++turing_init_counter;
+           if (turing_init_counter >= settings.GetValue(SETTING_TURING_INIT)) {
+              turing_init_counter = 0;
               turing_shift_register = Random::GetWord();
            }
-           if ((Random::GetWord() >> 25) < settings.GetValue(SETTING_TURING_PROB)) {
-              // bit-flip the MSB
-              turing_shift_register ^= 1 << (turing_length - 1);
-           }
+        }
+        // decide whether to flip the MSB
+        if (static_cast<uint8_t>(Random::GetWord() >> 26) < settings.GetValue(SETTING_TURING_PROB)) {
+           // bit-flip the MSB
+           turing_shift_register ^= 1 << (turing_length - 1);
         }
         // read the LSB
         uint32_t turing_lsb = turing_shift_register & 1;
+        uint32_t turing_remainder_lsb = 0;
+        // read the LSB in the remainder of the shift register
+        if (turing_length < 32) {
+           turing_remainder_lsb = turing_shift_register & 1 << turing_length;
+        }
         // rotate the shift register
         turing_shift_register = turing_shift_register >> 1;
         // add back the LSB into the MSB postion
         turing_shift_register = turing_shift_register | turing_lsb << (turing_length - 1);       
+        // add back the LSB to the remainder of the shift register
+        if (turing_length < 32) {
+           turing_shift_register = turing_shift_register | turing_remainder_lsb << (32 - turing_length);
+        }
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
         // convert into a pitch increment
-        turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
-        /*
-        // if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 4)) {
-        //    turing_pitch_delta = musical_scales[(((metaseq_parameter & 7) * 16) + turing_value)] * 128 ;
-        // } else {
-        //    turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
-        // }
-        */
+        if (settings.GetValue(SETTING_MUSICAL_SCALE) < 8) {
+           turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 16) + turing_value)] * 128 ;
+        } else {
+           // Harmonic series
+           turing_pitch_delta = (1536 * log2_table[turing_value]) >> 10;
+        }
      }
   } // end Turing machine
 
