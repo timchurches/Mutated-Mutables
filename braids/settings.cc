@@ -78,7 +78,7 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_parameter_dest, was mod1_mod2_timbre_depth
   63,                   // fine_tune, was mod1_mod2_color_depth
   false,                // mod1_mod2_vibrato_depth
-  50,                   // initial_gain = 65535
+  127,                  // initial_gain = 65535
   0,                    // metaseq
   0,                    // metaseq_shape1
   1,                    // metaseq_step_length1
@@ -470,6 +470,7 @@ const char* const meta_values[] = {
     "DIRT", // 11 = SRAT + JITR was 10
     "FLTH", // 12 = BITS + SRAT was 11
     "FCKD", // 13 = BITS + SRAT + JITR was 12
+    "PTOL", // 14 = Ptolemy's intense diatonic scale
 };
 
 /*
@@ -572,7 +573,8 @@ const char* const musical_scale_values[] = {
     "AEOL", // 5=Aeolian
     "LOCR", // 6=Locrian
     "PENT", // 7=Pentatonic    	
-    "HARM", // 8=Harmonic    	
+    "PTOL", // 8=Ptolemy intense diatonic just tuning   	
+    "HARM", // 9=Harmonic 
 };
 
 /* static */
@@ -582,7 +584,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 13, "FMCV", meta_values },
+  { 0, 14, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -658,9 +660,9 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "TUDV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
   { 1, 4, "WIND", mod_rate_values },
-  { 0, 64, "PROB", mod_rate_values },
+  { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
-  { 0, 8, "SCAL", musical_scale_values },
+  { 0, 9, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.4", NULL },  // Placeholder for version string
