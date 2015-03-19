@@ -252,23 +252,22 @@ void RenderBlock() {
   env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_param * 2) >> 8; 
   env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_param * 2) >> 8;  
 
-  // now set the attack and decay parameters 
-  // using the modified attack and decay values
-  envelope.Update(env_a, env_d, 0, 0);  
-
   // Render envelope in LFO mode, or not
   // envelope 1
-  uint8_t modulator1_attack_shape = settings.GetValue(SETTING_MOD1_ATTACK_SHAPE);
-  uint8_t modulator1_decay_shape = settings.GetValue(SETTING_MOD1_DECAY_SHAPE);
-  uint16_t ad_value = 0 ;
+  bool LFO_mode = false;
   if (modulator1_mode == 1) { 
 	  // LFO mode
-	  ad_value = envelope.Render(true, modulator1_attack_shape, modulator1_decay_shape);
-  }
-  else if (modulator1_mode > 1){
+	  LFO_mode = true;
+  } else if (modulator1_mode > 1) {
 	  // envelope mode
-	  ad_value = envelope.Render(false, modulator1_attack_shape, modulator1_decay_shape);
-  }
+	  LFO_mode = false;  
+  }	  
+  // now set the attack and decay parameters 
+  // using the modified attack and decay values
+  envelope.Update(env_a, env_d, 0, 0, LFO_mode, settings.GetValue(SETTING_MOD1_ATTACK_SHAPE), settings.GetValue(SETTING_MOD1_DECAY_SHAPE));  
+  // Render the envelope
+  uint16_t ad_value = envelope.Render() ;
+
 
   // TO-DO: instead of repeating code, use an array for env params and a loop!
   // Note: tried in branch envelope-tidy-up, but resulted in bigger compiled size
@@ -300,23 +299,20 @@ void RenderBlock() {
   env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_param * 2) >> 8; 
   env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_param * 2) >> 8;  
  
-  // now set the attack and decay parameters 
-  // using the modified attack and decay values
-  envelope2.Update(env2_a, env2_d, 0, 0);  
-
   // Render envelope in LFO mode, or not
   // envelope 2
-  uint8_t modulator2_attack_shape = settings.GetValue(SETTING_MOD2_ATTACK_SHAPE);
-  uint8_t modulator2_decay_shape = settings.GetValue(SETTING_MOD2_DECAY_SHAPE);
-  uint16_t ad2_value = 0 ;
   if (modulator2_mode == 1) { 
 	  // LFO mode
-	  ad2_value = envelope2.Render(true, modulator2_attack_shape, modulator2_decay_shape);
-  }
-  else if (modulator2_mode > 1) {
+	  LFO_mode = true;
+  } else if (modulator2_mode > 1) {
 	  // envelope mode
-	  ad2_value = envelope2.Render(false, modulator2_attack_shape, modulator2_decay_shape);
-  }
+	  LFO_mode = false;  
+  }	  
+  // now set the attack and decay parameters 
+  // using the modified attack and decay values
+  envelope2.Update(env2_a, env2_d, 0, 0, LFO_mode, settings.GetValue(SETTING_MOD2_ATTACK_SHAPE), settings.GetValue(SETTING_MOD2_DECAY_SHAPE));  
+  // Render the envelope
+  uint16_t ad2_value = envelope2.Render() ;
 
   // meta-sequencer
   uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
@@ -578,7 +574,7 @@ void RenderBlock() {
   pitch += internal_adc.value() >> 8;
 
   // or harmonic intervals 
-  if (meta_mod == 6 || meta_mod == 14) {
+  if (meta_mod == 6 || meta_mod == 7) {
      // Apply hysteresis to ADC reading to prevent a single bit error to move
      // the quantized pitch up and down the quantization boundary.
      uint16_t fm_adc_code = adc.channel(3);
@@ -594,7 +590,7 @@ void RenderBlock() {
      } else if (harmonic_multiplier > 15) {
         harmonic_multiplier = 15;
      }
-     if (meta_mod == 6) {
+     if (meta_mod == 7) {
         if (harmonic_multiplier > 0) {
            pitch += (1536 * log2_table[harmonic_multiplier - 1]) >> 10;
         } else if (harmonic_multiplier < 0) {
@@ -635,7 +631,7 @@ void RenderBlock() {
   // jitter depth now settable and voltage controllable.
   // TO-DO jitter still causes pitch to sharpen slightly - why?
   int32_t vco_drift = settings.vco_drift();
-  if (meta_mod == 7 || meta_mod == 10 || meta_mod == 11 || meta_mod == 13) {
+  if (meta_mod == 8 || meta_mod == 11 || meta_mod == 12 || meta_mod == 14) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
@@ -736,7 +732,7 @@ void RenderBlock() {
 
   // Voltage control of bit crushing
   uint8_t bits_value = settings.resolution();
-  if (meta_mod == 8 || meta_mod == 10 || meta_mod >= 12 ) {
+  if (meta_mod == 9 || meta_mod == 11 || meta_mod >= 13 ) {
      bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (bits_value < 0) {
 	    bits_value = 0 ;
@@ -747,7 +743,7 @@ void RenderBlock() {
 
   // Voltage control of sample rate decimation
   uint8_t sample_rate_value = settings.data().sample_rate;
-  if (meta_mod == 9 || meta_mod >= 11 ) {
+  if (meta_mod == 10 || meta_mod >= 12 ) {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (sample_rate_value < 0) {
 	    sample_rate_value = 0 ;

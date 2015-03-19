@@ -59,12 +59,15 @@ class Envelope {
     return static_cast<EnvelopeSegment>(segment_);
   }
 
-  inline void Update(int32_t a, int32_t d, int32_t s, int32_t r) {
+  inline void Update(int32_t a, int32_t d, int32_t s, int32_t r, bool LfoMode, uint8_t EnvTypeA, uint8_t EnvTypeD) {
     increment_[ENV_SEGMENT_ATTACK] = lut_env_portamento_increments[a];
     increment_[ENV_SEGMENT_DECAY] = lut_env_portamento_increments[d];
     increment_[ENV_SEGMENT_RELEASE] = lut_env_portamento_increments[r];
     target_[ENV_SEGMENT_DECAY] = s << 9;
     target_[ENV_SEGMENT_SUSTAIN] = target_[ENV_SEGMENT_DECAY];
+    LfoMode_ = LfoMode;
+    EnvTypeA_ = EnvTypeA;
+    EnvTypeD_ = EnvTypeD;
   }
   
   inline void Trigger(EnvelopeSegment segment) {
@@ -77,18 +80,18 @@ class Envelope {
     phase_ = 0;
   }
   
-  inline uint16_t Render(bool LfoMode, uint8_t EnvTypeA, uint8_t EnvTypeD) {
+  inline uint16_t Render() {
     uint32_t increment = increment_[segment_];
     phase_ += increment;
     // Kickstart the LFO if in LFO mode and not already looping
-    if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
+    if (LfoMode_ && segment_ > ENV_SEGMENT_DECAY) {        
          Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
     } 
 
     if (phase_ < increment) {
       value_ = Mix(a_, b_, 65535);
       // This makes the envelope loop if LFO mode selected
-      if (LfoMode && segment_ > ENV_SEGMENT_DECAY) {        
+      if (LfoMode_ && segment_ > ENV_SEGMENT_DECAY) {        
          Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
       } 
       else { 
@@ -98,7 +101,7 @@ class Envelope {
 
     if (increment_[segment_]) {    
        if (segment_ == ENV_SEGMENT_ATTACK || segment_ == ENV_SEGMENT_DECAY) {
-          uint8_t type = segment_ == ENV_SEGMENT_ATTACK ? EnvTypeA : EnvTypeD;
+          uint8_t type = segment_ == ENV_SEGMENT_ATTACK ? EnvTypeA_ : EnvTypeD_;
           switch (type) {
              case 0:
                 // exponential
@@ -179,7 +182,12 @@ class Envelope {
 
   uint32_t phase_increment_;
   uint32_t phase_;
-  
+
+  // envelope settings
+  bool LfoMode_;
+  uint8_t EnvTypeA_;
+  uint8_t EnvTypeD_;
+    
   DISALLOW_COPY_AND_ASSIGN(Envelope);
 };
 

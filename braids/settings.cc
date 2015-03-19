@@ -393,62 +393,6 @@ const char* const trig_delay_values[] = {
     "4ms"
 };
 
-/*
-// const char* const mod_depth_values[] = {
-//     "0",
-//     "5",
-//     "10",
-//     "15",
-//     "20",
-//     "25",
-//     "30",
-//     "35",
-//     "40",
-//     "45",
-//     "50",
-//     "55",
-//     "60",
-//     "65",
-//     "70",
-//     "75",
-//     "80",
-//     "85",
-//     "90",
-//     "95",
-//     "100",
-//     "105",
-//     "110",
-//     "115",
-//     "120",
-//     "125",
-//     "130",    
-//     "135",
-//     "140",    
-//     "145",
-//     "150",
-//     "155",
-//     "160",    
-//     "165",
-//     "170",    
-//     "175",
-//     "180",    
-//     "185",
-//     "190",    
-//     "195",
-//     "200",    
-//     "205",
-//     "210",    
-//     "215",
-//     "220",    
-//     "225",
-//     "230",    
-//     "235",
-//     "240",    
-//     "245",
-//     "250",
-// };
-*/
-
 const char* const brightness_values[] = {
     "LOW",
     "MED",
@@ -462,42 +406,16 @@ const char* const meta_values[] = {
     "RAT1", // 3
     "RAT2", // 4
     "LEVL", // 5
-    "HARM", // 6 = harmonic intervals
-    "JITR", // 7 was 6
-    "BITS", // 8 was 7
-    "SRAT", // 9 was 8
-    "SMUT", // 10 = BITS + JITR was 9
-    "DIRT", // 11 = SRAT + JITR was 10
-    "FLTH", // 12 = BITS + SRAT was 11
-    "FCKD", // 13 = BITS + SRAT + JITR was 12
-    "PTOL", // 14 = Ptolemy's intense diatonic scale
+    "PTOL", // 6 = Ptolemy's intense diatonic scale
+    "HARM", // 7 = harmonic intervals, was 6
+    "JITR", // 8 was 7 
+    "BITS", // 9 was 8 
+    "SRAT", // 10 was 9 
+    "SMUT", // 11 = BITS + JITR, was 10 
+    "DIRT", // 12 = SRAT + JITR, was 11 
+    "FLTH", // 13 = BITS + SRAT, was 12 
+    "FCKD", // 14 = BITS + SRAT + JITR, was 13 
 };
-
-/*
-// const char* const ad_ratio_values[] = { 
-//     "2", // 0
-//     "10", // 1
-//     "20", // 2
-//     "30", // 3
-//     "40", // 4
-//     "50", // 5
-//     "60", // 6
-//     "70", // 7
-//     "80", // 8
-//     "90", // 9
-//     "100", // 10
-//     "111", // 11
-//     "125", // 12
-//     "143", // 13
-//     "166", // 14
-//     "200", // 15
-//     "250", // 16
-//     "333", // 17
-//     "500", // 18
-//     "1k", // 19
-//     "5k", // 20
-// };
-*/
 
 const char* const mod_shape_values[] = { 
     "EXPO",  // 0 exponentially-curved triangle
@@ -552,16 +470,6 @@ const char* const metaseq_parameter_dest_values[] = {
     "T+L",  // 5
     "C+L",  // 6
     "TLC",  // 7
-/*
-//     "SCAL", // 8
-//     "T+S",  // 9
-//     "C+S",  // 10
-//     "TCS",  // 11
-//     "L+S",  // 12
-//     "TLS",  // 13
-//     "CLS",  // 14
-//     "TLCS",  // 15
-*/
 };
 
 const char* const musical_scale_values[] = {
