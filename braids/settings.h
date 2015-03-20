@@ -410,7 +410,7 @@ class Settings {
   }
 
   inline int32_t fine_tune() const {
-    return data_.fine_tune - 63;
+    return data_.fine_tune - 64;
   }
 
   inline bool mod1_mod2_vibrato_depth() const {
