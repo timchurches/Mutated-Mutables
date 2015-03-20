@@ -403,7 +403,7 @@ void RenderBlock() {
         uint32_t turing_remainder_lsb = 0;
         // read the LSB in the remainder of the shift register
         if (turing_length < 32) {
-           turing_remainder_lsb = turing_shift_register & 1 << turing_length;
+           turing_remainder_lsb = turing_shift_register & (1 << turing_length);
         }
         // rotate the shift register
         turing_shift_register = turing_shift_register >> 1;
@@ -411,7 +411,7 @@ void RenderBlock() {
         turing_shift_register = turing_shift_register | turing_lsb << (turing_length - 1);       
         // add back the LSB to the remainder of the shift register
         if (turing_length < 32) {
-           turing_shift_register = turing_shift_register | turing_remainder_lsb << (32 - turing_length);
+           turing_shift_register = turing_shift_register | turing_remainder_lsb << (31 - turing_length);
         }
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
