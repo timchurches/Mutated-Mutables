@@ -426,7 +426,7 @@ class Settings {
   }
 
   inline int32_t metaseq_note(uint8_t i) const {
-    return int32_t(GetValue(Setting(SETTING_METASEQ_NOTE1 + i)));
+    return int32_t(GetValue(Setting(SETTING_METASEQ_NOTE1 + i)) - 31) ;
   }
 
   inline MacroOscillatorShape metaseq_shape(uint8_t i) const {

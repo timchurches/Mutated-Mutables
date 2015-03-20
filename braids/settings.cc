@@ -100,14 +100,14 @@ const SettingsData kInitSettings = {
   0,                    // metaseq_direction
   0,                    // reset_type
   false,                // pitch_sample_hold
-  0,                    // metaseq_note1
-  0,                    // metaseq_note2
-  0,                    // metaseq_note3
-  0,                    // metaseq_note4
-  0,                    // metaseq_note5
-  0,                    // metaseq_note6
-  0,                    // metaseq_note7
-  0,                    // metaseq_note8
+  31,                   // metaseq_note1
+  31,                   // metaseq_note2
+  31,                   // metaseq_note3
+  31,                   // metaseq_note4
+  31,                   // metaseq_note5
+  31,                   // metaseq_note6
+  31,                   // metaseq_note7
+  31,                   // metaseq_note8
   127,                  // metaseq_parameter1
   127,                  // metaseq_parameter2
   127,                  // metaseq_parameter3
@@ -370,39 +370,7 @@ const char* const mod_rate_values[] = {
 };
 
 const char* const bipolar_values[] = {
-//     "-63",
-//     "-62",
-//     "-61",
-//     "-60",
-//     "-59",
-//     "-58",
-//     "-57",
-//     "-56",
-//     "-55",
-//     "-54",
-//     "-53",
-//     "-52",
-//     "-51",
-//     "-50",
-//     "-49",
-//     "-48",
-//     "-47",
-//     "-46",
-//     "-45",
-//     "-44",
-//     "-43",
-//     "-42",
-//     "-41",
-//     "-40",
-//     "-39",
-//     "-38",
-//     "-37",
-//     "-36",
-//     "-35",
-//     "-34",
-//     "-33",
-//     "-32",
-    "-31",
+    "-31", // 0
     "-30",
     "-29",
     "-28",
@@ -465,38 +433,6 @@ const char* const bipolar_values[] = {
     "29",
     "30",
     "31",
-//     "32",
-//     "33",
-//     "34",
-//     "35",
-//     "36",
-//     "37",
-//     "38",
-//     "39",
-//     "40",
-//     "41",
-//     "42",
-//     "43",
-//     "44",
-//     "45",
-//     "46",
-//     "47",
-//     "48",
-//     "49",
-//     "50",
-//     "51",
-//     "52",
-//     "53",
-//     "54",
-//     "55",
-//     "56",
-//     "57",
-//     "58",
-//     "59",
-//     "60",
-//     "61",
-//     "62",
-//     "63",
 };
 
     
@@ -635,8 +571,6 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 9, "\x82" "SH2", mod_shape_values },
   { 0, 127, "M1" "\x85" "T", mod_rate_values },
   { 0, 127, "M2" "\x85" "T", mod_rate_values },
-  // { 0, 20, "\x83" "\x82" "1", ad_ratio_values },
-  // { 0, 20, "\x83" "\x82" "2", ad_ratio_values },
   { 0, 127, "\x83" "\x82" "1", mod_rate_values },
   { 0, 127, "\x83" "\x82" "2", mod_rate_values },
   { 0, 3, "MOD1", mod_mode_values },
@@ -679,14 +613,14 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 2, "SDIR", metaseq_dir_values },
   { 0, 3, "RST ", reset_type_values },
   { 0, 1, "FS+H", boolean_values },
-  { 0, 127, "NOT1", mod_rate_values },
-  { 0, 127, "NOT2", mod_rate_values },
-  { 0, 127, "NOT3", mod_rate_values },
-  { 0, 127, "NOT4", mod_rate_values },
-  { 0, 127, "NOT5", mod_rate_values },
-  { 0, 127, "NOT6", mod_rate_values },
-  { 0, 127, "NOT7", mod_rate_values },
-  { 0, 127, "NOT8", mod_rate_values },
+  { 0, 62, "NOT1", bipolar_values },
+  { 0, 62, "NOT2", bipolar_values },
+  { 0, 62, "NOT3", bipolar_values },
+  { 0, 62, "NOT4", bipolar_values },
+  { 0, 62, "NOT5", bipolar_values },
+  { 0, 62, "NOT6", bipolar_values },
+  { 0, 62, "NOT7", bipolar_values },
+  { 0, 62, "NOT8", bipolar_values },
   { 0, 127, "PAR1", mod_rate_values },
   { 0, 127, "PAR2", mod_rate_values },
   { 0, 127, "PAR3", mod_rate_values },
