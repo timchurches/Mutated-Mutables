@@ -109,7 +109,7 @@ void Ui::RefreshDisplay() {
         display_.Print(settings.metadata(setting_).strings[value]);
       }
       break;
-      
+    
     case MODE_MENU:
       {
         if (setting_ == SETTING_CV_TESTER) {

@@ -216,6 +216,7 @@ void RenderBlock() {
   static uint8_t turing_init_counter = 0;
   static uint32_t turing_shift_register = 0;
   static int32_t turing_pitch_delta = 0;
+  static uint8_t turing_frb_counter = 0;
   
   // debug_pin.High();
 
@@ -388,25 +389,41 @@ void RenderBlock() {
            }
         }
         // read the LSB
-        uint32_t turing_lsb = turing_shift_register & 1;
-        uint32_t turing_remainder_lsb = 0;
+        bool turing_lsb = turing_shift_register & static_cast<uint32_t>(1);
+        bool turing_remainder_lsb = false;
         // read the LSB in the remainder of the shift register
         if (turing_length < 32) {
-           turing_remainder_lsb = turing_shift_register & (1 << turing_length);
+           turing_remainder_lsb = turing_shift_register & (1 << static_cast<uint32_t>(turing_length));
         }
         // rotate the shift register
         turing_shift_register = turing_shift_register >> 1;
         // add back the LSB into the MSB postion
-        turing_shift_register = turing_shift_register | (turing_lsb << (turing_length - 1));       
+        if (turing_lsb) {
+           turing_shift_register |= (static_cast<uint32_t>(1) << (turing_length - 1));
+        } else {
+           turing_shift_register &= (~(static_cast<uint32_t>(1) << (turing_length - 1)));
+        }
         // add back the LSB to the remainder of the shift register
         if (turing_length < 32) {
-           turing_shift_register = turing_shift_register | (turing_remainder_lsb << (31 - turing_length));
+           if (turing_remainder_lsb) {
+              turing_shift_register |= (static_cast<uint32_t>(1) << turing_length);
+           } else {
+              turing_shift_register &= (~(static_cast<uint32_t>(1) << turing_length));
+           }
         }
         // decide whether to flip the LSB
         if (static_cast<uint8_t>(Random::GetWord() >> 25) < settings.GetValue(SETTING_TURING_PROB)) {
            // bit-flip the LSB
-           turing_shift_register = turing_shift_register ^ 1 ;
+           turing_shift_register = turing_shift_register ^ static_cast<uint32_t>(1) ;
         }
+        // flip a random bit if required
+        if (settings.GetValue(SETTING_TURING_FLIP_RANDOM_BIT)) {
+           ++turing_frb_counter;
+           if (turing_frb_counter >= settings.GetValue(SETTING_TURING_FLIP_RANDOM_BIT)) {
+              turing_frb_counter = 0;
+              turing_shift_register = turing_shift_register ^ (static_cast<uint32_t>(1) << Random::GetInt(turing_length - 1));
+           }
+        }        
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
         // convert into a pitch increment

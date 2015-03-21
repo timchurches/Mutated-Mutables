@@ -123,7 +123,8 @@ const SettingsData kInitSettings = {
   0,                    // turing_prob
   false,                // turing_init
   0,                    // musical_scale
-  { 0, 0 },             // padding
+  0,                    // turing_flip_random_bit
+  0,                    // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -632,10 +633,11 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MSDV", mod_rate_values },
   { 1, 127, "TUDV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 1, 4, "WIND", mod_rate_values },
-  { 0, 127, "PROB", mod_rate_values },
+  { 1, 4, "TWID", mod_rate_values },
+  { 0, 127, "TPRB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
-  { 0, 9, "SCAL", musical_scale_values },
+  { 0, 9, "TSCL", musical_scale_values },
+  { 0, 127, "TFRB", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.5", NULL },  // Placeholder for version string
@@ -723,6 +725,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_TURING_LENGTH,
   SETTING_TURING_WINDOW,
   SETTING_TURING_PROB,  
+  SETTING_TURING_FLIP_RANDOM_BIT,
   SETTING_TURING_INIT,
   SETTING_TURING_CLOCK_DIV,
   SETTING_MUSICAL_SCALE,
