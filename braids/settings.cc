@@ -121,10 +121,9 @@ const SettingsData kInitSettings = {
   0,                    // turing_length
   1,                    // turing_window
   0,                    // turing_prob
-  false,                // turing_init
+  0,                    // turing_init
   0,                    // musical_scale
-  0,                    // turing_flip_random_bit
-  0,                    // padding
+  { 0, 0 },             // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -473,16 +472,20 @@ const char* const meta_values[] = {
     "RATE", // 2
     "RAT1", // 3
     "RAT2", // 4
-    "LEVL", // 5
-    "PTOL", // 6 = Ptolemy's intense diatonic scale
-    "HARM", // 7 = harmonic intervals, was 6
-    "JITR", // 8 was 7 
-    "BITS", // 9 was 8 
-    "SRAT", // 10 was 9 
-    "SMUT", // 11 = BITS + JITR, was 10 
-    "DIRT", // 12 = SRAT + JITR, was 11 
-    "FLTH", // 13 = BITS + SRAT, was 12 
-    "FCKD", // 14 = BITS + SRAT + JITR, was 13 
+    "DCAY", // 5
+    "DCY1", // 6
+    "DCY2", // 7
+    "LEVL", // 8 was 5
+    "PTOL", // 9 was 6 = Ptolemy's intense diatonic scale
+    "HARM", // 10 was 7 = harmonic intervals, was 6
+    "TPRB", // 11 = Turing Machine probability
+    "JITR", // 12 was 8 
+    "BITS", // 13 was 9 
+    "SRAT", // 14 was 10 
+    "SMUT", // 15 = BITS + JITR, was 11 
+    "DIRT", // 16 = SRAT + JITR, was 12 
+    "FLTH", // 17 = BITS + SRAT, was 13 
+    "FCKD", // 18 = BITS + SRAT + JITR, was 14 
 };
 
 const char* const mod_shape_values[] = { 
@@ -631,13 +634,12 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PAR7", mod_rate_values },
   { 0, 127, "PAR8", mod_rate_values },
   { 1, 127, "MSDV", mod_rate_values },
-  { 1, 127, "TUDV", mod_rate_values },
+  { 1, 127, "TDIV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
   { 1, 4, "TWID", mod_rate_values },
   { 0, 127, "TPRB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
   { 0, 9, "TSCL", musical_scale_values },
-  { 0, 127, "TFRB", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.5", NULL },  // Placeholder for version string
@@ -725,7 +727,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_TURING_LENGTH,
   SETTING_TURING_WINDOW,
   SETTING_TURING_PROB,  
-  SETTING_TURING_FLIP_RANDOM_BIT,
   SETTING_TURING_INIT,
   SETTING_TURING_CLOCK_DIV,
   SETTING_MUSICAL_SCALE,

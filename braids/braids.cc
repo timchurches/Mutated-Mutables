@@ -216,7 +216,6 @@ void RenderBlock() {
   static uint8_t turing_init_counter = 0;
   static uint32_t turing_shift_register = 0;
   static int32_t turing_pitch_delta = 0;
-  static uint8_t turing_frb_counter = 0;
   
   // debug_pin.High();
 
@@ -412,18 +411,21 @@ void RenderBlock() {
            }
         }
         // decide whether to flip the LSB
-        if (static_cast<uint8_t>(Random::GetWord() >> 25) < settings.GetValue(SETTING_TURING_PROB)) {
+        int16_t turing_prob = settings.GetValue(SETTING_TURING_PROB);
+        if (meta_mod == 11) {
+           // add the FM CV amount
+	       turing_prob += settings.adc_to_fm(adc.channel(3)) >> 5;
+        }
+        // Clip at zero and 127
+        if (turing_prob < 0) { 
+	       turing_prob = 0 ;
+        } else if (turing_prob > 127) {
+	       turing_prob = 127 ;
+        } 
+        if (static_cast<uint8_t>(Random::GetWord() >> 25) < turing_prob) {
            // bit-flip the LSB
            turing_shift_register = turing_shift_register ^ static_cast<uint32_t>(1) ;
         }
-        // flip a random bit if required
-        if (settings.GetValue(SETTING_TURING_FLIP_RANDOM_BIT)) {
-           ++turing_frb_counter;
-           if (turing_frb_counter >= settings.GetValue(SETTING_TURING_FLIP_RANDOM_BIT)) {
-              turing_frb_counter = 0;
-              turing_shift_register = turing_shift_register ^ (static_cast<uint32_t>(1) << Random::GetInt(turing_length - 1));
-           }
-        }        
         // read the window and calculate pitch increment
         uint8_t turing_value = (turing_shift_register & 127) >> (7 - settings.GetValue(SETTING_TURING_WINDOW));        
         // convert into a pitch increment
@@ -584,8 +586,8 @@ void RenderBlock() {
   
   pitch += internal_adc.value() >> 8;
 
-  // or harmonic intervals 
-  if (meta_mod == 6 || meta_mod == 7) {
+  // or harmonic intervals or just intonation
+  if (meta_mod == 9 || meta_mod == 10) {
      // Apply hysteresis to ADC reading to prevent a single bit error to move
      // the quantized pitch up and down the quantization boundary.
      uint16_t fm_adc_code = adc.channel(3);
@@ -601,7 +603,7 @@ void RenderBlock() {
      } else if (harmonic_multiplier > 15) {
         harmonic_multiplier = 15;
      }
-     if (meta_mod == 7) {
+     if (meta_mod == 10) {
         if (harmonic_multiplier > 0) {
            pitch += (1536 * log2_table[harmonic_multiplier - 1]) >> 10;
         } else if (harmonic_multiplier < 0) {
@@ -642,7 +644,7 @@ void RenderBlock() {
   // jitter depth now settable and voltage controllable.
   // TO-DO jitter still causes pitch to sharpen slightly - why?
   int32_t vco_drift = settings.vco_drift();
-  if (meta_mod == 8 || meta_mod == 11 || meta_mod == 12 || meta_mod == 14) {
+  if (meta_mod == 12 || meta_mod == 15 || meta_mod == 16 || meta_mod == 18) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
@@ -712,7 +714,7 @@ void RenderBlock() {
   uint32_t mod2_level_depth = uint32_t(settings.mod2_level_depth());
   int32_t gain = settings.initial_gain(); 
   // add external CV if FMCV used for level
-  if (meta_mod == 5) {
+  if (meta_mod == 8) {
      gain += settings.adc_to_fm(adc.channel(3)) << 4; // was 3 
   } 
   // Gain mod by modulator 1
@@ -743,7 +745,7 @@ void RenderBlock() {
 
   // Voltage control of bit crushing
   uint8_t bits_value = settings.resolution();
-  if (meta_mod == 9 || meta_mod == 11 || meta_mod >= 13 ) {
+  if (meta_mod == 13 || meta_mod == 15 || meta_mod == 17 || meta_mod == 18) {
      bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (bits_value < 0) {
 	    bits_value = 0 ;
@@ -754,7 +756,7 @@ void RenderBlock() {
 
   // Voltage control of sample rate decimation
   uint8_t sample_rate_value = settings.data().sample_rate;
-  if (meta_mod == 10 || meta_mod >= 12 ) {
+  if (meta_mod == 14 || meta_mod == 16 || meta_mod == 17 || meta_mod == 18) {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (sample_rate_value < 0) {
 	    sample_rate_value = 0 ;
