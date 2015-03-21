@@ -226,30 +226,41 @@ void RenderBlock() {
   // use FM CV data for env params if envelopes or LFO modes are enabled
   // Note, we invert the parameter if in LFO mode, so higher voltages produce 
   // higher LFO frequencies
-  uint32_t env_param = uint32_t (settings.GetValue(SETTING_MOD1_RATE));
+  uint32_t env_a_param = uint32_t (settings.GetValue(SETTING_MOD1_RATE));
+  uint32_t env_d_param = env_a_param;
   uint32_t env_a = 0;
   uint32_t env_d = 0;
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   if (meta_mod == 2 || meta_mod == 3) {
-	 env_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+	 env_a_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+  }
+  if (meta_mod == 2 || meta_mod == 3 || meta_mod == 5 || meta_mod == 6) {
+	 env_d_param += settings.adc_to_fm(adc.channel(3)) >> 5;
   }
 
   // Clip at zero and 127
-  if (env_param < 0) {
-	 env_param = 0 ;
-  } else if (env_param > 127) {
-	 env_param = 127 ;
+  if (env_a_param < 0) {
+	 env_a_param = 0 ;
+  } else if (env_a_param > 127) {
+	 env_a_param = 127 ;
   } 
+  if (env_d_param < 0) {
+	 env_d_param = 0 ;
+  } else if (env_d_param > 127) {
+	 env_d_param = 127 ;
+  } 
+
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
   if (modulator1_mode == 1 && settings.rate_inversion()) {
-	 env_param = 127 - env_param ;
+	 env_a_param = 127 - env_a_param ;
+	 env_d_param = 127 - env_d_param ;
   }  
 
   // attack and decay parameters, default to FM voltage reading.
   // These are ratios of attack to decay, from A/D = 0 to 127
-  env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_param * 2) >> 8; 
-  env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_param * 2) >> 8;  
+  env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_a_param * 2) >> 8; 
+  env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_d_param * 2) >> 8;  
 
   // Render envelope in LFO mode, or not
   // envelope 1
@@ -270,33 +281,43 @@ void RenderBlock() {
 
   // TO-DO: instead of repeating code, use an array for env params and a loop!
   // Note: tried in branch envelope-tidy-up, but resulted in bigger compiled size
-  uint32_t env2_param = uint32_t (settings.GetValue(SETTING_MOD2_RATE));
+  uint32_t env2_a_param = uint32_t (settings.GetValue(SETTING_MOD2_RATE));
+  uint32_t env2_d_param = env2_a_param;
   uint32_t env2_a = 0;
   uint32_t env2_d = 0;
   // add the external voltage to this.
   // scaling this by 32 seems about right for 0-5V modulation range.
   if (meta_mod == 2 || meta_mod == 4) {
-	 env2_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+	 env2_a_param += settings.adc_to_fm(adc.channel(3)) >> 5;
+  }
+  if (meta_mod == 2 || meta_mod == 4 || meta_mod == 5 || meta_mod == 7) {
+	 env2_d_param += settings.adc_to_fm(adc.channel(3)) >> 5;
   }
   // Add cross-modulation
   int8_t mod1_mod2_depth = settings.GetValue(SETTING_MOD1_MOD2_DEPTH);
   if (mod1_mod2_depth) {
-	env2_param +=  (ad_value * mod1_mod2_depth) >> 18;
+	env2_a_param +=  (ad_value * mod1_mod2_depth) >> 18;
+	env2_a_param +=  (ad_value * mod1_mod2_depth) >> 18;
   }
   // Clip at zero and 127
-  if (env2_param < 0) { 
-	 env2_param = 0 ;
-  } else if (env2_param > 127) {
-	 env2_param = 127 ;
+  if (env2_a_param < 0) { 
+	 env2_a_param = 0 ;
+  } else if (env2_a_param > 127) {
+	 env2_a_param = 127 ;
   } 
-  // Invert if in LFO mode, so higher CVs create higher LFO frequency.
+  if (env2_d_param < 0) { 
+	 env2_d_param = 0 ;
+  } else if (env2_d_param > 127) {
+	 env2_d_param = 127 ;
+  } 
   if (modulator2_mode == 1 && settings.rate_inversion()) { 
-	 env2_param = 127 - env2_param ;
+	 env2_a_param = 127 - env2_a_param ;
+	 env2_d_param = 127 - env2_d_param ;
   }  
 
   // These are ratios of attack to decay, from A/D = 0 to 127
-  env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_param * 2) >> 8; 
-  env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_param * 2) >> 8;  
+  env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param * 2) >> 8; 
+  env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param * 2) >> 8;  
  
   // Render envelope in LFO mode, or not
   // envelope 2
