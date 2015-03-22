@@ -112,7 +112,7 @@
   <tr>
     <td class="tg-vv7f">FMCV</td>
     <td class="tg-vn4c">Select purpose/destination of FM CV input</td>
-    <td class="tg-vn4c">FREQ, META, RATE, RAT1, RAT2, LEVL, HARM, JITR, BITS, SRAT, SMUT, DIRT, FLTH</td>
+    <td class="tg-vn4c">FREQ, META, RATE, RAT1, RAT2, DECAY, DCY1, DCY2, LEVL, PTOL, HARM, JITR, BITS, SRAT, SMUT, DIRT, FLTH</td>
   </tr>
   <tr>
     <td class="tg-e3zv">MOD1</td>
@@ -247,7 +247,7 @@
   <tr>
     <td class="tg-e3zv">NOT1...NOT8</td>
     <td class="tg-031e">Meta-sequence steps 1 through 8 note (pitch) offset</td>
-    <td class="tg-031e">0 to 127, in equally tempered semitone increments</td>
+    <td class="tg-031e">-31 to 31, in 12-note equally-tempered (TET) semitone increments</td>
   </tr>
   <tr>
     <td class="tg-vv7f">RPT1...RPT8</td>
@@ -302,7 +302,7 @@
   <tr>
     <td class="tg-e3zv">FTUN</td>
     <td class="tg-031e">Oscillator fine tune</td>
-    <td class="tg-031e">0 to 127, 63=zero pitch offset</td>
+    <td class="tg-031e">-13 to 31, 0=zero pitch offset</td>
   </tr>
   <tr>
     <td class="tg-vv7f">FS+H</td>
@@ -356,8 +356,8 @@
   </tr>
   <tr>
     <td class="tg-vv7f">PROB</td>
-    <td class="tg-vn4c">Turing Machine probability of flipping the MSB (most significant bit)</td>
-    <td class="tg-vn4c">0 to 64, with an implicit divisor of 64, so that 0 is <em>p</em>=0, 64 is <em>p</em>=1.0</td>
+    <td class="tg-vn4c">Turing Machine probability of flipping the LSB (least significant bit)</td>
+    <td class="tg-vn4c">0 to 127, with an implicit divisor of 512, so that 0 is <em>p</em>=0, 126 is approximately <em>p</em>=0.25, and 127 is a special-case resulting in <em>p</em>=1.0, that is, the least significant bit is flipped every time.</td>
   </tr>
     <td class="tg-e3zv">TDIV</td>
     <td class="tg-031e">Turing Machine clock/trigger divider</td>
@@ -366,7 +366,7 @@
   </tr>
     <td class="tg-vv7f">SCAL</td>
     <td class="tg-vn4c">Musical scale/mode used by Turing Machine</td>
-    <td class="tg-vn4c">CHRM (chromatic), ION (Ionian), DOR (Dorian), PHRY (Phrygian), LTD (Lydian), AEOL (Aeolian), LOCR (Locrian), PENT (Pentatonic), HARM (Harmonic series)</td>
+    <td class="tg-vn4c">CHRM (chromatic), ION (Ionian), DOR (Dorian), PHRY (Phrygian),  AEOL (Aeolian), PENT (Pentatonic), PTOL (Ptolemy's intense diatonic scale), HARM (Harmonic series)</td>
   </tr>
   </tr>
     <td class="tg-e3zv">TINT</td>
