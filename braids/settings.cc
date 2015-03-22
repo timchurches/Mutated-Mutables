@@ -119,7 +119,7 @@ const SettingsData kInitSettings = {
   1,                    // metaseq_clock_div
   1,                    // turing_clock_div
   0,                    // turing_length
-  1,                    // turing_window
+  4,                    // turing_window
   0,                    // turing_prob
   0,                    // turing_init
   0,                    // musical_scale
@@ -633,13 +633,13 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PAR6", mod_rate_values },
   { 0, 127, "PAR7", mod_rate_values },
   { 0, 127, "PAR8", mod_rate_values },
-  { 1, 127, "MSDV", mod_rate_values },
+  { 1, 127, "MDIV", mod_rate_values },
   { 1, 127, "TDIV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 1, 4, "TWID", mod_rate_values },
-  { 0, 127, "TPRB", mod_rate_values },
+  { 1, 5, "WIND", mod_rate_values },
+  { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
-  { 0, 9, "TSCL", musical_scale_values },
+  { 0, 9, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.5", NULL },  // Placeholder for version string
