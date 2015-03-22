@@ -200,12 +200,8 @@ const uint8_t musical_scales[] =
        29, 31, 32, 34, 36, 37, 39, 41, 43, 44, 46, 48, 49, 51, 53, // Dorian
        0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, 27,
        29, 31, 32, 34, 36, 37, 39, 41, 43, 44, 46, 48, 49, 51, 53, // Phrygian
-       0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26, 28,
-       30, 31, 33, 35, 36, 38, 40, 42, 43, 45, 47, 48, 50, 52, 54, // Lydian
        0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, 27,
        29, 31, 32, 34, 36, 38, 39, 41, 43, 44, 46, 48, 50, 51, 53, // Aeolian
-       0, 1, 3, 5, 6, 8, 10, 12, 13, 15, 17, 18, 20, 22, 24, 25, 27,
-       29, 30, 32, 34, 36, 37, 39, 41, 42, 44, 46, 48, 49, 51, 53, // Locrian
        0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36, 38,
        40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, };  // Pentatonic
                                 
@@ -458,16 +454,16 @@ void RenderBlock() {
         } else if (turing_prob > 127) {
 	       turing_prob = 127 ;
         } 
-        if (static_cast<uint8_t>(Random::GetWord() >> 25) < turing_prob) {
-           // bit-flip the LSB
+        if ((static_cast<uint8_t>(Random::GetWord() >> 23) < turing_prob) || turing_prob == 127) {
+           // bit-flip the LSB, bit-shift was 25 but try making is 4 times less sensitive
            turing_shift_register = turing_shift_register ^ static_cast<uint32_t>(1) ;
         }
         // read the window and calculate pitch increment
         uint8_t turing_value = turing_shift_register & (0xFF >> (8 - settings.GetValue(SETTING_TURING_WINDOW)));        
         // convert into a pitch increment
-        if (settings.GetValue(SETTING_MUSICAL_SCALE) < 8) {
+        if (settings.GetValue(SETTING_MUSICAL_SCALE) < 6) {
            turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 32) + turing_value)] * 128 ;
-        } else if (settings.GetValue(SETTING_MUSICAL_SCALE) == 8) {
+        } else if (settings.GetValue(SETTING_MUSICAL_SCALE) == 6) {
            // Ptolemy's intense diatonic just tuning
            turing_pitch_delta = (1536 * ptolemy_table[turing_value]) >> 10;           
         } else {

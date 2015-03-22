@@ -548,12 +548,10 @@ const char* const musical_scale_values[] = {
     "ION",  // 1=Ionian
     "DOR",  // 2=Dorian
     "PHRY", // 3=Phrygian
-    "LYD",  // 4=Lydian
-    "AEOL", // 5=Aeolian
-    "LOCR", // 6=Locrian
-    "PENT", // 7=Pentatonic    	
-    "PTOL", // 8=Ptolemy intense diatonic just tuning   	
-    "HARM", // 9=Harmonic 
+    "AEOL", // 4=Aeolian
+    "PENT", // 5=Pentatonic    	
+    "PTOL", // 6=Ptolemy intense diatonic just tuning   	
+    "HARM", // 7=Harmonic 
 };
 
 /* static */
@@ -639,7 +637,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 5, "WIND", mod_rate_values },
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
-  { 0, 9, "SCAL", musical_scale_values },
+  { 0, 7, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.5", NULL },  // Placeholder for version string
