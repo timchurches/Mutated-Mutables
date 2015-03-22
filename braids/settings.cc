@@ -478,7 +478,7 @@ const char* const meta_values[] = {
     "LEVL", // 8 was 5
     "PTOL", // 9 was 6 = Ptolemy's intense diatonic scale
     "HARM", // 10 was 7 = harmonic intervals, was 6
-    "TPRB", // 11 = Turing Machine probability
+    "PROB", // 11 = Turing Machine probability
     "JITR", // 12 was 8 
     "BITS", // 13 was 9 
     "SRAT", // 14 was 10 
