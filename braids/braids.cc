@@ -403,6 +403,14 @@ void RenderBlock() {
   
   // Turing machine
   uint8_t turing_length = settings.GetValue(SETTING_TURING_LENGTH);
+  // Override the Turing shift register length if meta-sequence is active and Turing
+  // length selected as parameter destination
+  if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 8)) {
+     turing_length = metaseq_parameter;
+     if (turing_length > 32) {
+        turing_length = 32;
+     }
+  }
   if (trigger_flag && turing_length) {
      ++turing_div_counter;
      if (turing_div_counter >= settings.GetValue(SETTING_TURING_CLOCK_DIV)) {
