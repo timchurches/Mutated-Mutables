@@ -445,9 +445,13 @@ void RenderBlock() {
         // add back the LSB to the remainder of the shift register
         if (turing_length < 32) {
            if (turing_remainder_lsb) {
-              turing_shift_register |= (static_cast<uint32_t>(1) << turing_length);
+              // WRONG! - the remainder LSB should be added back at the MSB position
+              // for the entire 32-bit shift register!
+              // turing_shift_register |= (static_cast<uint32_t>(1) << turing_length);
+              turing_shift_register |= (static_cast<uint32_t>(1) << 31);
            } else {
-              turing_shift_register &= (~(static_cast<uint32_t>(1) << turing_length));
+              // turing_shift_register &= (~(static_cast<uint32_t>(1) << turing_length));
+              turing_shift_register &= (~(static_cast<uint32_t>(1) << 31));
            }
         }
         // decide whether to flip the LSB
@@ -464,6 +468,7 @@ void RenderBlock() {
         } 
         if ((static_cast<uint8_t>(Random::GetWord() >> 23) < turing_prob) || turing_prob == 127) {
            // bit-flip the LSB, bit-shift was 25 but try making is 4 times less sensitive
+           // yes, leave at 23 but force bit-flip if turing_prob is 127.
            turing_shift_register = turing_shift_register ^ static_cast<uint32_t>(1) ;
         }
         // read the window and calculate pitch increment

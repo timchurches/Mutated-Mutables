@@ -641,7 +641,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 7, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v3.5", NULL },  // Placeholder for version string
+  { 0, 0, "v3.6", NULL },  // Placeholder for version string
 };
 
 /* static */
