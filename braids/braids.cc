@@ -381,13 +381,13 @@ void RenderBlock() {
 		       }             
 		   } else if (metaseq_direction == 2) {
 		     // random
-		     // if (metaseq_length < 3) {
-		     //    metaseq_index = uint8_t(Random::GetWord() >> 31);
-		     // } else if (metaseq_length < 7) {
-			 //    metaseq_index = uint8_t(Random::GetWord() >> 30);
-		     // } else {
+		     if (metaseq_length < 3) {
+		        metaseq_index = uint8_t(Random::GetWord() >> 31);
+		     } else if (metaseq_length < 7) {
+			    metaseq_index = uint8_t(Random::GetWord() >> 30);
+		     } else {
 		        metaseq_index = uint8_t(Random::GetWord() >> 29);
-		     // }
+		     }
 		     if (metaseq_index > metaseq_length) {
 		        metaseq_index = 0;
 		     }
@@ -402,14 +402,17 @@ void RenderBlock() {
   } // end meta-sequencer
   
   // Turing machine
-  uint8_t turing_length = settings.GetValue(SETTING_TURING_LENGTH);
-  // Override the Turing shift register length if meta-sequence is active and Turing
-  // length selected as parameter destination
-  if (metaseq_length && (settings.GetValue(SETTING_METASEQ_PARAMETER_DEST) & 8)) {
-     turing_length = metaseq_parameter;
-     if (turing_length > 32) {
-        turing_length = 32;
-     }
+  int16_t turing_length = static_cast<int16_t>(settings.GetValue(SETTING_TURING_LENGTH));
+  // Add to the Turing shift register length if FMCV=TRNG
+  if (meta_mod == 10) {
+     // add the FM CV amount
+	 turing_length += settings.adc_to_fm(adc.channel(3)) >> 7;
+     // Clip at zero and 32
+     if (turing_length < 0) { 
+        turing_length = 0 ;
+     } else if (turing_length > 32) {
+        turing_length = 32 ;
+     } 
   }
   if (trigger_flag && turing_length) {
      ++turing_div_counter;
@@ -472,7 +475,7 @@ void RenderBlock() {
            turing_shift_register = turing_shift_register ^ static_cast<uint32_t>(1) ;
         }
         // read the window and calculate pitch increment
-        uint8_t turing_value = turing_shift_register & (0xFF >> (8 - settings.GetValue(SETTING_TURING_WINDOW)));        
+        uint8_t turing_value = turing_shift_register & (0xFF >> (8 - settings.GetValue(SETTING_TURING_WINDOW))); 
         // convert into a pitch increment
         if (settings.GetValue(SETTING_MUSICAL_SCALE) < 6) {
            turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 32) + turing_value)] * 128 ;
@@ -631,8 +634,8 @@ void RenderBlock() {
   
   pitch += internal_adc.value() >> 8;
 
-  // or harmonic intervals or just intonation
-  if (meta_mod == 9 || meta_mod == 10) {
+  // or harmonic intervals 
+  if (meta_mod == 9) {
      // Apply hysteresis to ADC reading to prevent a single bit error to move
      // the quantized pitch up and down the quantization boundary.
      uint16_t fm_adc_code = adc.channel(3);
@@ -648,18 +651,10 @@ void RenderBlock() {
      } else if (harmonic_multiplier > 31) {
         harmonic_multiplier = 31;
      }
-     if (meta_mod == 10) {
-        if (harmonic_multiplier > 0) {
-           pitch += (1536 * log2_table[harmonic_multiplier - 1]) >> 10;
-        } else if (harmonic_multiplier < 0) {
-           pitch -= (1536 * log2_table[-1 - harmonic_multiplier]) >> 10;
-        }
-     } else {
-        if (harmonic_multiplier > 0) {
-           pitch += (1536 * ptolemy_table[harmonic_multiplier - 1]) >> 10;
-        } else if (harmonic_multiplier < 0) {
-           pitch -= (1536 * ptolemy_table[-1 - harmonic_multiplier]) >> 10;
-        }
+     if (harmonic_multiplier > 0) {
+        pitch += (1536 * log2_table[harmonic_multiplier - 1]) >> 10;
+     } else if (harmonic_multiplier < 0) {
+        pitch -= (1536 * log2_table[-1 - harmonic_multiplier]) >> 10;
      }
   }
   
@@ -689,7 +684,7 @@ void RenderBlock() {
   // jitter depth now settable and voltage controllable.
   // TO-DO jitter still causes pitch to sharpen slightly - why?
   int32_t vco_drift = settings.vco_drift();
-  if (meta_mod == 12 || meta_mod == 15 || meta_mod == 16 || meta_mod == 18) {
+  if (meta_mod == 12 || meta_mod == 16) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
@@ -790,7 +785,7 @@ void RenderBlock() {
 
   // Voltage control of bit crushing
   uint8_t bits_value = settings.resolution();
-  if (meta_mod == 13 || meta_mod == 15 || meta_mod == 17 || meta_mod == 18) {
+  if (meta_mod == 13 || meta_mod == 15 || meta_mod == 16) {
      bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (bits_value < 0) {
 	    bits_value = 0 ;
@@ -801,7 +796,7 @@ void RenderBlock() {
 
   // Voltage control of sample rate decimation
   uint8_t sample_rate_value = settings.data().sample_rate;
-  if (meta_mod == 14 || meta_mod == 16 || meta_mod == 17 || meta_mod == 18) {
+  if (meta_mod == 14 || meta_mod == 15 || meta_mod == 16) {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (sample_rate_value < 0) {
 	    sample_rate_value = 0 ;

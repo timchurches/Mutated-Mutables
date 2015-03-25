@@ -475,17 +475,15 @@ const char* const meta_values[] = {
     "DCAY", // 5
     "DCY1", // 6
     "DCY2", // 7
-    "LEVL", // 8 was 5
-    "PTOL", // 9 was 6 = Ptolemy's intense diatonic scale
-    "HARM", // 10 was 7 = harmonic intervals, was 6
-    "PROB", // 11 = Turing Machine probability
-    "JITR", // 12 was 8 
-    "BITS", // 13 was 9 
-    "SRAT", // 14 was 10 
-    "SMUT", // 15 = BITS + JITR, was 11 
-    "DIRT", // 16 = SRAT + JITR, was 12 
-    "FLTH", // 17 = BITS + SRAT, was 13 
-    "FCKD", // 18 = BITS + SRAT + JITR, was 14 
+    "LEVL", // 8 
+    "HARM", // 9 = harmonic intervals,
+    "TRNG", // 10 = Turing Machine shift register length 0 to 32
+    "PROB", // 11 = Turing Machine probability 0 to 127
+    "JITR", // 12 
+    "BITS", // 13 
+    "SRAT", // 14 
+    "SMUT", // 15 = BITS + SRAT 
+    "FCKD", // 16 = BITS + SRAT + JITR 
 };
 
 const char* const mod_shape_values[] = { 
@@ -541,7 +539,6 @@ const char* const metaseq_parameter_dest_values[] = {
     "T+L",  // 5
     "C+L",  // 6
     "TLC",  // 7
-    "TRNG", // 8
 };
 
 const char* const musical_scale_values[] = {
@@ -562,7 +559,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 18, "FMCV", meta_values },
+  { 0, 16, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -591,7 +588,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "M1SY", mod_rate_values },
   { 0, 127, "M2SY", mod_rate_values },
   { 0, 1, "OSYN", boolean_values },
-  { 0, 8, "MSPD", metaseq_parameter_dest_values }, // was M1T2
+  { 0, 7, "MSPD", metaseq_parameter_dest_values }, 
   { 0, 62, "FTUN", bipolar_values }, // was M1C2
   { 0, 1, "M1F2", boolean_values },
   { 0, 127, "LEVL", mod_rate_values },
