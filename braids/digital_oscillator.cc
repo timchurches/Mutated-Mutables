@@ -1987,110 +1987,112 @@ void DigitalOscillator::RenderGranularCloud(
    } 
 }
 
-static const uint16_t kParticleNoiseDecay = 64763;
-static const int32_t kResonanceSquared = 32768 * 0.996 * 0.996;
-static const int32_t kResonanceFactor = 32768 * 0.996;
-
-void DigitalOscillator::RenderParticleNoise(
-    const uint8_t* sync,
-    int16_t* buffer,
-    uint8_t size) {
-  uint16_t amplitude = state_.pno.amplitude;
-  uint32_t density = 1024 + parameter_[0];
-  int32_t sample;
-  
-  int32_t y10, y20, y30;
-  int32_t y11 = state_.pno.filter_state[0][0];
-  int32_t y12 = state_.pno.filter_state[0][1];
-  int32_t s1 = state_.pno.filter_scale[0];
-  int32_t c1 = state_.pno.filter_coefficient[0];
-  int32_t y21 = state_.pno.filter_state[1][0];
-  int32_t y22 = state_.pno.filter_state[1][1];
-  int32_t s2 = state_.pno.filter_scale[1];
-  int32_t c2 = state_.pno.filter_coefficient[1];
-  int32_t y31 = state_.pno.filter_state[2][0];
-  int32_t y32 = state_.pno.filter_state[2][1];
-  int32_t s3 = state_.pno.filter_scale[2];
-  int32_t c3 = state_.pno.filter_coefficient[2];
-
-  while (size) {
-    uint32_t noise = Random::GetWord();
-    if ((noise & 0x7fffff) < density) {
-      amplitude = 65535;
-      int16_t noise_a = (noise & 0x0fff) - 0x800;
-      int16_t noise_b = ((noise >> 15) & 0x1fff) - 0x1000;
-      int16_t p1 = pitch_ + (3 * noise_a * parameter_[1] >> 17) + 0x600;
-
-      CONSTRAIN(p1, 0, 16383)
-      c1 = Interpolate824(lut_resonator_coefficient, p1 << 17);
-      s1 = Interpolate824(lut_resonator_scale, p1 << 17);
-
-      int16_t p2 = pitch_ + (noise_a * parameter_[1] >> 15) + 0x980;
-      CONSTRAIN(p2, 0, 16383)
-      c2 = Interpolate824(lut_resonator_coefficient, p2 << 17);
-      s2 = Interpolate824(lut_resonator_scale, p2 << 17);
-
-      int16_t p3 = pitch_ + (noise_b * parameter_[1] >> 16) + 0x790;
-      CONSTRAIN(p3, 0, 16383)
-      c3 = Interpolate824(lut_resonator_coefficient, p3 << 17);
-      s3 = Interpolate824(lut_resonator_scale, p3 << 17);
-      
-      c1 = c1 * kResonanceFactor >> 15;
-      c2 = c2 * kResonanceFactor >> 15;
-      c3 = c3 * kResonanceFactor >> 15;
-    }
-    sample = (static_cast<int16_t>(noise) * amplitude) >> 16;
-    amplitude = (amplitude * kParticleNoiseDecay) >> 16;
-    
-    if (sample > 0) {
-      y10 = sample * s1 >> 16;
-      y20 = sample * s2 >> 16;
-      y30 = sample * s3 >> 16;
-    } else {
-      y10 = -((-sample) * s1 >> 16);
-      y20 = -((-sample) * s2 >> 16);
-      y30 = -((-sample) * s3 >> 16);
-    }
-    
-    y10 += y11 * c1 >> 15;
-    y10 -= y12 * kResonanceSquared >> 15;
-    CLIP(y10);
-    y12 = y11;
-    y11 = y10;
-    
-    y20 += y21 * c2 >> 15;
-    y20 -= y22 * kResonanceSquared >> 15;
-    CLIP(y20);
-    y22 = y21;
-    y21 = y20;
-    
-    y30 += y31 * c3 >> 15;
-    y30 -= y32 * kResonanceSquared >> 15;
-    CLIP(y30);
-    y32 = y31;
-    y31 = y30;
-    
-    y10 += y20 + y30;
-    CLIP(y10)
-    *buffer++ = y10;
-    *buffer++ = y10;
-    size -= 2;
-  }
-  
-  state_.pno.amplitude = amplitude;
-  state_.pno.filter_state[0][0] = y11;
-  state_.pno.filter_state[0][1] = y12;
-  state_.pno.filter_scale[0] = s1;
-  state_.pno.filter_coefficient[0] = c1;
-  state_.pno.filter_state[1][0] = y21;
-  state_.pno.filter_state[1][1] = y22;
-  state_.pno.filter_scale[1] = s2;
-  state_.pno.filter_coefficient[1] = c2;
-  state_.pno.filter_state[2][0] = y31;
-  state_.pno.filter_state[2][1] = y32;
-  state_.pno.filter_scale[2] = s3;
-  state_.pno.filter_coefficient[2] = c3;
-}
+/*
+// static const uint16_t kParticleNoiseDecay = 64763;
+// static const int32_t kResonanceSquared = 32768 * 0.996 * 0.996;
+// static const int32_t kResonanceFactor = 32768 * 0.996;
+// 
+// void DigitalOscillator::RenderParticleNoise(
+//     const uint8_t* sync,
+//     int16_t* buffer,
+//     uint8_t size) {
+//   uint16_t amplitude = state_.pno.amplitude;
+//   uint32_t density = 1024 + parameter_[0];
+//   int32_t sample;
+//   
+//   int32_t y10, y20, y30;
+//   int32_t y11 = state_.pno.filter_state[0][0];
+//   int32_t y12 = state_.pno.filter_state[0][1];
+//   int32_t s1 = state_.pno.filter_scale[0];
+//   int32_t c1 = state_.pno.filter_coefficient[0];
+//   int32_t y21 = state_.pno.filter_state[1][0];
+//   int32_t y22 = state_.pno.filter_state[1][1];
+//   int32_t s2 = state_.pno.filter_scale[1];
+//   int32_t c2 = state_.pno.filter_coefficient[1];
+//   int32_t y31 = state_.pno.filter_state[2][0];
+//   int32_t y32 = state_.pno.filter_state[2][1];
+//   int32_t s3 = state_.pno.filter_scale[2];
+//   int32_t c3 = state_.pno.filter_coefficient[2];
+// 
+//   while (size) {
+//     uint32_t noise = Random::GetWord();
+//     if ((noise & 0x7fffff) < density) {
+//       amplitude = 65535;
+//       int16_t noise_a = (noise & 0x0fff) - 0x800;
+//       int16_t noise_b = ((noise >> 15) & 0x1fff) - 0x1000;
+//       int16_t p1 = pitch_ + (3 * noise_a * parameter_[1] >> 17) + 0x600;
+// 
+//       CONSTRAIN(p1, 0, 16383)
+//       c1 = Interpolate824(lut_resonator_coefficient, p1 << 17);
+//       s1 = Interpolate824(lut_resonator_scale, p1 << 17);
+// 
+//       int16_t p2 = pitch_ + (noise_a * parameter_[1] >> 15) + 0x980;
+//       CONSTRAIN(p2, 0, 16383)
+//       c2 = Interpolate824(lut_resonator_coefficient, p2 << 17);
+//       s2 = Interpolate824(lut_resonator_scale, p2 << 17);
+// 
+//       int16_t p3 = pitch_ + (noise_b * parameter_[1] >> 16) + 0x790;
+//       CONSTRAIN(p3, 0, 16383)
+//       c3 = Interpolate824(lut_resonator_coefficient, p3 << 17);
+//       s3 = Interpolate824(lut_resonator_scale, p3 << 17);
+//       
+//       c1 = c1 * kResonanceFactor >> 15;
+//       c2 = c2 * kResonanceFactor >> 15;
+//       c3 = c3 * kResonanceFactor >> 15;
+//     }
+//     sample = (static_cast<int16_t>(noise) * amplitude) >> 16;
+//     amplitude = (amplitude * kParticleNoiseDecay) >> 16;
+//     
+//     if (sample > 0) {
+//       y10 = sample * s1 >> 16;
+//       y20 = sample * s2 >> 16;
+//       y30 = sample * s3 >> 16;
+//     } else {
+//       y10 = -((-sample) * s1 >> 16);
+//       y20 = -((-sample) * s2 >> 16);
+//       y30 = -((-sample) * s3 >> 16);
+//     }
+//     
+//     y10 += y11 * c1 >> 15;
+//     y10 -= y12 * kResonanceSquared >> 15;
+//     CLIP(y10);
+//     y12 = y11;
+//     y11 = y10;
+//     
+//     y20 += y21 * c2 >> 15;
+//     y20 -= y22 * kResonanceSquared >> 15;
+//     CLIP(y20);
+//     y22 = y21;
+//     y21 = y20;
+//     
+//     y30 += y31 * c3 >> 15;
+//     y30 -= y32 * kResonanceSquared >> 15;
+//     CLIP(y30);
+//     y32 = y31;
+//     y31 = y30;
+//     
+//     y10 += y20 + y30;
+//     CLIP(y10)
+//     *buffer++ = y10;
+//     *buffer++ = y10;
+//     size -= 2;
+//   }
+//   
+//   state_.pno.amplitude = amplitude;
+//   state_.pno.filter_state[0][0] = y11;
+//   state_.pno.filter_state[0][1] = y12;
+//   state_.pno.filter_scale[0] = s1;
+//   state_.pno.filter_coefficient[0] = c1;
+//   state_.pno.filter_state[1][0] = y21;
+//   state_.pno.filter_state[1][1] = y22;
+//   state_.pno.filter_scale[1] = s2;
+//   state_.pno.filter_coefficient[1] = c2;
+//   state_.pno.filter_state[2][0] = y31;
+//   state_.pno.filter_state[2][1] = y32;
+//   state_.pno.filter_scale[2] = s3;
+//   state_.pno.filter_coefficient[2] = c3;
+// }
+*/
 
 void DigitalOscillator::RenderKick(
     const uint8_t* sync,
@@ -2346,7 +2348,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   // &DigitalOscillator::RenderTwinPeaksNoise,
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
-  &DigitalOscillator::RenderParticleNoise,
+  // &DigitalOscillator::RenderParticleNoise,
   &DigitalOscillator::RenderSilence,
 };
 

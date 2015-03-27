@@ -428,7 +428,7 @@ MacroOscillator::RenderFn MacroOscillator::fn_table_[] = {
   // &MacroOscillator::RenderDigital, // was FilteredNoise
   &MacroOscillator::RenderDigital,
   &MacroOscillator::RenderDigital,
-  &MacroOscillator::RenderDigital,
+  // &MacroOscillator::RenderDigital, // was ParticleNoise
   &MacroOscillator::RenderDigital, // for RenderSilence  
 };
 

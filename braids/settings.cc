@@ -214,7 +214,7 @@ const char* const algo_values[] = {
     // "TWNQ",
     "CLKN",
     "CLOU",
-    "PRTC",
+    // "PRTC",
     "ZERO", // this is the RenderSilence digital model 
 };
 
@@ -576,8 +576,7 @@ const char* const musical_scale_values[] = {
     "PHRY", // 3=Phrygian
     "AEOL", // 4=Aeolian
     "PENT", // 5=Pentatonic    	
-    "PTOL", // 6=Ptolemy intense diatonic just tuning   	
-    "HARM", // 7=Harmonic 
+    "HARM", // 6=Harmonic 
 };
 
 /* static */
@@ -663,7 +662,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 5, "WIND", mod_rate_values },
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
-  { 0, 7, "SCAL", musical_scale_values },
+  { 0, 6, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.6", NULL },  // Placeholder for version string

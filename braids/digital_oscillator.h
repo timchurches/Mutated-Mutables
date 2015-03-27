@@ -94,7 +94,7 @@ enum DigitalOscillatorShape {
   // OSC_SHAPE_TWIN_PEAKS_NOISE,
   OSC_SHAPE_CLOCKED_NOISE,
   OSC_SHAPE_GRANULAR_CLOUD,
-  OSC_SHAPE_PARTICLE_NOISE,
+  // OSC_SHAPE_PARTICLE_NOISE,
   OSC_SHAPE_SILENCE,
 
   // Leave this here because it marks the end of the oscillator model list.
@@ -218,7 +218,7 @@ union DigitalOscillatorState {
   SawSwarmState saw;
   PluckState plk[4];
   FeedbackFmState ffm;
-  ParticleNoiseState pno;
+  // ParticleNoiseState pno;
   PhysicalModellingState phy;
   Grain grain[4];
   FofState fof;
@@ -313,7 +313,7 @@ class DigitalOscillator {
   // void RenderFilteredNoise(const uint8_t*, int16_t*, uint8_t);
   void RenderClockedNoise(const uint8_t*, int16_t*, uint8_t);
   void RenderGranularCloud(const uint8_t*, int16_t*, uint8_t);
-  void RenderParticleNoise(const uint8_t*, int16_t*, uint8_t);
+  // void RenderParticleNoise(const uint8_t*, int16_t*, uint8_t);
   
   void RenderKick(const uint8_t*, int16_t*, uint8_t);
   void RenderSnare(const uint8_t*, int16_t*, uint8_t);
