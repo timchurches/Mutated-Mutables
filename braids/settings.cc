@@ -436,7 +436,35 @@ const char* const bipolar_values[] = {
 };
 
     
-const char* const quantization_values[] = { "OFF ", "QTR", "SEMI" };
+const char* const quantization_values[] = { 
+    "OFF",  // 0
+    "QTR",  // 1
+    "SEMI", // 2
+    "ION",  // 3
+    "DOR",  
+    "PHR",
+    "LYD",
+    "MIXO",
+    "AEOL",
+    "LOCR",
+    "BLMJ",
+    "BLMN",
+    "5MAJ",
+    "5MIN",
+    "BHAI",
+    "SHRI",
+    "RUPA",
+    "TODI",
+    "RAGE",
+    "KAAF",
+    "MEGH",
+    "MALK",
+    "DEEP",
+    "FOLK",
+    "JAPN",
+    "GAML",
+    "WHOL", // 26
+};
 
 const char* const trig_source_values[] = { "EXT", "AUTO" };
 

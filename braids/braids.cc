@@ -204,6 +204,114 @@ const uint8_t musical_scales[] =
        29, 31, 32, 34, 36, 38, 39, 41, 43, 44, 46, 48, 50, 51, 53, // Aeolian
        0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36, 38,
        40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, };  // Pentatonic
+
+/*
+// unprocessed_scales = [
+//   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],  # Chromatic
+//   [0, 2, 4, 5, 7, 9, 11],  # Ionian
+//   [0, 2, 3, 5, 7, 9, 10],  # Dorian
+//   [0, 1, 3, 5, 7, 8, 10],  # Phryigan
+//   [0, 2, 4, 6, 7, 9, 11],  # Lydian
+//   [0, 2, 4, 5, 7, 9, 10],  # Mixolydian
+//   [0, 2, 3, 5, 7, 8, 10],  # Aeolian
+//   [0, 1, 3, 5, 6, 8, 10],  # Locrian
+//   [0, 3, 4, 7, 9, 10],     # Blues major
+//   [0, 3, 5, 6, 7, 10],     # Blues minor
+//   [0, 2, 4, 7, 9],         # Pentatonic major
+//   [0, 3, 5, 7, 10],        # Pentatonic minor
+//   
+//   [0, 1, 4, 5, 7, 8, 11],     # Bhairav
+//   [0, 1, 4, 6, 7, 8, 11],     # Shri
+//   [0, 1, 3, 5, 7, 10, 11],    # Rupavati
+//   [0, 1, 3, 6, 7, 8, 11],     # Todi
+//   [0, 2, 4, 5, 9, 10, 11],    # Rageshri
+//   [0, 2, 3, 5, 7, 9, 10],     # Kaafi
+//   [0, 2, 5, 7, 9],            # Megh
+//   [0, 3, 5, 8, 10],           # Malkauns
+//   [0, 3, 4, 6, 8, 10],        # Deepak
+// 
+//   [0, 1, 3, 4, 5, 7, 8, 10],  # Folk
+//   [0, 1, 5, 7, 8],            # Japanese
+//   [0, 1, 3, 7, 8],            # Gamelan
+//   [0, 2, 4, 6, 8, 10],        # Whole tone 
+// ]
+*/
+
+const uint8_t quant_scales[] = {
+// Ionian
+       0,      0,      2,      2,      4,      5,      5,      7,
+       7,      9,      9,     11,
+//Dorian
+       0,      0,      2,      3,      3,      5,      5,      7,
+       7,      9,     10,     10,
+//Phrygian
+       0,      1,      1,      3,      3,      5,      5,      7,
+       8,      8,     10,     10,
+// Lydian
+       0,      0,      2,      2,      4,      4,      6,      7,
+       7,      9,      9,     11,
+// Myxolydian
+       0,      0,      2,      2,      4,      5,      5,      7,
+       7,      9,     10,     10,
+// Aeolian
+       0,      0,      2,      3,      3,      5,      5,      7,
+       8,      8,     10,     10,
+// Locrian
+       0,      1,      1,      3,      3,      5,      6,      6,
+       8,      8,     10,     10,
+// Blues major
+       0,      0,      3,      3,      4,      4,      7,      7,
+       7,      9,     10,     10,
+// Blues minor
+       0,      0,      3,      3,      3,      5,      6,      7,
+       7,     10,     10,     10,
+// Pentatonic major
+       0,      0,      2,      2,      4,      4,      7,      7,
+       7,      9,      9,      9,
+// Pentatonic minor
+       0,      0,      3,      3,      3,      5,      5,      7,
+       7,     10,     10,     10,
+// Bhairav
+       0,      1,      1,      4,      4,      5,      5,      7,
+       8,      8,     11,     11,
+// Shri
+       0,      1,      1,      4,      4,      4,      6,      7,
+       8,      8,     11,     11,
+// Rupavati
+       0,      1,      1,      3,      3,      5,      5,      7,
+       7,     10,     10,     11,
+// Todi
+       0,      1,      1,      3,      3,      6,      6,      7,
+       8,      8,     11,     11,
+// Rageshri
+       0,      0,      2,      2,      4,      5,      5,      5,
+       9,      9,     10,     11,
+// Kaafi
+       0,      0,      2,      2,      3,      3,      5,      5,
+       7,      7,      9,     10,
+
+// Megh
+       0,      0,      2,      2,      5,      5,      5,      7,
+       7,      9,      9,      9,
+// Malkauns
+       0,      0,      3,      3,      3,      5,      5,      8,
+       8,      8,     10,     10,
+// Deepak
+       0,      0,      3,      3,      4,      4,      6,      6,
+       8,      8,     10,     10,
+// Folk
+       0,      1,      1,      3,      4,      5,      5,      7,
+       8,      8,     10,     10,
+// Japanese
+       0,      1,      1,      1,      5,      5,      5,      7,
+       8,      8,      8,      8,
+// Gamelan
+       0,      1,      1,      3,      3,      3,      7,      7,
+       8,      8,      8,      8,
+// Whole tone
+       0,      0,      2,      2,      4,      4,      6,      6,
+       8,      8,     10,     10,
+};
                                 
 void RenderBlock() {
   static uint16_t previous_pitch_adc_code = 0;
@@ -396,7 +504,7 @@ void RenderBlock() {
 	    MacroOscillatorShape metaseq_current_shape = settings.metaseq_shape(metaseq_index);
 	    osc.set_shape(metaseq_current_shape);
 	    ui.set_meta_shape(metaseq_current_shape);
-	    metaseq_pitch_delta = settings.metaseq_note(metaseq_index) * 128;
+	    metaseq_pitch_delta = settings.metaseq_note(metaseq_index) << 7;
         metaseq_parameter = settings.metaseq_parameter(metaseq_index) ;
      }
   } // end meta-sequencer
@@ -435,7 +543,7 @@ void RenderBlock() {
         bool turing_remainder_lsb = false;
         // read the LSB in the remainder of the shift register
         if (turing_length < 32) {
-           turing_remainder_lsb = turing_shift_register & (1 << static_cast<uint32_t>(turing_length));
+           turing_remainder_lsb = turing_shift_register & (static_cast<uint32_t>(1) << turing_length);
         }
         // rotate the shift register
         turing_shift_register = turing_shift_register >> 1;
@@ -448,12 +556,8 @@ void RenderBlock() {
         // add back the LSB to the remainder of the shift register
         if (turing_length < 32) {
            if (turing_remainder_lsb) {
-              // WRONG! - the remainder LSB should be added back at the MSB position
-              // for the entire 32-bit shift register!
-              // turing_shift_register |= (static_cast<uint32_t>(1) << turing_length);
               turing_shift_register |= (static_cast<uint32_t>(1) << 31);
            } else {
-              // turing_shift_register &= (~(static_cast<uint32_t>(1) << turing_length));
               turing_shift_register &= (~(static_cast<uint32_t>(1) << 31));
            }
         }
@@ -478,7 +582,7 @@ void RenderBlock() {
         uint8_t turing_value = turing_shift_register & (0xFF >> (8 - settings.GetValue(SETTING_TURING_WINDOW))); 
         // convert into a pitch increment
         if (settings.GetValue(SETTING_MUSICAL_SCALE) < 6) {
-           turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) * 32) + turing_value)] * 128 ;
+           turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) << 5) + turing_value)] << 7 ;
         } else if (settings.GetValue(SETTING_MUSICAL_SCALE) == 6) {
            // Ptolemy's intense diatonic just tuning
            turing_pitch_delta = (1536 * ptolemy_table[turing_value]) >> 10;           
@@ -622,9 +726,15 @@ void RenderBlock() {
   }
   
   if (settings.pitch_quantization() == PITCH_QUANTIZATION_QUARTER_TONE) {
-    pitch = (pitch + 32) & 0xffffffc0;
+     pitch = (pitch + 32) & 0xffffffc0;
   } else if (settings.pitch_quantization() == PITCH_QUANTIZATION_SEMITONE) {
-    pitch = (pitch + 64) & 0xffffff80;
+     pitch = (pitch + 64) & 0xffffff80;
+  } else if (settings.pitch_quantization() > PITCH_QUANTIZATION_SEMITONE) {
+     pitch = (pitch + 64) & 0xffffff80;
+     uint8_t pitch_semitones = pitch >> 7;
+     uint8_t pitch_whole_octaves = pitch_semitones / 12 ;
+     uint8_t pitch_remainder_semitones = pitch_semitones - (pitch_whole_octaves * 12);
+     pitch = ((pitch_whole_octaves * 12) + quant_scales[((settings.pitch_quantization() - 3) * 12) + pitch_remainder_semitones]) << 7;
   }
 
   // add FM
