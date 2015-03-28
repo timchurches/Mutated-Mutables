@@ -119,7 +119,7 @@ const SettingsData kInitSettings = {
   1,                    // metaseq_clock_div
   1,                    // turing_clock_div
   0,                    // turing_length
-  4,                    // turing_window
+  12,                   // turing_window
   0,                    // turing_prob
   0,                    // turing_init
   0,                    // musical_scale
@@ -678,7 +678,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MDIV", mod_rate_values },
   { 1, 127, "TDIV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 1, 5, "WIND", mod_rate_values },
+  { 2, 36, "WIND", mod_rate_values },
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
