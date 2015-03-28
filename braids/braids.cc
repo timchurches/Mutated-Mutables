@@ -182,20 +182,73 @@ const uint16_t log2_table[] = { 0, 1024, 1623, 2048, 2378, 2647, 2875, 3072, 324
                                 3542, 3671, 3789, 3899, 4001, 4096, 4186, 4270, 4350,
                                 4426, 4498, 4566, 4632, 4695, 4755, 4813, 4869, 4923,
                                 4975, 5025, 5073, 5120, };
+/*
+// const uint8_t musical_scales[] = 
+//      { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+//        16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, // chromatic
+//         0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26, 28,
+//         29, 31, 33, 35, 36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, // Ionian
+//        0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, 27,
+//        29, 31, 32, 34, 36, 37, 39, 41, 43, 44, 46, 48, 49, 51, 53, // Dorian
+//        0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, 27,
+//        29, 31, 32, 34, 36, 37, 39, 41, 43, 44, 46, 48, 49, 51, 53, // Phrygian
+//        0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, 27,
+//        29, 31, 32, 34, 36, 38, 39, 41, 43, 44, 46, 48, 50, 51, 53, // Aeolian
+//        0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36, 38,
+//        40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, };  // Pentatonic
+*/
 
-const uint8_t musical_scales[] = 
-     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-       16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, // chromatic
-        0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26, 28,
-        29, 31, 33, 35, 36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, // Ionian
-       0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, 27,
-       29, 31, 32, 34, 36, 37, 39, 41, 43, 44, 46, 48, 49, 51, 53, // Dorian
-       0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, 27,
-       29, 31, 32, 34, 36, 37, 39, 41, 43, 44, 46, 48, 49, 51, 53, // Phrygian
-       0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, 27,
-       29, 31, 32, 34, 36, 38, 39, 41, 43, 44, 46, 48, 50, 51, 53, // Aeolian
-       0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36, 38,
-       40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, };  // Pentatonic
+const uint8_t turing_scales[] = 
+    { 0, 2, 4, 5, 7,  9,  11, 12,              // Ionian = 7
+      0, 2, 3, 5, 7,  9,  10, 12,              // Dorian = 7
+      0, 1, 3, 5, 7,  8,  10, 12,              // Phrygian = 7
+      0, 2, 4, 6, 7,  9,  11, 12,              // Lydian = 7
+      0, 2, 4, 5, 7,  9,  10, 12,              // Mixolydian = 7
+      0, 2, 3, 5, 7,  8,  10, 12,              // Aeolian = 7
+      0, 1, 3, 5, 6,  8,  10, 12,              // Locrian = 7
+      0, 3, 4, 7, 9,  10, 12, 15,              // Blues major = 6
+      0, 3, 5, 6, 7,  10, 12, 15,              // Blues minor = 6
+      0, 2, 4, 7, 9,  12, 14, 16,              // Pentatonic major = 5
+      0, 3, 5, 7, 10, 12, 15, 17,              // Pentatonic minor = 5
+      0, 1, 4, 5, 7,  8,  11, 12,              // Bhairav = 7
+      0, 1, 4, 6, 7,  8,  11, 12,              // Shri = 7
+      0, 1, 3, 5, 7,  10, 11, 12,              // Rupavati = 7
+      0, 1, 3, 6, 7,  8,  11, 12,              // Todi = 7
+      0, 2, 4, 5, 9,  10, 11, 12,              // Rageshri = 7
+      0, 2, 3, 5, 7,  9,  10, 12,              // Kaafi = 7
+      0, 2, 5, 7, 9,  12, 14, 17,              // Megh = 5
+      0, 3, 5, 8, 10, 12, 15, 17,              // Malkauns = 5
+      0, 3, 4, 6, 8,  10, 12, 15,              // Deepak = 6
+      0, 1, 3, 4, 5,  7,  8,  10,              // Folk = 8
+      0, 1, 5, 7, 8,  12, 13, 17,              // Japanese = 5
+      0, 1, 3, 7, 8,  12, 13, 15,              // Gamelan = 5
+      0, 2, 4, 6, 8,  10, 12, 14, };           // Whole tone = 6
+
+const uint8_t turing_divisors[] = { 7, // Ionian = 7
+                                  7, // Dorian = 7
+                                  7, // Phrygian = 7
+                                  7, // Lydian = 7
+                                  7, // Mixolydian = 7
+                                  7, // Aeolian = 7
+                                  7, // Locrian = 7
+                                  6, // Blues major = 6
+                                  6, // Blues minor = 6
+                                  5, // Pentatonic major = 5
+                                  5, // Pentatonic minor = 5 
+                                  7, // Bhairav = 7
+                                  7, // Shri = 7
+                                  7, // Rupavati = 7
+                                  7, // Todi = 7
+                                  7, // Rageshri = 7
+                                  7, // Kaafi = 7
+                                  5, // Megh = 5
+                                  5, // Malkauns = 5
+                                  6, // Deepak = 6
+                                  8, // Folk = 8
+                                  5, // Japanese = 5
+                                  5, // Gamelan = 5
+                                  6, // Whole tone = 6
+};
 
 /*
 // unprocessed_scales = [
@@ -368,6 +421,8 @@ void RenderBlock() {
   // These are ratios of attack to decay, from A/D = 0 to 127
   env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_a_param * 2) >> 8; 
   env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_d_param * 2) >> 8;  
+  // env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_a_param) >> 7; 
+  // env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_d_param) >> 7;  
 
   // Render envelope in LFO mode, or not
   // envelope 1
@@ -425,6 +480,8 @@ void RenderBlock() {
   // These are ratios of attack to decay, from A/D = 0 to 127
   env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param * 2) >> 8; 
   env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param * 2) >> 8;  
+  // env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param) >> 7; 
+  // env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param) >> 7;  
  
   // Render envelope in LFO mode, or not
   // envelope 2
@@ -573,9 +630,13 @@ void RenderBlock() {
         // read the window and calculate pitch increment
         uint8_t turing_value = turing_shift_register & (0xFF >> (8 - settings.GetValue(SETTING_TURING_WINDOW))); 
         // convert into a pitch increment
-        if (settings.GetValue(SETTING_MUSICAL_SCALE) < 6) {
-           turing_pitch_delta = musical_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) << 5) + turing_value)] << 7 ;
-        } else if (settings.GetValue(SETTING_MUSICAL_SCALE) == 6) {
+        if (settings.GetValue(SETTING_MUSICAL_SCALE) == 0) {
+           turing_pitch_delta = turing_value << 7 ;
+        } else if (settings.GetValue(SETTING_MUSICAL_SCALE) < 25) {
+           uint8_t turing_whole_octaves = turing_value / turing_divisors[(settings.GetValue(SETTING_MUSICAL_SCALE) - 1)] ;
+           uint8_t turing_remainder_semitones = turing_value - (turing_whole_octaves * turing_divisors[(settings.GetValue(SETTING_MUSICAL_SCALE) - 1)]);          
+           turing_pitch_delta = ((turing_whole_octaves * 12) + turing_scales[((settings.GetValue(SETTING_MUSICAL_SCALE) - 1) << 3) + turing_remainder_semitones]) << 7 ;
+        } else if (settings.GetValue(SETTING_MUSICAL_SCALE) == 25) {
            // Harmonic series
            turing_pitch_delta = (1536 * log2_table[turing_value]) >> 10;
         }

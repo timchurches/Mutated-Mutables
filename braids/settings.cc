@@ -571,12 +571,31 @@ const char* const metaseq_parameter_dest_values[] = {
 
 const char* const musical_scale_values[] = {
     "CHRM", // 0=chromatic
-    "ION",  // 1=Ionian
-    "DOR",  // 2=Dorian
-    "PHRY", // 3=Phrygian
-    "AEOL", // 4=Aeolian
-    "PENT", // 5=Pentatonic    	
-    "HARM", // 6=Harmonic 
+    "ION",  // 1
+    "DOR",  
+    "PHR",
+    "LYD",
+    "MIXO",
+    "AEOL",
+    "LOCR",
+    "BLMJ",
+    "BLMN",
+    "5MAJ",
+    "5MIN",
+    "BHAI",
+    "SHRI",
+    "RUPA",
+    "TODI",
+    "RAGE",
+    "KAAF",
+    "MEGH",
+    "MALK",
+    "DEEP",
+    "FOLK",
+    "JAPN",
+    "GAML",
+    "WHOL", // 24
+    "HARM", // 25=Harmonic 
 };
 
 /* static */
@@ -662,7 +681,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 5, "WIND", mod_rate_values },
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
-  { 0, 6, "SCAL", musical_scale_values },
+  { 0, 25, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v3.7", NULL },  // Placeholder for version string
