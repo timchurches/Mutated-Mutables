@@ -250,7 +250,8 @@ const uint8_t turing_divisors[] = { 7, // Ionian = 7
                                   6, // Whole tone = 6
 };
 
-/*
+/* 
+// from MIDIpal source code
 // unprocessed_scales = [
 //   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],  # Chromatic
 //   [0, 2, 4, 5, 7, 9, 11],  # Ionian
@@ -419,10 +420,22 @@ void RenderBlock() {
 
   // attack and decay parameters, default to FM voltage reading.
   // These are ratios of attack to decay, from A/D = 0 to 127
-  env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_a_param * 2) >> 8; 
-  env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_d_param * 2) >> 8;  
-  // env_a = ((1 + settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_a_param) >> 7; 
-  // env_d = ((128 - settings.GetValue(SETTING_MOD1_AD_RATIO)) * env_d_param) >> 7;  
+  // env_a = ((1 + (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_a_param * 4) >> 8;  
+  // env_d = ((128 - (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_d_param * 4) >> 8;   
+  env_a = ((1 + (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_a_param) >> 6;  
+  env_d = ((128 - (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_d_param) >> 6;   
+
+  // Clip at zero and 127
+  if (env_a < 0) {
+	 env_a = 0 ;
+  } else if (env_a > 127) {
+	 env_a = 127 ;
+  } 
+  if (env_d < 0) {
+	 env_d = 0 ;
+  } else if (env_d > 127) {
+	 env_d = 127 ;
+  } 
 
   // Render envelope in LFO mode, or not
   // envelope 1
@@ -478,10 +491,22 @@ void RenderBlock() {
   }  
 
   // These are ratios of attack to decay, from A/D = 0 to 127
-  env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param * 2) >> 8; 
-  env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param * 2) >> 8;  
-  // env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param) >> 7; 
-  // env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param) >> 7;  
+  // env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param * 4) >> 8; 
+  // env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param * 4) >> 8; 
+  env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param) >> 6; 
+  env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param) >> 6; 
+
+  // Clip at zero and 127
+  if (env2_a < 0) {
+	 env2_a = 0 ;
+  } else if (env2_a > 127) {
+	 env2_a = 127 ;
+  } 
+  if (env2_d < 0) {
+	 env2_d = 0 ;
+  } else if (env2_d > 127) {
+	 env2_d = 127 ;
+  } 
  
   // Render envelope in LFO mode, or not
   // envelope 2
