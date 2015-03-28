@@ -604,9 +604,19 @@ void RenderBlock() {
            turing_shift_register = turing_shift_register ^ static_cast<uint32_t>(1) ;
         }
         // read the window and calculate pitch increment
+        int16_t turing_window = settings.GetValue(SETTING_TURING_WINDOW);
+        if (meta_mod == 12) {
+           // add the FM CV amount, offset by 2
+	       turing_window += (settings.adc_to_fm(adc.channel(3)) >> 7) + 2;
+        }
+        // Clip at zero and 36
+        if (turing_window < 0) { 
+	       turing_window = 0 ;
+        } else if (turing_window > 36) {
+	       turing_window = 36 ;
+        }         
         uint32_t turing_byte = turing_shift_register & static_cast<uint32_t>(0xFF);
-        uint8_t turing_value = (turing_byte * settings.GetValue(SETTING_TURING_WINDOW)) >> 8;
-        // uint8_t turing_value = turing_shift_register & (0xFF >> (8 - settings.GetValue(SETTING_TURING_WINDOW))); 
+        uint8_t turing_value = (turing_byte * static_cast<uint8_t>(turing_window)) >> 8;
         // convert into a pitch increment
         if (settings.GetValue(SETTING_MUSICAL_SCALE) == 0) {
            turing_pitch_delta = turing_value << 7 ;
@@ -822,7 +832,7 @@ void RenderBlock() {
   // jitter depth now settable and voltage controllable.
   // TO-DO jitter still causes pitch to sharpen slightly - why?
   int32_t vco_drift = settings.vco_drift();
-  if (meta_mod == 12 || meta_mod == 16) {
+  if (meta_mod == 13 || meta_mod == 17) {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
@@ -923,7 +933,7 @@ void RenderBlock() {
 
   // Voltage control of bit crushing
   uint8_t bits_value = settings.resolution();
-  if (meta_mod == 13 || meta_mod == 15 || meta_mod == 16) {
+  if (meta_mod == 14 || meta_mod == 16 || meta_mod == 17) {
      bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (bits_value < 0) {
 	    bits_value = 0 ;
@@ -934,7 +944,7 @@ void RenderBlock() {
 
   // Voltage control of sample rate decimation
   uint8_t sample_rate_value = settings.data().sample_rate;
-  if (meta_mod == 14 || meta_mod == 15 || meta_mod == 16) {
+  if (meta_mod == 15 || meta_mod == 16 || meta_mod == 17) {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      if (sample_rate_value < 0) {
 	    sample_rate_value = 0 ;

@@ -507,11 +507,12 @@ const char* const meta_values[] = {
     "HARM", // 9 = harmonic intervals,
     "TRNG", // 10 = Turing Machine shift register length 0 to 32
     "PROB", // 11 = Turing Machine probability 0 to 127
-    "JITR", // 12 
-    "BITS", // 13 
-    "SRAT", // 14 
-    "SMUT", // 15 = BITS + SRAT 
-    "FCKD", // 16 = BITS + SRAT + JITR 
+    "RANG", // 12 = Turing Machine range (window) 2 to 36
+    "JITR", // 13 
+    "BITS", // 14 
+    "SRAT", // 15 
+    "SMUT", // 16 = BITS + SRAT 
+    "FCKD", // 17 = BITS + SRAT + JITR 
 };
 
 const char* const mod_shape_values[] = { 
@@ -605,7 +606,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
   { 0, 6, "TDLY", trig_delay_values },
-  { 0, 16, "FMCV", meta_values },
+  { 0, 17, "FMCV", meta_values },
   { 0, 4, "RANG", pitch_range_values }, // enable LFO pitch range
   { 0, 4, "OCTV", octave_values },
   { 0, PITCH_QUANTIZATION_LAST - 1, "QNTZ", quantization_values },
@@ -678,13 +679,13 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MDIV", mod_rate_values },
   { 1, 127, "TDIV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 2, 36, "WIND", mod_rate_values },
+  { 2, 36, "RANG", mod_rate_values }, // was WIND, turing_window
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v3.7", NULL },  // Placeholder for version string
+  { 0, 0, "v3.8", NULL },  // Placeholder for version string
 };
 
 /* static */
@@ -768,10 +769,10 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ_PARAMETER8,
   SETTING_TURING_LENGTH,
   SETTING_TURING_WINDOW,
+  SETTING_MUSICAL_SCALE,
   SETTING_TURING_PROB,
   SETTING_TURING_INIT,
   SETTING_TURING_CLOCK_DIV,
-  SETTING_MUSICAL_SCALE,
   SETTING_RESET_TYPE,
   SETTING_VERSION,
 };
