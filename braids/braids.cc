@@ -420,8 +420,6 @@ void RenderBlock() {
 
   // attack and decay parameters, default to FM voltage reading.
   // These are ratios of attack to decay, from A/D = 0 to 127
-  // env_a = ((1 + (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_a_param * 4) >> 8;  
-  // env_d = ((128 - (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_d_param * 4) >> 8;   
   env_a = ((1 + (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_a_param) >> 6;  
   env_d = ((128 - (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_d_param) >> 6;   
 
@@ -491,8 +489,6 @@ void RenderBlock() {
   }  
 
   // These are ratios of attack to decay, from A/D = 0 to 127
-  // env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param * 4) >> 8; 
-  // env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param * 4) >> 8; 
   env2_a = ((1 + settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_a_param) >> 6; 
   env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param) >> 6; 
 
