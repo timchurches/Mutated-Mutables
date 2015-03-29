@@ -507,7 +507,7 @@ const char* const meta_values[] = {
     "HARM", // 9 = harmonic intervals,
     "TRNG", // 10 = Turing Machine shift register length 0 to 32
     "PROB", // 11 = Turing Machine probability 0 to 127
-    "RANG", // 12 = Turing Machine range (window) 2 to 36
+    "SPAN", // 12 = Turing Machine range (window) 2 to 36
     "JITR", // 13 
     "BITS", // 14 
     "SRAT", // 15 
@@ -679,7 +679,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 1, 127, "MDIV", mod_rate_values },
   { 1, 127, "TDIV", mod_rate_values },
   { 0, 32, "TRNG", mod_rate_values },
-  { 2, 36, "RANG", mod_rate_values }, // was WIND, turing_window
+  { 2, 36, "SPAN", mod_rate_values }, // was WIND, turing_window
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "TINT", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
