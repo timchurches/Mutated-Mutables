@@ -681,11 +681,11 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 32, "TRNG", mod_rate_values },
   { 2, 36, "SPAN", mod_rate_values }, // was WIND, turing_window
   { 0, 127, "PROB", mod_rate_values },
-  { 0, 127, "TINT", mod_rate_values },
+  { 0, 127, "SEED", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v3.8", NULL },  // Placeholder for version string
+  { 0, 0, "v3.9", NULL },  // Placeholder for version string
 };
 
 /* static */

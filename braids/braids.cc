@@ -332,6 +332,7 @@ void RenderBlock() {
   static uint8_t turing_init_counter = 0;
   static uint32_t turing_shift_register = 0;
   static int32_t turing_pitch_delta = 0;
+  static uint8_t prev_turing_seed = 0;
   
   // debug_pin.High();
 
@@ -556,12 +557,19 @@ void RenderBlock() {
            turing_shift_register = Random::GetWord();
         }
         // re-initialise the shift register with random data if required
-        if (settings.GetValue(SETTING_TURING_INIT)) {
+        uint8_t turing_seed = settings.GetValue(SETTING_TURING_INIT);
+        if (turing_seed && turing_seed < 126) {
            ++turing_init_counter;
-           if (turing_init_counter >= settings.GetValue(SETTING_TURING_INIT)) {
+           if (turing_init_counter >= turing_seed) {
               turing_init_counter = 0;
               turing_shift_register = Random::GetWord();
            }
+        } else if (turing_seed == 126 && turing_seed != prev_turing_seed) {
+           turing_shift_register = 0x00000000;
+           prev_turing_seed = turing_seed;
+        } else if (turing_seed == 127 && turing_seed != prev_turing_seed) {
+           turing_shift_register = 0xFFFFFFFF;
+           prev_turing_seed = turing_seed;
         }
         // read the LSB
         bool turing_lsb = turing_shift_register & static_cast<uint32_t>(1);
