@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Mutated Mutables by timchurches</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Mutated Mutables</h1>
+        <h2>Various enhancements, experiments and outright hacks of Mutable Instruments eurorack synth module firmware</h2>
+        <a href="https://github.com/timchurches/Mutated-Mutables" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+<p><a href="https://github.com/timchurches/Mutated-Mutables">This repository</a> is based on a copy of the Mutable Instruments GitHub repository at <a href="https://github.com/pichenettes/eurorack">https://github.com/pichenettes/eurorack</a></p>
+
+<p>So far, the only modified code is the Bees-in-the-Trees enhancements to the <a href="http://mutable-instruments.net/modules/braids">Braids module</a>, as described and documented below. However, ideas for future hacks of Mutable Instruments module firmware are being collected on the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>. If you have a GitHub account, then you can contribute directly to that, otherwise send your ideas to tim.churches@gmail.com, or post them on the <a href="http://mutable-instruments.net/forum/discussions">MI Forum</a>.</p>
+
+<h1>
+<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgements</h1>
+
+<p>First and foremost, huge thanks are due to <a href="https://media.licdn.com/mpr/mpr/shrink_500_500/p/4/005/041/08d/3190533.jpg">Olivier Gillet</a> of <a href="http://mutable-instruments.net">Mutable Instruments</a> for creating Braids and his other wonderful Eurorack synth modules - in terms of depth and breadth of creativity, elegance and excellence of implementation and execution, they are head-and-shoulders above other Eurorack synth modules. But equally huge thanks are due to Olivier for having the vision, courage and faith to release the designs and source code for his modules under open-source licenses. Without that, the modifications which are documented here would not have been possible.</p>
+
+<p>Many thanks also to <a href="http://sneak-thief.com">Sneak-Thief</a> in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the initial design of the Bees-in-the-Trees modifications, and for actively testing early iterations of the code and discovering several bugs (and documenting how to reproduce them!). Special thanks are also due to <em>stevenb</em> (aka <a href="https://soundcloud.com/steven-barsky/">Steven Barsky</a>), who has been incredibly painstaking in his testing of Bees-in-the-Trees, and has picked up several nasty bugs (now fixed), as well as providing lots of useful feedback and making excellent suggestions for tweaks and enhancements to the design. Many thanks are also due to a team of volunteer testers who have tried out each successive pre-release version of Bees-in-the-Trees, found and reported bugs, and provided helpful suggestions and encouragement. In particular I would like to thank <em>weliveincities</em> (aka <a href="http://chrispenalosa.com">Chris Penalosa</a>), <em>Bmhot</em> (aka Steph), <em>stevencrichton</em> (aka <a href="https://soundcloud.com/zuikomedia">Steven Crichton</a>), <em>AcousmatiK</em> (aka <a href="https://soundcloud.com/acousmatik">Brice Moise</a>), <em>simonebosco</em>, <em>pauk</em> (aka <a href="http://www.larajaruchik.com/pauk/">Pau Cabruja</a>), <em>sixty_n</em> (another Tim) and <em>RyuX</em> (aka <a href="https://soundcloud.com/ryu-x">Patrick P.</a>) on the Mutable Instruments forum.</p>
+
+<h1>
+<a id="Bees-in-the-Trees" class="anchor" href="#Bees-in-the-Trees" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees</h1>
+
+<p>Bees-in-the-Trees is a modification to the "official" firmware as supplied by Mutable Instruments on the Braids modules it manufactures and sells.</p> 
+
+<p>The goals of these modifications are to:</p>
+<ul>
+<li>expand the internal, self-modulation facilities in Braids;</li>
+<li>expose a wider range of internal parameters to external voltage control;</li>
+<li>add a few additional features that may make Braids more useful or easier to integrate into a modular patch in some circumstances.</li>
+</ul>
+
+<p>These enhancements are necessarily constrained by a number of factors:</p>
+<ul>
+<li>the hardware design of all existing Braids modules is obviously fixed, and thus the firmware must work with the hardware facilities available. For example, there are four CV inputs available in Braids. Firmware changes cannot create a fifth one. </li>
+<li>the computational power of the STM32F1 processor which powers Braids is finite, and thus there is a limit to the amount and complexity of additional code and computations that can be added to the firmware while still allowing the processor to keep the audio buffer filled, in real-time.</li>
+<li>the storage space for compiled program code in flash memory is limited to exactly 108 pages of 1024 bytes each - that is, 110,592 bytes. Thus there is a hard limit to the size and complexity of the firmware for Braids. In order to remain under this firmware size limit, some features have had to be removed from Braids to make space for the enhancements described below. See <a href="#anti-enhancements" aria-hidden="true">Anti-enhancements</a> below for details of what has been removed.</li>
+</ul>
+
+<p><img src="images/Bees-in-the-Trees.png" alt="Bees-in-the-Trees">Bees-in-the-Trees is based on the official Braids v1.7 source code, and has had the sync buffer and DAC timing bug fixes which were made to the v1.7 code in late January 2015 ported to it: thus the core oscillator code is identical to the current Braids v1.7 code. However, many changes to modulation options and other aspects have been made.</p>
+
+<p>Why is it called <em>Bees-in-the-Trees</em>? Because Olivier Gillet named his alternative firmware for the <a href="http://mutable-instruments.net/modules/tides">Mutable Instruments Tides</a> module "<em><a href="http://mutable-instruments.net/modules/sheep/manual">Sheep</a></em>". That established <a href="http://en.wikipedia.org/wiki/Drowning_by_Numbers#In_popular_culture"><em>la règle du jeu</em></a> which demanded to be followed.</p>
+
+
+<h2>
+<a id="Bees-in-the-Trees-audience" class="anchor" href="#Bees-in-the-Trees-audience" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intended audience for Bees-in-the-Trees</h2>
+
+<p>Bees-in-the-Trees is intended for expert users of the Braids module. It, and this documentation, presumes a good understanding of the way in which Braids running the  official, factory firmware works. If you have only recently obtained your Braids module, then it is strongly recommended that you spend some time (days, weeks, months) thoroughly familiarising yourself with it before trying Bees-in-the-Trees. Braids is a complex, deep module - it isn't called a <b><em>MacroOscillator</em></b> for nothing! Bees-in-the-Trees only makes it more complex. Also, this documentation is intended to be a <em>meta-manual</em>, to be read in conjunction with or as an adjunct to the <a href="http://mutable-instruments.net/modules/braids/manual">official Braids manual</a>.</p>
+
+<h3>
+<a id="Dislike-menu-diving" class="anchor" href="#Dislike-menu-diving" aria-hidden="true"><span class="octicon octicon-link"></span></a>But I hate menu-diving</h3>
+
+<p>If you hate "menu-diving" or demand that all your synthesiser modules strictly adhere to the "one knob per parameter" paradigm, then Bees-in-the-Trees is probably not for you, because it adds a lot of additional menu settings to Braids, and requires lots and lots of menu-diving and encoder twiddling and clicking to make use of it. There are plans to add presets to Version 4 of Bees-in-the-Trees, but even then, the encoder knob on your Braids will see a lot of use if you install Bees-in-the-Trees. It makes the BMW <a href="http://en.wikipedia.org/wiki/IDrive"><em>iDrive</em> interface</a> seem very ergonomic indeed. You have been warned!</p>
+
+<p><b>Note:</b> mechanical encoders like the one used in Braids have a finite operational lifespan, and it is possible to wear them out. Typical manufacturers' figures are a lifespan of a <b><em>minimum</em></b> of 30,000 rotational cycles (complete revolutions, not rotational clicks), and 20,000 presses (see for example the <a href="http://www.mouser.com/ds/2/54/bourns_pec12-350254.pdf">Bourns PEC-12</a> encoder datasheet). However, those are minimum lifespans, and most encoders will last much longer than that. The encoder is also fairly easy to replace - any competent electronics technician should be able to do it, and the encoder part itself costs just a few dollars. Nonetheless, use of Bees-in-the-Trees does entail a great deal of encoder twiddling and clicking, and thus it <b>will</b> wear out your encoder more quickly. If that bothers you, then you should not install Bees-in-the-Trees.</p>
+
+<h2>
+<a id="TLDR" class="anchor" href="#TLDR" aria-hidden="true"><span class="octicon octicon-link"></span></a>TL;DR</h2>
+
+<p>For those short of time or attention span, here is a summary table of the many settings which Bees-in-the-Trees makes available. If you want more detail about what each one does and how best to use it, then read on after the table.</p>
+
+<p>The order of the settings in the menu was informed by seeking input from testers. Unfortunately, <a href="http://plato.stanford.edu/entries/arrows-theorem/"><em>Arrow's Theorem</em></a> applies, and thus the ordering is necessarily sub-optimal, but better orderings are impossible.</p>
+
+<p>In addition, Steven Barsky has kindly written a <a href="https://github.com/timchurches/Mutated-Mutables/wiki/The-Quick-Start-Guide-to-Bees-in-the-Trees">quick-start guide to Bees-in-the-Trees</a>, which is highly recommended for all new users.</p>
+  
+<p>The following documentation relates to Bees-in-the-Trees version 3.9</p>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;margin:0px auto;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#669;background-color:#e8edff;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#aabcfe;color:#039;background-color:#b9c9fe;}
+.tg .tg-vn4c{background-color:#D2E4FC}
+.tg .tg-e3zv{font-weight:bold}
+.tg .tg-vv7f{background-color:#D2E4FC;font-weight:bold}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-031e">Setting</th>
+    <th class="tg-e3zv">Purpose</th>
+    <th class="tg-e3zv">Values</th>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">SAVE</td>
+    <td class="tg-vn4c">Saves settings to flash storage, switches to oscillator selection mode</td>
+    <td class="tg-vn4c">Oscillator models</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">LEVL</td>
+    <td class="tg-031e">Initial level (gain, volume). </td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">FMCV</td>
+    <td class="tg-vn4c">Select purpose/destination of FM CV input</td>
+    <td class="tg-vn4c">FREQ, META, RATE, RAT1, RAT2, DCAY, DCY1, DCY2, LEVL, HARM, TRNG, PROB, SPAN, JITR, BITS, SRAT, SMUT</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">MOD1</td>
+    <td class="tg-031e">Internal modulator 1 mode</td>
+    <td class="tg-031e">OFF, LFO, ENV-, ENV+</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RAT1</td>
+    <td class="tg-vn4c">Internal modulator 1 rate (LFO frequency or envelope duration)</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇑SH1</td>
+    <td class="tg-031e">Shape of rising arm of LFO or attack part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇓SH1</td>
+    <td class="tg-vn4c">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇑⇓1</td>
+    <td class="tg-031e">Ratio of rising/attack LFO/envelope duration to falling/decay duration</td>
+    <td class="tg-031e">0 to 127, with 63 representing equal attack/rising to decay/falling times</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1SY</td>
+    <td class="tg-vn4c">Modulator 1 sync/phase reset</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1→T</td>
+    <td class="tg-031e">Modulator 1 timbre modulation depth</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1→C</td>
+    <td class="tg-vn4c">Modulator 1 colour modulation depth</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1→L</td>
+    <td class="tg-031e">Modulator 1 level (gain, volume) modulation depth</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1→F</td>
+    <td class="tg-vn4c">Modulator 1 frequency (oscillator pitch) modulation depth</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M1→2</td>
+    <td class="tg-031e">Modulator 1 depth of modulation of Modulator 2 rate (frequency/duration)</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">MOD2</td>
+    <td class="tg-vn4c">Internal modulator 2 mode</td>
+    <td class="tg-vn4c">OFF, LFO, ENV-, ENV+</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">RAT2</td>
+    <td class="tg-031e">Internal modulator 2 rate (LFO frequency or envelope duration)</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇑SH2</td>
+    <td class="tg-vn4c">Shape of rising arm of LFO or attack part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇓SH2</td>
+    <td class="tg-031e">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇑⇓2</td>
+    <td class="tg-vn4c">Ratio of rising/attack LFO/envelope duration to falling/decay duration</td>
+    <td class="tg-vn4c">0 to 127, with 63 representing equal attack/rising to decay/falling times</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M2SY</td>
+    <td class="tg-031e">Modulator 2 sync/phase reset</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M2→T</td>
+    <td class="tg-vn4c">Modulator 2 timbre modulation depth</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M2→C</td>
+    <td class="tg-031e">Modulator 2 colour modulation depth</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M2→L</td>
+    <td class="tg-vn4c">Modulator 2 level (gain, volume) modulation depth</td>
+    <td class="tg-vn4c">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">M2→F</td>
+    <td class="tg-031e">Modulator 2 frequency (oscillator pitch) modulation depth</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">M1F2</td>
+    <td class="tg-vn4c">Modulator 1 amplitude modulation of Modulator 2 oscillator pitch modulation</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">OSYN</td>
+    <td class="tg-031e">Oscillator phase sync/reset</td>
+    <td class="tg-031e">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RINV</td>
+    <td class="tg-vn4c">Internal modulator rate inversion</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">BRIG</td>
+    <td class="tg-vn4c">Display brightness</td>
+    <td class="tg-vn4c">LOW, MED, HIGH</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">CAL.</td>
+    <td class="tg-031e">Oscillator pitch tracking calibration</td>
+    <td class="tg-031e"></td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">CV tester</td>
+    <td class="tg-vn4c">Control voltage display dials</td>
+    <td class="tg-vn4c"></td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">RANG</td>
+    <td class="tg-031e">Oscillator frequency range</td>
+    <td class="tg-031e">EXT, FREE, XTND, 440, LFO</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">OCTV</td>
+    <td class="tg-vn4c">Oscillator octave offset</td>
+    <td class="tg-vn4c">-2, -1, 0, 1, 2</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">FTUN</td>
+    <td class="tg-031e">Oscillator fine tune</td>
+    <td class="tg-031e">-13 to 31, 0=zero pitch offset</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">FS+H</td>
+    <td class="tg-vn4c">Frequency (oscillator pitch) sample and hold</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">QNTZ</td>
+    <td class="tg-031e">Frequency (oscillator pitch) 12-tone equal temperament quantisation/scales</td>
+    <td class="tg-031e">OFF, QTR (quarter tone), SEMI (semitones), ION (Ionian), DOR (Dorian), PHR (Phrygian), LYD (Lydian), MIXO (Mixolydian), AEOL (Aeolian), LOCR (Locrian), BLMJ (Blues major), BLMN (Blues minor), 5MAJ (Pentatonic major), 5MIN (Pentatonic minor), BHAI (Hindustani Bhairav), SHRI (Shri), RUPA (Rupavati), TODI (Todi), RAGE (Rageshri), KAAF (Kaafi), MEGH (Megh), MALK (Malkauns), DEEP (Deepak), FOLK (Folk), JAPN (Japanese), GAML (Gamelan), WHOL (Whole tone)</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">QVIB</td>
+    <td class="tg-vn4c">Quantise internal vibrato</td>
+    <td class="tg-vn4c">OFF, ON</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">TDLY</td>
+    <td class="tg-031e">Trigger delay time</td>
+    <td class="tg-031e">NONE, 125u, 250u, 500u, 1ms, 2ms, 4ms</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">TSRC</td>
+    <td class="tg-vn4c">Trigger source</td>
+    <td class="tg-vn4c">EXT, AUTO</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">BITS</td>
+    <td class="tg-031e">Bit-crushing</td>
+    <td class="tg-031e">2BIT, 3BIT, 4BIT, 6BIT, 8BIT, 12B, 16B</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">SRAT</td>
+    <td class="tg-vn4c">Output signal sample rate</td>
+    <td class="tg-vn4c">4K, 8K, 16K, 24K, 32K, 48K, 96K</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">JITR</td>
+    <td class="tg-031e">Oscillator drift/jitter</td>
+    <td class="tg-031e">0 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f"></td>
+    <td class="tg-vn4c"></td>
+    <td class="tg-vn4c"></td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">MSEQ</td>
+    <td class="tg-031e">Meta-sequencer enable/sequence length</td>
+    <td class="tg-031e">OFF, 2, 3, 4, 5, 6, 7, 8</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">MDIV</td>
+    <td class="tg-vn4c">Meta-sequencer clock/trigger divider</td>
+    <td class="tg-vn4c">1 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">SDIR</td>
+    <td class="tg-031e">Sequence direction</td>
+    <td class="tg-031e">LOOP, SWNG, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">WAV1...WAV8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 oscillator model</td>
+    <td class="tg-vn4c">Oscillator models</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">NOT1...NOT8</td>
+    <td class="tg-031e">Meta-sequence steps 1 through 8 note (pitch) offset</td>
+    <td class="tg-031e">-31 to 31, in 12-note equally-tempered (TET) semitone increments</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RPT1...RPT8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 repeat count</td>
+    <td class="tg-vn4c">1 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">MSPD</td>
+    <td class="tg-031e">Meta-sequence parameter destinations</td>
+    <td class="tg-031e">NONE, TIMB, COLR, T+C, LEVL, T+L, C+L, TLC</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">PAR1...PAR8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 parameter</td>
+    <td class="tg-vn4c">1 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv"></td>
+    <td class="tg-031e"></td>
+    <td class="tg-031e"></td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">TRNG</td>
+    <td class="tg-vn4c">Turing Machine shift register length</td>
+    <td class="tg-vn4c">0 to 32 bits, 0 means OFF</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">SPAN</td>
+    <td class="tg-031e">Turing Machine note span</td>
+    <td class="tg-031e">Sets the span (range) of notes available to the Turing Machine, from 2 notes to 36 notes. The actual notes are selected from the chosen scale, set by <code>SCAL</code>.</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">PROB</td>
+    <td class="tg-vn4c">Turing Machine probability of flipping the LSB (least significant bit)</td>
+    <td class="tg-vn4c">0 to 127, with an implicit divisor of 512, so that 0 is <em>p</em>=0, 126 is approximately <em>p</em>=0.25, and 127 is a special-case resulting in <em>p</em>=1.0, that is, the least significant bit is flipped every time.</td>
+  </tr>
+    <td class="tg-e3zv">TDIV</td>
+    <td class="tg-031e">Turing Machine clock/trigger divider</td>
+    <td class="tg-031e">1 to 127</td>
+  </tr>
+  </tr>
+    <td class="tg-vv7f">SCAL</td>
+    <td class="tg-vn4c">Musical scale/mode used by Turing Machine</td>
+    <td class="tg-vn4c">CHRM (chromatic 12-tone equal temperament [12TET]),  ION (Ionian), DOR (Dorian), PHR (Phrygian), LYD (Lydian), MIXO (Mixolydian), AEOL (Aeolian), LOCR (Locrian), BLMJ (Blues major), BLMN (Blues minor), 5MAJ (Pentatonic major), 5MIN (Pentatonic minor), BHAI (Hindustani Bhairav), SHRI (Shri), RUPA (Rupavati), TODI (Todi), RAGE (Rageshri), KAAF (Kaafi), MEGH (Megh), MALK (Malkauns), DEEP (Deepak), FOLK (Folk), JAPN (Japanese), GAML (Gamelan), WHOL (Whole tone), HARM (Harmonic series)</td>
+  </tr>
+  </tr>
+    <td class="tg-e3zv">TINT</td>
+    <td class="tg-031e">Turing Machine shift register re-initialise divider</td>
+    <td class="tg-031e">0 to 127, 0 is OFF, <em>n</em> re-seeds the shift register with a new random number (hence random bits) on the <em>n</em>th cycle of the shift register cycle.</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RST</td>
+    <td class="tg-vn4c">Settings reset</td>
+    <td class="tg-vn4c">NO, DFLT, NO, FULL</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">v3.9</td>
+    <td class="tg-031e">Bees-in-the-Trees firmware version</td>
+    <td class="tg-031e"></td>
+  </tr>
+</table>
+
+<h2>
+<a id="Bees-in-the-Trees-changes" class="anchor" href="#Bees-in-the-Trees-changes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees: what's changed in Version 3.9, compared to Version 3.0?</h2>
+
+<ul>
+<li>several new values have been added to the <code>FMCV</code> setting: <b>DCAY</b>, <b>DCY1</b> and <b>DCY2</b> allow voltage control over envelope decay time, without affecting the attack time; <b>HARM</b> (harmonic series quantisation); <b>TRNG</b> which allows setting of the length of the Turing Machine shift register;  <b>PROB</b>, which allows CV control over the bit-flip probability in the built-in Turing Machine.</li>
+<li>note (pitch) values, <code>NOT1</code> to <code>NOT8</code>, and parameter values, <code>PAR1</code> to <code>PAR8</code>, have been added to the meta-sequencer, so that a melody can be programmed and stored. The notes are set as semitone positive or negative offsets. The additional parameter value for each step can be directed to scale the timbre, colour or level (gain), or combinations of all three, for each step.</li>
+<li>the <b>CLKN</b> oscillator model has been restored, but the <b>TWNQ</b>, <b>NOIS</b> and <b>PRTC</b> models have been removed to make space for other features.</li>
+<li>the <code>M1T2</code> and <code>M1C2</code> settings have been removed.</li>
+<li>a <code>FTUN</code> (oscillator fine-tune) setting has been added, immediately after <code>OCTV</code>, and <code>FTUN</code> settings are now bipolar, centred around zero.</li>
+<li>there is now a complete <a href="http://musicthing.co.uk/modular/?page_id=21">Turing Machine</a>/Richter NoiseRing implementation inside Bees-in-the-Trees! See below for details.</li>
+<li>quantisation of the 1V/octave pitch value now supports a wide range of scales (see table above), not just quarter-tone and semitone chromatic quantisation.
+</ul>
+
+
+<h2>
+<a id="Bees-in-the-Trees-enhancements" class="anchor" href="#Bees-in-the-Trees-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees: the gory details of all the changes made to the official Braids firmware</h2>
+
+<ul>
+<li>The <code>WAVE</code> menu setting has been renamed <code>SAVE</code>. With the Braids firmware, clicking on <code>WAVE</code> takes you back to oscillator model selection mode, with a side-effect of saving all your settings. In Bees-in-the-Trees, clicking (or long-clicking, see below) on <code>SAVE</code> saves all your settings, with a side-effect of taking you back to oscillator model selection mode. In other words, the behaviour is the same, but the name was changed to emphasise the save aspect, because in Bees-in-the-Trees, there is also a long-click shortcut to toggle between menu mode and oscillator model selection mode (see below).</li> 
+<li>Instead of a single internal envelope, there are now two internal modulators, <code>MOD1</code> and <code>MOD2</code>. The <code>MOD1</code> and <code>MOD2</code> menu settings allow each internal modulator to be turned off (<b>OFF</b>), put in in LFO mode (<b>LFO</b>), or in one of two envelope modes (<b>ENV-</b> and <b>ENV+</b>). <b>ENV-</b> and <b>ENV+</b> are negative and positive envelopes respectively - <b>ENV+</b> is like a traditional attack-decay envelope, <b>ENV-</b> is the inverse.</li>
+<p>
+<li>Each internal modulator has a rate setting, <code>RAT1</code> and <code>RAT2</code> respectively, with ranges from 0 to 127. When in envelope mode, lower rate values produce shorter envelope segment (attack and decay) durations, and higher rate values produce longer envelope segment durations i.e. slower envelopes. When in LFO mode, lower rate values produce slower LFO speeds (lower LFO frequency), and higher rate values produce faster speeds (higher frequencies), if the <code>RINV</code> (rate inversion) setting is <b>ON</b> (which is the default). However, if you turn <code>RINV</code> off, then higher <code>RAT1</code> or <code>RAT2</code> settings will produce slower LFO speeds. This can be useful if you are controlling one envelope and one LFO with an external voltage - see below.</li>
+<p>
+<li>Each internal modulator has four depth controls: <code>M1→T</code>, <code>M1→C</code>, <code>M1→L</code> and <code>M1→F</code>; and <code>M2→T</code>, <code>M2→C</code>, <code>M2→L</code> and <code>M2→F</code>. These set the depth of modulation for each of timbre, color, level (amplitude), and frequency (pitch), respectively, between values of 0 to 127. Each modulation destination receives a weighted sum of the instantaneous modulator values. For example, if <code>M1→T</code>=30 and the instantaneous value of modulator 1 is, say, 100, and <code>M2→T</code>=60 and the instantaneous value of modulator 2 is 200, then the timbre parameter will receive a value of (30 * 100) + (60 * 200) = 15000. Obviously the values for modulator 1 and modulator 2 change each time the envelopes/LFOs are rendered, which is about 4000 times per second. </li>
+<p>
+<li>The timbre and color potentiometers and/or the timbre and colour CV inputs act as offsets - the weighted sum of the modulator values is added to these offsets. The <code>LEVL</code> setting controls the initial level (gain) offset. It defaults to 127 (the maximum). Unlike timbre and color, which are added to whatever offset is set by timbre and color potentiometers and/or the timbre and color CV inputs, the the modulation values for level when <code>MOD1</code> or <code>MOD2</code> are in <b>LFO</b> or <b>ENV-</b> modes are subtracted from this initial offset value (<code>LEVL</code>), but are added when in <b>ENV+</b> mode. Thus, when a modulator is in <b>ENV+</b> mode, it will have no effect of the output level if the <code>LEVL</code> is already set to 127, its maximum. In order to hear the effect of a positive-going envelope on level, you must reduce <code>LEVL</code> to a lower value - all the way down to zero if you wish to hear nothing between envelope firings.</li>
+<p>
+<li>The <code>M1→2</code> settings controls the degree of frequency modulation of modulator 2 by modulator 1. Yes, LFO 1 can frequency modulate LFO 2! </li>
+<p>
+<li><code>M1F2</code> is an ON/OFF switch which determines whether the depth of modulation of timbre and pitch by modulator 2 is itself modulated by the current value of modulator 1. That is, when enabled, this setting means that modulator 1 determines depth of modulator 2 modulation of oscillator frequency. Thus, if you set modulator 1 to be a slow envelope with a gentle attack, and set <code>M1F2</code> on, with <code>M2→F</code> set to some positive amount, and modulator 2 in LFO mode, then the effect will be vibrato that slowly fades in after a trigger is received. There are many other interesting variations possible.</li>
+<p>
+<li>The ratio between the attack and decay segments of each envelope, or the rising part of the waveform and the falling part in <b>LFO</b> mode, can be set by menu items labelled <code>⇑⇓1</code> and <code>⇑⇓2</code>. These provide value choices ranging between 0 and 127. These values refer to the ratio between the duration of the attack segment of the attack-decay (AD) envelope, or the rising segment of the LFO waveform, and the duration of the decay segment or falling segment, respectively. A value of 10 means that the attack part of the envelope is a 10/(128-10) fraction (that is, 10/118, or 0.085, or 8.5%) of the of the duration of the decay part. Likewise, at a setting of 10 the LFO waveform is asymmetrical, with the rising portion only 10/117 as long as the as the falling portion. A setting of 63 produces an almost symmetrical waveform (attack/rising is 63/64 of the duration of the decay/falling duration). At a setting of 127, the decay/falling arm of the envelope is 127 times as long as the attack/rising arm. However, you don't need to think too hard about the underlying arithmetic, just set the value to whatever sounds correct, remembering that values below 63 means attack is shorter than decay, and above 63 means decay is shorter than the attack.<ul><li><b>Note</b>: the LFO frequency or the total envelope duration will change slightly as the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. This is a known deficiency which may be able to be addressed in future versions of Bees-in-the-Trees. For now, you may need to re-adjust <code>RAT1</code> or <code>RAT2</code> after changing <code>⇑⇓1</code> and <code>⇑⇓2</code>.</li></ul></li>
+<p>
+<li>Each of the two internal modulators has its own pair of shape settings (<code>⇑SH1</code> and <code>⇓SH1</code>, and <code>⇑SH2</code> and <code>⇓SH2</code>). These set the shape of the curve used for the attack/rising and decay/falling parts of the envelope/LFO waveform respectively, for each of modulator 1 and modulator 2. Thus, an envelope can have different shapes for the attack and decay portions, and an LFO waveform can not only be asymmetrical, but have a different curvature or shape on the raising and falling arms of its cycle. The following curve shapes are available:
+<ul>
+<li><b>EXPO</b> is an exponential curve, as used in the envelopes in the official Braids firmware.</li>
+<li><b>LINR</b> is a linear curve i.e. a straight line (and thus in LFO mode produces sawtooth, triangle or ramp waveforms, depending on the <code>⇑⇓1</code> or <code>⇑⇓2</code> ratio settings).</li>
+<li><b>WIGL</b> is a wiggly line.</li>
+<li><b>SINE</b> is a sine wave (well, almost a sine wave - it re-uses an existing look-up table in the Braids code which is close to a sine wave).</li>
+<li><b>SQRE</b> is a square-ish curve - a bandwidth-limited square wave with quite rounded shoulders, in fact.</li>
+<li><b>BOWF</b> is a logarithmic curve with a flat top - it is actually an inverted version of the bowing envelope for the BOWD oscillator mode in Braids, hence the name. </li>
+<li><b>RNDE</b> is the same as EXPO except that the target level for the top of the envelope or LFO waveform varies randomly on each envelope or LFO cycle. </li>
+<li><b>RANDL</b> and <b>RNDS</b> are the same as <b>RNDE</b>, except using linear and square-ish curves as described above. </li>
+<li><b>RNDM</b> sets a fixed random level which is flat for the entire envelope segment or LFO half-wave - thus it acts like a traditional clocked sample-and-hold sampling a random voltage. Please be aware that this mode can result in audible clicks when used for some modulation destinations, because the level shifts instantaneously - there is no rate-limiting or easing between successive levels.</li>
+</ul>
+</li>
+<p>
+<li>The <code>FMCV</code> setting replaces what was the <code>META</code> menu setting in the official Braids firmware. <code>FMCV</code> determines to what use the FM control voltage input is put. The available choices are: 
+<ul>
+<li><b>FREQ</b>, which means the FM input does, um, FM (frequency modulation).</li>
+<li><b>META</b>, which is the same as <code>META</code> mode on in the official firmware - voltage on the FM input scans through the oscillator modes.</li>
+<li><b>RATE</b>, in which voltage on the FM input sets the duration of the envelope segments, or the frequency of the LFOs - thus providing voltage-controlled envelopes and/or LFOs, with the FM voltage affecting the duration/speed of both internal modulators. <ul><li><em><b>Tip</b></em>: if you have <code>MOD1</code> set as an envelope, and <code>MOD2</code> set as an LFO, or <em>vice versa</em>, and you are using <code>FMCV</code>=<b>RATE</b>, then it may be useful to set <code>RINV</code> to <b>OFF</b>, so that the CV operates in the same direction on both <code>MOD1</code> and <code>MOD2</code>.</li></ul></li>
+<li><b>RAT1</b> is the same except the FM voltage only affects modulator 1;</li>
+<li><b>RAT2</b> is also the same but the FM voltage only affects modulator 2. Note that for the rate settings, the voltage on the FM input is added to the <b>RAT1</b> and <b>RAT2</b> values for each each modulator, thus a base LFO speed or envelope duration can be set using <b>RAT1</b> and <b>RAT2</b>, and that can then be modified by voltage on the FM input.</li>
+<li><b>DCAY</b> is the same as <b>RATE</b> except the FM voltage only affects the decay duration of both modulators - thus, you can have a sharp attack and vary the decay time only under voltage control if using envelope modes, or you can alter the shape (the symmetry, at least) of the LFO waveform under voltage control;</li>
+<li><b>DCY1</b> is the same as <b>RAT1</b> except it only affects decay/fall time of modulator 1;</li>
+<li><b>DCY2</b> is the same as <b>RAT2</b> except it only affects decay/fall time of modulator 2;</li>
+<li><b>LEVL</b> provides voltage control over the level (amplitude, gain). You may need to reduce the initial gain (<code>GAIN</code>) down to zero to hear the full effect - approximately 5V at the FM CV input should produce full gain. This setting provides Braids with a built-in virtual VCA, in the same way that the Level input in Tides/Sheep acts as a virtual VCA.</li>
+<li><b>HARM</b> allows the FM CV input to offset the current note as a quantised harmonic series. The <a href="http://en.wikipedia.org/wiki/Harmonic_series_(music)">harmonic series</a> is the base frequency of the current note multiplied by 2, 3, 4 and so on. In Bees-in-the-Trees, approximately +5V into the FM CV input (with the attenuverter fully clockwise) gives the 15th harmonic overtone (that is, the base frequency times 15), although higher voltages will produce up to the 30th harmonic overtone. It is bipolar, so negative voltages on the FM CV input divide the current note frequency by 2, 3, 4 and so on, down to 30. You can use the FM attenuvertor to change positive voltages into negative voltages, of course. Try it! It sounds really nice when fed with an external LFO or a complex slowly fluctuating voltage source. The harmonic series (also called harmonic overtones and undertones) doesn’t depend on a particular musical key, so you can still play a normal melody and “bend” the notes up or down in the harmonic series. Of course, it is better if you use just intonation (or Pythagorean tuning) to play those notes, and if you have more than one Braids, or use multi-tracking to record one Braids several times, you will get “perfect” chords. Yarns can do just intonation or Pythagorean scales for you.</li>
+<li><b>TRNG</b> provides voltage control over the length (in bits) of the shift register used by the built-in Turing Machine pseudo-random sequencer. See below for more details of the Turing Machine. This value is added to that set by the <code>TRNG</code> menu setting. Approximately 5V input results in a value of 32 (the values are constrained to between 0 and 32. Note that a value of 0 stops the Turing Macine. It is suggested that you set a minimum shift Register length using the <code>TRNG</code> menu setting, and then use the <code>FMCV</code>=<b>TRNG</b> setting with a voltage into the FM CV input to alter the length of the shift register on-the-fly.</li>
+<li><b>PROB</b> provides voltage control over the probability that a bit will be flipped on each step of the built-in Turing Machine pseudo-random sequencer. See below for more details of the Turing Machine. This value is added to that set by the <code>PROB</code> menu setting. Approximately 5V input results in <em>p</em>=1, that is, certainty that a bit will be flipped on every step. Note that you can just "ping" the FMCV with a gate signal to cause a bit flip on just a single step, provided the "ping" or gate is synchronised or overlaps the trigger/clock signal input into the Trigger input, which drives the Turing Machine sequence.</li>
+<li><b>SPAN</b> provides voltage control over the span of notes available to the Turing Machine, from 2 to 36 notes (see the section on the Turing Machine below). It is added to the value of the <code>SPAN</code> setting - in other words, <code>SPAN</code> sets a minimum or floor for the Turing Machine note span, and voltages on the FM CV input when <code>FMCV</code>=<b>SPAN</b> add to this floor value. Approximately 5 volts represents the maximum span of 36. Negative voltages are ignored.</li>
+<li><b>JITR</b> provides voltage control over VCO jitter (drift), with a base level set by the <code>JITR</code> menu setting.</li>
+<li><b>BITS</b> provides voltage control over bit crush depth, with a base level set by the <code>BITS</code> menu setting. Increasing voltage reduces the number of bits in the output signal.</li>
+<li><b>SRAT</b> provides voltage control over sample rate (decimation), with a base level set by the <code>SRAT</code> menu setting. Increasing voltage reduces the sample rate (that is, increases the decimation) of the output signal.</li>
+<li><b>SMUT</b> provides simultaneous voltage control over both sample rate reduction (<code>SRAT</code>) and bit crushing (<code>BITS</code>).</li>
+<li>The final over-the-top setting provides simultaneous voltage control over sample rate reduction (<code>SRAT</code>), bit crushing (<code>BITS</code>) and VCO jitter (<code>JITR</code>).</li>
+</ul>
+</li>
+<p>
+<li>LFO range has been enabled in the range (<code>RANG</code>) menu. This LFO range was always present in the Braids source code, but its selection was disabled. The LFO range seems to go down to about 1Hz or so - thus it doesn't make Braids into a proper LFO, but it is low enough for many LFO modulation duties. Braids certainly produces many more interesting LFO waveforms than your average voltage-controlled LFO! And of course the two internal LFOs can still modulate Braids when its set to LFO range - thus you can use Braids as two voltage-controlled LFOs (<code>MOD1</code> and <code>MOD2</code>) inside your voltage-controlled LFO (the main Braids VCO when in LFO range)! </li>
+<p>
+<li><code>DRFT</code> (VCO drift) has been renamed <code>JITR</code> (jitter), and is now a settable value, from zero (off) to 127. At a setting of 127, you get noisy sonic destruction, but lower levels of jitter can add some nice dirt to some oscillator models. <code>JITR</code> can also be put under voltage control via the <code>FMCV</code> setting. Note that <code>JITR</code> causes the oscillator pitch to change (not sure why) to some degree.</li>
+<p>
+<li>The <code>RATE</code> (sample rate) setting in Braids has been renamed <code>SRAT</code> in Bees-in-the-Trees.
+<p>
+<li>The <code>TSRC</code>, <code>TDLY</code>, <code>OCTV</code>, <code>BITS</code>, <code>BRIG</code>, <code>CAL.</code> and CV testing menu choices are unchanged and function exactly as they do in the official Braids firmware.</li>
+<p>
+<li>The <code>QNTZ</code> menu setting now offers a much wider range of scales, based on 12-tone equal temperament tuning, to which the pitch can be constrained - apart from just quarter-tone and chromatic semitones, there is a full range of traditional Western scales, a selection of Hindustani raga scales, and a few others. Note that the non-Western scales still use the 12-tone equal temperament (12-TET) tuning, and thus they are not absolutely accurate representations of these scales and associated non-equal tunings, but they are close enough for most purposes. The full list of available quantisation scales is shown in the table above.</li>
+<p>
+<li>Immediately following <code>QNTZ</code> (pitch quantisation), there is a new menu selection called <code>QVIB</code>, which stands for "quantise vibrato". It defaults to <b>OFF</b> - that is, vibrato from the internal modulators (or from the external FM input) is applied after pitch quantisation has been performed, if pitch quantisation is enabled (via the <code>QNTZ</code> setting). However, if <code>QVIB</code> is set to <b>ON</b>, then quantisation will be performed <b>after</b> pitch modulation from the internal modulators has been added. Thus, a triangle pitch (frequency) modulation, provided by, say, <code>MOD1</code> via the <code>M1→F</code> level, will result in rising and falling arpeggio effects, more or less. It can be quite effective when the <b>RNDM</b> modulator shape is used, for example. All of the quantisation scales also work with this, of course.</li>
+<p>
+<li>There is a new menu item called <code>FTUN</code> (oscillator fine-tune). This allows very fine tuning of the oscillator frequency (pitch). Why is this needed, since Braids already has a fine-tune knob, you may ask? The fine-tune knob on Braids acts through the FM CV input. Because Bees-in-the-Trees re-purposes (some would say abuses) the FM CV input for several other purposes, there is no way to fine tune your oscillator using the fine-tune knob when these alternative uses of the FM CV input are enabled. The <code>FTUN</code> setting provides a work-around for this. <code>FTUN</code> defaults to 0, which represents zero pitch offset. Negative values flatten the pitch, positive values sharpen the pitch. Note that it is very fine-grained:  each increment is less than one cent, and the range is only about one quarter of a semi-tine in each direction.</li>
+<p>
+<li>There is a new menu item called <code>FS+H</code>, immediately following <code>OCTV</code>. <code>FS+H</code> stands for "frequency (i.e. pitch) sample-and-hold". It is disabled (<b>OFF</b>) by default, but when enabled (<b>ON</b>), the pitch as set by the V/octave pitch input is sampled whenever a trigger is received on the trigger input, and then that pitch is held until the next trigger input. Note that the "hold" pitch initialises to 440Hz prior to the first trigger being received after enabling <code>FS+H</code>. If <code>FS+H</code>=<b>OFF</b>, then pitch sampling is disabled even if triggers are being received, and thus when you then enable <code>FS+H</code>, Braids will return to the last sampled pitch, at least until a new external trigger signal is received. <ul><li><b>Note</b>: <code>FS+H</code> only works with external triggers, not internally generated triggers, thus if you enable <code>FS+H</code>, first ensure that <code>TSRC</code>=<b>EXT</b>, not <b>AUTO</b>. Also, although the value of <code>FS+H</code> is stored along with other settings, the sampled frequency is not, and thus does not persist between reboots - it is an ephemeral value.</li></ul></li>
+<p> 
+<li><code>M1SY</code> and <code>M2SY</code> (modulator 1 sync, and modulator 2 sync) determine whether a trigger (either external or auto) will trigger and/or reset the phase of modulator 1 or modulator 2, respectively. They default to <b>1</b>, which means ON. A setting of <b>0</b> (zero) disables modulator triggering and/or phase reset. <ul><li><b>Tip</b>: if you are using <code>MSEQ</code> (see below) and <code>MOD1</code> and/or <code>MOD2</code> in LFO mode to modulate timbre, color or other parameters, then try turning <code>M1SY</code> and/or <code>M2SY</code> off to decouple the internal modulators from the trigger stream driving the meta-sequencer. But there's more! <code>M1SY</code> and <code>M2SY</code> can both be set to values greater than one - all the way up to 127, in fact. This is a trigger or clock divider. Thus, if <code>M1SY</code>=3, then the phase of modulator 1 will only be reset on every third trigger received. This allows further variation in modulation patterns if desired.</li> <li><b>Trap</b>: note that if you have <code>MOD1</code> in one of the envelope modes, and <code>M1SY</code> is set to <b>0</b>, then the envelope will <b>not</b> trigger, by design! That's why <code>M1SY</code> and <code>M2SY</code> default to 1. But if <code>M1SY</code> is set to, say, 3, then the <code>MOD1</code> envelope will fire only on every third trigger input. The same applies to <code>MOD2</code> in envelope mode and <code>M2SY</code>. Interesting rhythmic effects can be set up by using different envelope settings for <code>MOD1</code> and <code>MOD2</code>, together with different values for <code>M1SY</code> and <code>M2SY</code>, even with a regular clock input as the trigger source.</li></ul></li>
+<p>
+<li><code>OSYN</code> (oscillator sync) determines whether oscillator phase synchronisation is enabled or not. It defaults to <b>OFF</b>. When enabled, (external or auto) triggers may cause audible clicks in some oscillator modes. Disabling it prevents those clicks, at the expense of not resetting the oscillator phase. However, the official Braids firmware disables oscillator sync whenever the internal envelope was used, in any case, probably for the same reason.</li>
+<p>
+<li>Bees-in-the-Trees adds a simple step meta-sequencer to your Braids. There are eight steps available in the sequence, and the sequence is advanced by triggers received on the trigger input jack. The <code>MSEQ</code> setting enables the meta-sequencer. The value of <code>MSEQ</code>, from 2 to 8, also sets the number of steps. The <code>SDIR</code> setting determines the direction of the meta-sequence: <b>LOOP</b> means that the sequence increments from 1 to the number of steps as set by <code>MSEQ</code>, and then it loops round to step 1 again; <b>SWNG</b> causes the sequence to swing up then down between step 1 and step indicated by <code>MSEQ</code>; and <b>RNDM</b> chooses an oscillator model randomly from the eight specified for each meta-sequence step. The probability density function is uniform, but a bias towards particular oscillator models can be introduced by specifying that model for more than one of the eight available steps, or by increasing the <code>RPT</code> setting for that step (see below). The settings <code>WAV1</code>, <code>WAV2</code>...<code>WAV8</code> allow the oscillator model for each step to be chosen. The settings <code>NOT1</code>, <code>NOT2</code>...<code>NOT8</code> allow positive or negative pitch offsets (musical note) for each step to be specified. Zero (the default) means no offset, 1 means one semitone higher pitch, 2 means two semitones higher, and so on up to 31. Likewise, -1 means one semi-tone lower pitch, and so on down to -31. These offsets are relative to whatever note or pitch is currently playing - so the sequence can be transposed up and down using a keyboard as a controller (via a MIDI-to_CV convertor such as Yarns) or an external sequencer, or, indeed, by the Turing Machine inside Braids. The settings <code>PAR1</code>, <code>PAR2</code>...<code>PAR8</code> act as a multiplier for the value sent to timbre, colour, level (gain) or combinations of these three. The destination of the <code>PAR</code> multiplier for each step is set by the <code>MSPD</code> setting. For example, if <code>MSPD</code>=<b>TIMB</b> and <code>PAR1</code> is 63, then the value sent to the timbre input will be halved (63/127). For this reason, the <code>PAR</code> settings all default to 127. The settings <code>RPT1</code>, <code>RPT2</code>...<code>RPT8</code> determine the number of trigger inputs that each step is repeated (held) for - all these settings default to 1. Thus, <code>RPT4</code>=3 means that the sequence of oscillator models will stay on step 4 for 3 successive input triggers. Using this, a "rhythm" of oscillator models can be set up, even when the triggers come from a regular clock signal. Note that if <code>MSEQ</code> is enabled, then <code>FMCV</code>=<b>META</b> mode is disabled if it is set. However, other <code>FMCV</code> modes still work when <code>MSEQ</code> is enabled. <ul><li><b>Trap</b>: if <code>MSEQ</code> was enabled when you last saved your settings (by clicking or long-clicking on <code>SAVE</code>), then it will still be enabled when you next power up. If there is no trigger input when you power up, the meta-sequence will not be stepping through its stored sequence, and thus it may not be obvious that <code>MSEQ</code> is turned on. Furthermore, oscillator selection will not seem to work. Do not panic! Simply click or long-click on the encoder to get to the settings menu, navigate to <code>MSEQ</code> and turn it off, and all will be well again. Remember to save your settings before powering off, by clicking or long-clicking on <code>SAVE</code>!</li> <li><b>Peculiarity</b>: if <code>MSEQ</code> is enabled when your Braids boots up, but if there is no trigger being received, then it will initialise on the <b>second</b> step of the meta-sequence - that is, the oscillator model specified by <code>WAV2</code> will be set. That's because Braids generates an internal trigger when it boots, and thus the meta-sequence advances one step, even without an external trigger.</li></ul></li>
+<p>
+<li>Embedded Music Thing <a href="http://musicthing.co.uk/modular/?page_id=21">Turing Machine</a>/Richter NoiseRing implementation: it is strongly recommended that you read Tom Whitwell's <a href="http://musicthing.co.uk/modular/wp-content/uploads/2012/05/random-sequencer-documentation-v2-1.pdf">explanation of the how the hardware Turing Machine works</a> so that the following explanations make more sense. The Turing Machine implementation in Bees-in-the-Trees is not an exact recreation of Tom Whitwell's hardware Turing Machine module, but it is inspired by it.
+<ul><li><code>TRNG</code> sets the length of the Turing Machine shift register, with a length of zero to 32 bits. Zero disables the Turing Machine. Unlike the hardware Turing machine, which is restricted to 8 or 16 bits for the shift register length, the shift register length for the Turing Machine in Bees-in-the-Trees is adjustable on-the-fly in 1 bit increments right up to 32 bits. In this respect, it acts somewhat like the <a href="http://www.circuitshaman.com/p/bytes.html">Circuit Shaman Bytes expander module</a> for the Turing Machine. Note that slightly weird, but potentially interesting things can happen as very small lengths of the shift register (lengths under 4). Using short lengths with a small <code>SPAN</code> value (see below) and <code>PROB</code>=126 or 127 can be useful, but don't ask me to explain why it behaves the way it does with these settings! Interestingly, there are similar descriptions of weird behaviour in the <a href="https://docs.google.com/file/d/0B1jw1Qp2qZVJTTgtNVlibTZoTkU/edit">manual</a> for the Circuit Shaman Bytes (hardware) expander for the (hardware) Turing Machine. You can use an external control voltage into the FM CV input to control the TRNG shift register length parameter as well, if <code>FMCV</code>=<B>TRNG</b>. This external <code>FMCV</code>=<B>TRNG</b> value is added to the <code>TRNG</code> setting. It is best to set a minimum shift register length using <code>TRNG</code> and then modulate it upwards using an external CV with <code>FMCV</code>=<B>TRNG</b>, if you wish.</li>
+<li><code>SPAN</code> sets the span (or range) of notes available to the Turing Machine, from a minimum of 2 notes up to 36 notes, with a default of 12 notes. The actual notes played are determined by the <code>SCAL</code> setting. Shorter spans create a more restrained, sombre feel to the sequence, while longer spans sound livelier and more bouncy, but it is easy to go too far with the span. Very short snote spans, or 3 or 4, can be effective when used with heavy timbral and/or colour modulation. Note that the spans interacts with the chosen scale: scales with fewer notes per octave (eg the pentatonic scales) will require shorter note spans, and <em>v-v</em>. You can use an external control voltage into the FM CV input to control the SPAN parameter as well, if <code>FMCV</code>=<B>SPAN</b>. This external <code>FMCV</code>=<B>SPAN</b> value is added to the <code>SPAN</code> setting. It is best to set a minimum span of notes using <code>SPAN</code> and then modulate it upwards using an external CV with <code>FMCV</code>=<B>SPAN</b>, if you wish.</li>
+<li><code>PROB</code> sets the probability that a bit in the LSB (least significant bit) position of the shift register will be flipped. There is an implicit divisor of 512. Thus 0 means zero probability (no flipping, ever), 126 means a probability of approximately 0.25 (126/512). Note that the value 127 is a special case which forces the probability to be 1 (that is, every bit is flipped at every step), thus turning the shift register into a Moebius strip and effectively doubling its length (to a maximum of 64 steps). In general, low settings of 2 to 20 work best, and the shorter the length of the shift register, as set by <code>TRNG</code>, the lower the <code>PROB</code> setting needs to be in order to maintain a given rate (strictly, expectation) of a bit being flipped in any arbitrary time period. Remember, the probability is tested at every step of the shift register, so if you only want a bit to be flipped every few cycles of the register, you will need a quite low per-shift probability. In general, low probabilities are the sweet spot. For example, if the shift register length <code>TRNG</code> is set to 8 bits, and the bit-flip probability <code>PROB</code> is set to 64, then there is approximately one chance in eight that a bit will be flipped in the shift register pattern each step (64/512), and thus in any one 8-step cycle of the shift register, the expectation is that one bit will be flipped and thus the pattern will change. That does not mean that the pattern <b>will</b> change every cycle - just that in the long-run the rate of pattern change will be about once per cycle (which is probably too high for most purposes). However, if the bit shift register is 32 bits, that is, four times as long, then at the same <code>PROB</code> setting of 64, a bit flip in the pattern in any cycle is four times less likely.</li>
+<li><code>TDIV</code> sets the Turing Machine clock/trigger divider. It defaults to one, but if set to <em>n</em>, then the Turing Machine shift register will only advance a step on every <em>n</em>th trigger input. This is effective when used in conjunction with the <code>MDIV</code> setting, which does the same for the meta-sequencer. For example, if the Turing Machine shift register length is 16 (<code>TRNG</code>=16), and <code>MDIV</code>=16, then each step of the meta-sequencer can be used to transpose the Turing Machine sequence, and/or change the oscillator model on each sequence repeat. The same applies in reverse - by setting <code>TDIV</code> to a multiple of the meta-sequence length, then the meta-sequence can be transposed by a pseudo-random amount each <em>n</em> cycles.</li>
+<li><code>SCAL</code> sets the scale of notes which the Turing Machine choses from, up to 32 notes (when <code>WIND</code>=5). The scales available are listed in the table above.</li>
+<li><code>TINT</code> enables re-initialisation of the Turing Machine shift register with a fresh random 32-bit value. Zero means no re-initialisation. Values greater than 0 mean it will re-seed the shift register with a random value every <em>n</em>th cycle of the shift register. Thus you can have sudden discontinuities in the random pattern every so many "bars" (where "bar" means one cycle of the shift register) if you set <code>TINT</code> to some multiple of the <code>TRNG</code> shift register length setting.</li>
+</ul>
+</li>
+<p>
+<li>There is a new oscillator model, called <b>ZERO</b>, right at the end of the model list, after <b>PRTC</b>. Don't get too excited, because this model fills the audio buffer with zeroes, and thus produces absolute silence. This was added to enable "rests" to be inserted in the <code>MSEQ</code> meta-sequencer. The downside is that there is an audible click when switching to it, because the signal amplitude immediately goes to zero. I can't think of any easy way to avoid this, however. The same problem occurs, to a lesser degree, and in the factory firmware as well, when switching to some of the other models, for similar reasons. Note that the <b>ZERO</b> model isn't accessible via <code>FMCV</code>=<b>META</b> mode.</li>
+<p>
+<li>There is now a shortcut between menu mode and oscillator model selection mode. If you are in menu mode, if you do a long-click (hold down the encoder for more than half a second), then you will be taken directly back to oscillator selection mode. In oscillator selection mode, if you do a long-click, you will be dropped back to menu mode on the menu choice you were last on when you used the long-click shortcut. This makes it easy to switch back-and-forward without losing your place in the menu. Note that this long-click shortcut doesn't work when actually editing a setting value (edit mode), only when you in menu mode. <ul><li><b>Note:</b> your settings are saved when you short-click or long-click on the <code>SAVE</code> menu item, but they are <b>not</b> saved when you use the long-click shortcut to swap to oscillator model selection mode from any other menu item - as in the standard Braids (in which <code>SAVE</code> is called <code>WAVE</code>), only clicking (or long-clicking) on <code>SAVE</code>/<code>WAVE</code> causes your settings to be saved.</li></ul></li>
+<p>
+<li>As an extra guard against accidental reset of all settings, which in the Braids firmware is done by a long-click when the version string is displayed in menu mode, Bees-in-the-Trees uses a separate menu item: <code>RST</code> (reset). The <code>RST</code> menu item has four settings: <b>NO</b>, <b>DFLT</b> (defaults), <b>NO</b>, and <b>FULL</b>. If <code>RST</code>=<b>NO</b>, then a long-click when on <code>RST</code> when in menu mode does nothing. If <code>RST</code>=<b>DFLT</b>, a long-click on <code>RST</code> in menu mode resets all the settings back to the defaults (essentially vanilla Braids behaviour, with no internal modulation etc), except for the calibration data, which is preserved. If <code>RST</code>=<b>FULL</b>, a long-click on <code>RST</code> in menu mode resets all the settings back to the defaults, including the calibration data. Thus, performing a settings reset is a four-stage process: first navigate to the <code>RST</code> menu item, then short-click on it and choose <b>DFLT</b> or <b>FULL</b>, which arms the reset function, and then short-click again to return to the <code>RST</code> menu item, and finally long-click on <code>RST</code> to cause the reset to actually occur. Your Braids will respond with a buzz to confirm the settings reset, and you will be returned to oscillator model selection mode. This <code>RST</code>=<b>DFLT</b> procedure should make it much quicker to get back to vanilla Braids operation without losing calibration data, while still preventing accidental settings resets.</li>
+<p>
+<li>Finally, the menu mode is now like an <a href-"http://en.wikipedia.org/wiki/Ouroboros"><em>Ouroboros</em></a> – instead of being a linear list starting with <code>SAVE</code> and ending with the version string, the menu items are now in a loop, so that if you are at the version string (the end), one more forward increment on the encoder will loop you back to <code>SAVE</code> (the beginning). This should make it quicker to navigate through the now rather large number of menu items. When in oscillator model selection mode, a short-click still takes you back to <code>SAVE</code>, and a long-click takes you to the position you were at in the menu loop when you last used the long-click shortcut to oscillator selection mode.
+<ul><li><b>Tip:</b> because the list of menu items is a loop, it can be tricky to quickly find the SAVE option, because it is not at the beginning of the menu items (there is no beginning, nor end). Here is one work-around: from any menu item (except <code>CAL.</code> or <code>RST</code>), you can long-click to go directly to oscillator selection mode, then a short-click will take you to <code>SAVE</code>, then another short-click will save your settings and take you back to oscillator selection mode, and another long-click will take you back to where you started in the menu. Thus, from nearly anywhere in the menu, a long-click and then two short-clicks and then a long-click will save your settings and bring you back to where you were. That tends to be much faster than scrolling through the menu items looking for <code>SAVE</code>.</li></ul>
+</li>
+</ul>
+<p></p>
+<h2><a id="modulation-map" class="anchor" href="#modulation-map" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Modulation Graph</h2>
+<p>
+<img src="images/Bees-in-Trees-schematic-v3y.png" /></p>
+
+<h2>
+<a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Anti-enhancements</h2>
+
+<p>These changes, with respect to the official Braids version 1.7 firmware, were required in order to free up space in the firmware storage for the enhancements described above.</p>
+
+<ul>
+<li>A <em>paschal oophorectomy</em> has been performed: the Easter egg oscillator model has been removed and the ability to trigger Easter egg mode has been disabled. One could say that the code for it has been Pynchoned off...</li>
+<li>The marquee feature has been removed.</li>
+<li>The NOIS, TWNQ, PRTC and QPSK oscillator models have been removed.</li>
+<li>VCO tune flattening (<code>FLAT</code>) and signature waveshapping (<code>SIGN</code>) have been removed.</li>
+</ul>
+
+<h1>
+<a id="installation-and-de-installation" class="anchor" href="#installation-and-de-installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation and De-installation</h1>
+
+
+<h2>
+<a id="obligatory-warnings" class="anchor" href="#obligatory-warnings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Obligatory warnings</a></h2>
+
+<ol>
+<li>As per the <a href-"https://github.com/timchurches/Mutated-Mutables/blob/master/braids/braids.cc">license text</a> at the top of every source code file for Bees-in-the-Trees, Bees-in-the-Trees is available for your use only if you accept the following terms:
+<pre>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY 
+OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</pre>
+</li>
+<p></p>
+<li>Installing Bees-in-the-Trees <b>will</b> reset the calibration data in your Braids, so you will need to re-calibrate it, using the (very straightforward) procedure described in the <a href="http://mutable-instruments.net/modules/braids/manual#calibration">Braids manual</a>. Likewise, re-installing official Braids firmware will also reset the calibration data, so you will need to re-calibrate yet again. However, it only takes a minute or so. But if you are not able to re-calibrate your Braids, then please do not install Bees-in-the-Trees!</li>
+<p></p>
+<li>If you want to re-install the official Braids firmware, then you <b>MUST</b> re-install the latest release in the v1.7 factory firmware series, which is here: <a href="http://mutable-instruments.net/static/firmware/braids_1.7.wav">http://mutable-instruments.net/static/firmware/braids_1.7.wav</a> – or a version of the factory firmware later than v1.7 if that is available. Do not re-install any of the earlier "release candidate" versions of v1.7 factory code, nor version 1.5 or earlier of the factory firmware. The reason for re-installing only v1.7 of the official Braids firmware is that only the very latest version of the official v1.7 Braids code contains a special settings checking routine that ensures that re-installation of the official firmware after installing Bees-in-the-Trees (or other hacked code) will result is sane settings and a fully functional Braids. Of course, if there is a version of the official Braids firmware later than v1.7 available at the time you read this, then you should install that. The main thing to remember is that after installing Bees-in-the-Trees, you may experience problems if you try to re-install any version of the factory Braids firmware earlier than version 1.7. However, if you re-install version 1.7, it should be fine (all testing to date suggests that is the case, at least).</li> 
+<p></p>
+<li>You need to be aware that if you are installing Bees-in-the-Trees via the audio bootloader facilty then there is a very small chance that something may go wrong, either while installing Bees-in-the-Trees, or while re-installing the factory Braids firmware. Olivier Gillet has designed the audio bootloader to be highly fail-safe, and almost foolproof, but nonetheless, there is a very small risk that you could end up with a non-functioning Braids due to a failed firmware upgrade (that is, your Braids ends up being "bricked"). If that happens, then I (Tim Churches) can offer only advice. I cannot offer an unbricking service, except to Braids users located in Sydney, and only then on a best-effort basis by prior arrangement. Thus, before trying Bees-in-the-Trees, you may wish to enquire whether there are other Braids users in the city or region where you live who are willing to re-install factory firmware for you using the FTDI or JTAG/SWD interfaces on Braids, just in case something does go wrong. I very much doubt that you will have any problems, but it is best to proceed cautiously. Note that installation of Bees-in-the-Trees cannot physically damage your Braids, so the module will always be recoverable if you have access to an FTDI or JTAG/SWD programmer as described <a href="http://mutable-instruments.net/modules/braids/open">here</a>.</li>
+<p></p>
+<li>Note also that the fine print in the Braids manual states that Olivier doesn’t offer an unbricking service for Braids that have had alternative firmware installed on them. That said, the likelihood of bricking your Braids when using the audio bootloader is very small – as already noted, it has been designed to be failsafe and nearly idiot-proof.</li>
+<p></p>
+<li>See also the warning about encoder wear-and-tear in the <a href="#Dislike-menu-diving">"<em>But I hate menu diving</em>"</a> section above. </li>
+</ol>
+<p></p>
+<p>OK, enough warnings.</p>
+
+<p>If you have access to an FTDI interface or a suitable JTAG/SWD programmer, then you can just clone or download the Bees-in-the-Trees source code (use the HEAD commit from the master branch), compile it and flash it to your Braids. Instructions regarding this are <a href="http://mutable-instruments.net/modules/braids/open">here</a>. See also the note below about encoder direction and firmware image size.</p>
+
+<p>If you are intending to use only the audio bootloader, then you should carefully follow the following steps:</p>
+
+<ol>
+<li>Use the audio bootloader, <a href="http://mutable-instruments.net/modules/braids/manual#firmware">as described in the Braids manual</a>, to first load the very latest Braids v1.7 firmware – see the link to it above. Verify that works correctly. The reason for first upgrading to Braids v1.7 (or later) before installing Bees-in-the-Trees is to confirm that audio firmware updates are working correctly in your system. It is much better to confirm that using the official Braids v1.7 firmware than with Bees-in-the-Trees. Common reasons for audio updates not working are insufficient volume level when playing the firmware WAV file into your Braids module, or extraneous sounds, such as email or Facebook post notifications, being generated in your computer while you are playing the firmware WAV file.</li>
+<li>Practice the Braids re-calibration procedure and verify that has worked.</li>
+<li>Proceed to load the latest Bees-in-the-Trees version via the audio bootloader in the same way. Compiled firmware images in WAV format for Bees-in-the-Trees are available at the following locations. Be sure to download the files, using the download icon in the middle of the top of the page - don't listen to the file! And check that the downloaded size is exactly as shown below. You can also check the SHA1 or MD5 hash values if you like, but that is not essential.</li>
+  <ul>
+    <li><a href="https://drive.google.com/file/d/0BykuVdPr-by8NTRNRjlYeUNYY0k/view?usp=sharing">Bees-in-the-Trees version 3.8 firmware update file in WAV format - for Braids manufactured by Mutable Instruments</a> (8,540,972, SHA-1 6f11f549a9af106fb15323df168361e031937fda, MD5 d7a52baf6c3f6c624374c975cc669d49)</li>
+    <li><a href="https://drive.google.com/file/d/0BykuVdPr-by8WmtUU1ladzhJREE/view?usp=sharing">Bees-in-the-Trees version 3.8 firmware update file in WAV format - for DIY Braids with Bourns or similar reversed encoder</a> (8,540,972 bytes, SHA-1 716250d4a1ae173a32adf4497553e1b3c4e863eb, MD5 80fa255aeeb77a96ce2242fce534262b)</li>
+  </ul>
+<li>Re-calibrate your Braids.</li>
+<li>Go crazy with it.</li>
+</ol>
+
+<p>You shouldn’t need to manually reset the stored settings if you follow this procedure – your Braids should do that automatically when it boots up after installing the Bees-in-the-Trees code (and likewise when you re-install the latest v1.7 or later factory firmware).<.p>
+
+<p>However, if your Braids does seem confused, you can trigger a manual settings reset in Braids v1.7 firmware by navigating to the version string right at the end of the menu choices, and doing a long-click on the encoder. Warning: this also resets your calibration data, so you’ll need to re-calibrate yet again.</p>
+
+<p>In Bees-in-the-Trees, the reset procedure is slightly different - please see the full description above. Use the <code>RST</code>=FULL option if you need to reset the settings after a firmware update.</p>
+
+<p>Re-installation of the factory Braids firmware is similar:</p>
+<ol>
+<li>Use the audio bootloader, <a href="http://mutable-instruments.net/modules/braids/manual#firmware">as described in the Braids manual</a>, to re-load the very latest Braids v1.7 firmware – see the link to it above. Verify that works correctly.</li>
+<li>Re-calibrate it.</li>
+</ol>
+
+<h2>
+<a id="bug-reports" class="anchor" href="#bug-reports" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bug reports</a></h2>
+
+<p>If you encounter a bug or anomalous behaviour while using Bees-in-the-Trees, please report it via email to <a href="mailto:tim.churches@gmail.com">tim.churches@gmail.com</a> However, in order to fix bugs or problems, they must be reproducible, and to that end, it would be helpful if you could report as many as possible of the settings which you were using when you encountered the bug, and provide details of any other external inputs or modulation. Cutting-and-pasting the <a href="#TLDR">TL;DR table of settings</a> above into the body of an email message and then annotating or editing that list is a handy way of documenting settings.</p>
+
+<h1>
+<a id="to-do-and-roadmap" class="anchor" href="#to-do-and-roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>TO-DO and Roadmap</h1>
+
+<ul>
+<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change. Is it due to it being a form of non-linear FM, perhaps?</li>
+<li>PENDING: Prevent the LFO frequency or the total envelope duration from changing when the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. Did I mention that integer arithmetic is a pain in the arse?</li>
+</ul>
+<p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured in the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>.</p>
+
+<h1>
+<a id="encoder-direction" class="anchor" href="#encoder-direction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoder direction and firmware image size</h1>
+
+<p>Some crazy people (including me!) have built DIY versions of Braids, and have used Bourns encoders in doing so. These operate in the opposite direction to those used by factory-built Braids modules. In order to accomodate this, <code>#define BACKWARDS_ENCODER</code> is set at the top of the <em>encoder.h</em> source code file. If you are compiling the source code yourself to load on a factory-built Braids, then you should ensure that this #define is commented out (place // in front of it on the same line). Failure to do that will mean that the encoder on your Braids will run backwards!</p>
+<p>The other consideration if you are compiling Bees-in-the-Trees yourself is the total size of the final compiled and linked firmware image. The size of the waves.bin image, as built by <em>make -f braids/makefile wav</em>, <b>must</b> be under 110,592 bytes. The other way to check is to run <em>make -f braids/makefile size</em> and then <em>cat build/braids/braids.size</em>. Add the first two numbers (the ones under text and data). That will give the total size of the binary image - the number should be exactly the same as the size in bytes of the wave.bin file. That size <b>must</b> be under 110,592, otherwise the saved settings will, after 10 or 11 save cycles, over-write the tail end of executable image and your Braids will probably hang, or at least misbehave badly. My recommendation is to use the J Snyder package for the EABI ARM GCC compiler recommended by Olivier Gillet (which includes v4.7.3 of arm-none-eabi-gcc, that's what I use), but later versions may also work - but you must keep an eye on the size of the compiled and linked binary image! Be aware that Bees-in-the-Trees uses almost all the available flash storage space when compiled - it is a tight fit!
+
+<h1>
+<a id="discussion" class="anchor" href="#discussion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Discussion</h1>
+
+<p>All these enhancements seem to work fine, but more extensive testing is always helpful. As mentioned above, Bees-in-the-Trees is intended for advanced users only, and assumes thorough familiarity with the way Braids operates. The modulators can interact with each other, by design, in complex and interesting ways (note that their values are summed for each destination, and the resulting sum is clipped - thus with the right offsets and modulation depths, you can achieve half-wave clipping effects etc). All of these substantially extend the range of sounds that can be coaxed out of a Braids, without using any other modules at all. Add a single external LFO or sequencer modulating the FM input, or a clock or trigger source stepping the MSEQ mode, and all sorts of really amazing things are possible. As such, Bees-in-the-Trees may be particularly useful in small systems where external modulation sources are few, but since it does not remove or subtract any vital or commonly-used existing Braids features or capabilities, it may be useful even in large systems.</p>
+
+<p>Feedback and suggestions are welcome and appreciated - please email <a href="mailto:tim.churches@gmail.com">tim.churches@gmail.com</a></p>
+
+<h3>Some flight paths of bees in the trees</h3>
+<a href="https://aschinchon.wordpress.com/2014/11/11/3d-harmonographs-in-motion/"><img alt="Paths of bee flight in trees" style="border-width:0" src="images/bee-flight-paths-in-trees-8.gif" /></a></p>
+
+        </section>
+
+        <aside id="sidebar">
+        
+<h3>Table of Contents</h3>
+
+<ul>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+<li><a href="#Bees-in-the-Trees">Bees-in-the-Trees</a></li>
+<li><a href="#Bees-in-the-Trees-audience">Intended audience for Bees-in-the-Trees</a></li>
+<li><a href="#Dislike-menu-diving">But I hate menu-diving</a></li>
+<li><a href="#TLDR">TL;DR</a>
+<li><a href="#Bees-in-the-Trees-changes">Changes in the latest version</a></li>
+<li><a href="#Bees-in-the-Trees-enhancements">Bees-in-the-Trees: the gory details of all the changes made to the official Braids firmware</a></li>   
+<li><a href="#modulation-map">The Modulation Graph</a></li>
+<li><a href="#anti-enhancements">Anti-enhancements</a></li>
+<li><a href="#installation-and-de-installation">Installation and De-installation</a></li>
+<li><a href="#obligatory-warnings">Obligatory warnings</a></li>
+<li><a href="#bug-reports">Bug reports</a></li>
+<li><a href="#to-do-and-roadmap">TO-DO and Roadmap</a></li>
+<li><a href="#encoder-direction">Encoder direction and firmware image size</a></li>
+<li><a href="#discussion">Discussion</a></li>
+</ul>
+       
+          <a href="https://github.com/timchurches/Mutated-Mutables/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/timchurches/Mutated-Mutables/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/timchurches/Mutated-Mutables"></a> is maintained by <a href="https://github.com/timchurches">timchurches</a>.</p>
+
+          <p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Mutated Mutables Bees-in-the-Trees firmware documentation</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://timchurches.github.io/Mutated-Mutables/" property="cc:attributionName" rel="cc:attributionURL">Tim Churches</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+          
+<h3>Some Bees-in-the-Trees videos</h3>
+<ul>
+<li><a href="https://vimeo.com/119143721">Pauk demonstrating Bees-in-the-Trees  meta-sequence mode</a></li>
+<li><a href="https://www.youtube.com/watch?v=1wFaNrP9TEU">Luke Blip, aka Disjunction Reunion, also uses Bees-in-the-Trees meta-sequence mode to provide some beats</a></li>
+<li><a href="https://www.youtube.com/watch?v=gnWaZ93zqbQ">RyuX using Bees-in-the-Trees for some sonic destruction</a></li>
+<li><a href="https://www.youtube.com/watch?v=lGYnOIE5Pn4">Chris Penalosa using Bees-in-the-Trees v3.0 to create a really interesting soundscape with just a few modules</a></li>
+<li><a href="https://www.youtube.com/watch?v=SZM1fnzwkEc">A video of a jam session by SunFalls, featuring Braids running Bees-in-the-Trees v3.0</a></li>
+<li><a href="https://www.youtube.com/watch?v=C2fdGqA1Fa8">Sneak-Thief (aka Michel Morin) in Berlin demonstrating the use of a piezo controller tapped with the fingers to trigger 4 Braids, each running Bees-in-the-Trees v3.4 with a pseudo-random "melody" provided by the Turing Machine built into Bees-in-the-Trees.</a></li>
+<li><a href="https://www.youtube.com/watch?v=GrlohD0lSRE">A long and turgid tour through Bees-in-the-Trees version 3.g, which was an earlier development version, but broadly similar to the current version 3.4</a></li>
+<li><a href="https://www.youtube.com/watch?v=9Rp7Mrl0gZc">Michael Nyman</a></li>
+</ul>
+
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
