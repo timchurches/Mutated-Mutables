@@ -38,7 +38,7 @@
 
 <p>First and foremost, huge thanks are due to <a href="https://media.licdn.com/mpr/mpr/shrink_500_500/p/4/005/041/08d/3190533.jpg">Olivier Gillet</a> of <a href="http://mutable-instruments.net">Mutable Instruments</a> for creating Braids and his other wonderful Eurorack synth modules - in terms of depth and breadth of creativity, elegance and excellence of implementation and execution, they are head-and-shoulders above other Eurorack synth modules. But equally huge thanks are due to Olivier for having the vision, courage and faith to release the designs and source code for his modules under open-source licenses. Without that, the modifications which are documented here would not have been possible.</p>
 
-<p>Many thanks also to <a href="http://sneak-thief.com">Sneak-Thief</a> in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the initial design of the Bees-in-the-Trees modifications, and for actively testing early iterations of the code and discovering several bugs (and documenting how to reproduce them!). Many thanks are also due to a team of volunteer testers who have tried out each successive pre-release version of Bees-in-the-Trees, found and reported bugs, and provided helpful suggestions and encouragement. In particular I would like to thank <em>weliveincities</em> (aka <a href="http://chrispenalosa.com">Chris Penalosa</a>), <em>Bmhot</em> (aka Steph), <em>stevencrichton</em> (aka <a href="https://soundcloud.com/zuikomedia">Steven Crichton</a>), <em>stevenb</em> (aka <a href="https://soundcloud.com/steven-barsky/">Steven Barsky</a>), <em>AcousmatiK</em> (aka <a href="https://soundcloud.com/acousmatik">Brice Moise</a>), <em>simonebosco</em>, <em>pauk</em> (aka <a href="http://www.larajaruchik.com/pauk/">Pau Cabruja</a>), <em>sixty_n</em> (another Tim) and <em>RyuX</em> (aka <a href="https://soundcloud.com/ryu-x">Patrick P.</a>) on the Mutable Instruments forum.</p>
+<p>Many thanks also to <a href="http://sneak-thief.com">Sneak-Thief</a> in Berlin, first of all for providing the impetus for me to start hacking the Braids code, and then for providing lots of really useful feedback on the initial design of the Bees-in-the-Trees modifications, and for actively testing early iterations of the code and discovering several bugs (and documenting how to reproduce them!). Special thanks are also due to <em>stevenb</em> (aka <a href="https://soundcloud.com/steven-barsky/">Steven Barsky</a>), who has been incredibly painstaking in his testing of Bees-in-the-Trees, and has picked up several nasty bugs (now fixed), as well as providing lots of useful feedback and making excellent suggestions for tweaks and enhancements to the design. Many thanks are also due to a team of volunteer testers who have tried out each successive pre-release version of Bees-in-the-Trees, found and reported bugs, and provided helpful suggestions and encouragement. In particular I would like to thank <em>weliveincities</em> (aka <a href="http://chrispenalosa.com">Chris Penalosa</a>), <em>Bmhot</em> (aka Steph), <em>stevencrichton</em> (aka <a href="https://soundcloud.com/zuikomedia">Steven Crichton</a>), <em>AcousmatiK</em> (aka <a href="https://soundcloud.com/acousmatik">Brice Moise</a>), <em>simonebosco</em>, <em>pauk</em> (aka <a href="http://www.larajaruchik.com/pauk/">Pau Cabruja</a>), <em>sixty_n</em> (another Tim) and <em>RyuX</em> (aka <a href="https://soundcloud.com/ryu-x">Patrick P.</a>) on the Mutable Instruments forum.</p>
 
 <h1>
 <a id="Bees-in-the-Trees" class="anchor" href="#Bees-in-the-Trees" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees</h1>
@@ -82,8 +82,10 @@
 <p>For those short of time or attention span, here is a summary table of the many settings which Bees-in-the-Trees makes available. If you want more detail about what each one does and how best to use it, then read on after the table.</p>
 
 <p>The order of the settings in the menu was informed by seeking input from testers. Unfortunately, <a href="http://plato.stanford.edu/entries/arrows-theorem/"><em>Arrow's Theorem</em></a> applies, and thus the ordering is necessarily sub-optimal, but better orderings are impossible.</p>
+
+<p>In addition, there is a <a href="https://github.com/timchurches/Mutated-Mutables/wiki/The-Quick-Start-Guide-to-Bees-in-the-Trees">quick-start guide to Bees-in-the-Trees</a>, by Steven Barsky and Tim Churches, which is still a work-in-progress.</p>
   
-<p>The following documentation relates to Bees-in-the-Trees version 3.0</p>
+<p>The following documentation relates to Bees-in-the-Trees version 3.9</p>
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;margin:0px auto;}
@@ -107,12 +109,12 @@
   <tr>
     <td class="tg-e3zv">LEVL</td>
     <td class="tg-031e">Initial level (gain, volume). </td>
-    <td class="tg-031e">0 to 250</td>
+    <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-vv7f">FMCV</td>
     <td class="tg-vn4c">Select purpose/destination of FM CV input</td>
-    <td class="tg-vn4c">FREQ, META, RATE, RAT1, RAT2, LEVL, JITR, BITS, SRAT, SMUT, DIRT, FLTH</td>
+    <td class="tg-vn4c">FREQ, META, RATE, RAT1, RAT2, DCAY, DCY1, DCY2, LEVL, HARM, TRNG, PROB, SPAN, JITR, BITS, SRAT, SMUT</td>
   </tr>
   <tr>
     <td class="tg-e3zv">MOD1</td>
@@ -125,19 +127,19 @@
     <td class="tg-vn4c">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">⇑SH1</td>
-    <td class="tg-031e">Shape of rising arm of LFO or attack part of envelope</td>
-    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+    <td class="tg-e3zv">⇑⇓1</td>
+    <td class="tg-031e">Ratio of rising/attack LFO/envelope duration to falling/decay duration</td>
+    <td class="tg-031e">0 to 127, with 63 representing equal attack/rising to decay/falling times</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">⇓SH1</td>
-    <td class="tg-vn4c">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-vv7f">⇑SH1</td>
+    <td class="tg-vn4c">Shape of rising arm of LFO or attack part of envelope</td>
     <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">⇑⇓1</td>
-    <td class="tg-031e">Ratio of rising/attack LFO/envelope duration to falling/decay duration, as a percentage</td>
-    <td class="tg-031e">2, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 11, 125, 143, 166, 200, 250, 33, 500, 1k, 5k</td>
+    <td class="tg-e3zv">⇓SH1</td>
+    <td class="tg-031e">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
   </tr>
   <tr>
     <td class="tg-vv7f">M1SY</td>
@@ -147,17 +149,17 @@
   <tr>
     <td class="tg-e3zv">M1→T</td>
     <td class="tg-031e">Modulator 1 timbre modulation depth</td>
-    <td class="tg-031e">0 to 250</td>
+    <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-vv7f">M1→C</td>
     <td class="tg-vn4c">Modulator 1 colour modulation depth</td>
-    <td class="tg-vn4c">0 to 250</td>
+    <td class="tg-vn4c">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-e3zv">M1→L</td>
     <td class="tg-031e">Modulator 1 level (gain, volume) modulation depth</td>
-    <td class="tg-031e">0 to 250</td>
+    <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-vv7f">M1→F</td>
@@ -180,19 +182,19 @@
     <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">⇑SH2</td>
-    <td class="tg-vn4c">Shape of rising arm of LFO or attack part of envelope</td>
-    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+    <td class="tg-vv7f">⇑⇓2</td>
+    <td class="tg-vn4c">Ratio of rising/attack LFO/envelope duration to falling/decay duration</td>
+    <td class="tg-vn4c">0 to 127, with 63 representing equal attack/rising to decay/falling times</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">⇓SH2</td>
-    <td class="tg-031e">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-e3zv">⇑SH2</td>
+    <td class="tg-031e">Shape of rising arm of LFO or attack part of envelope</td>
     <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">⇑⇓2</td>
-    <td class="tg-vn4c">Ratio of rising/attack LFO/envelope duration to falling/decay duration, as a percentage</td>
-    <td class="tg-vn4c">2, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 11, 125, 143, 166, 200, 250, 33, 500, 1k, 5k</td>
+    <td class="tg-vv7f">⇓SH2</td>
+    <td class="tg-vn4c">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
   </tr>
   <tr>
     <td class="tg-e3zv">M2SY</td>
@@ -202,17 +204,17 @@
   <tr>
     <td class="tg-vv7f">M2→T</td>
     <td class="tg-vn4c">Modulator 2 timbre modulation depth</td>
-    <td class="tg-vn4c">0 to 250</td>
+    <td class="tg-vn4c">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-e3zv">M2→C</td>
     <td class="tg-031e">Modulator 2 colour modulation depth</td>
-    <td class="tg-031e">0 to 250</td>
+    <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-vv7f">M2→L</td>
     <td class="tg-vn4c">Modulator 2 level (gain, volume) modulation depth</td>
-    <td class="tg-vn4c">0 to 250</td>
+    <td class="tg-vn4c">0 to 127</td>
   </tr>
   <tr>
     <td class="tg-e3zv">M2→F</td>
@@ -220,54 +222,9 @@
     <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">M1T2</td>
-    <td class="tg-vn4c">Modulator 1 amplitude modulation of Modulator 2 timbre modulation</td>
-    <td class="tg-vn4c">OFF, ON</td>
-  </tr>
-  <tr>
-    <td class="tg-e3zv">M1C2</td>
-    <td class="tg-031e">Modulator 1 amplitude modulation of Modulator 2 colour modulation</td>
-    <td class="tg-031e">OFF, ON</td>
-  </tr>
-  <tr>
     <td class="tg-vv7f">M1F2</td>
     <td class="tg-vn4c">Modulator 1 amplitude modulation of Modulator 2 oscillator pitch modulation</td>
     <td class="tg-vn4c">OFF, ON</td>
-  </tr>
-  <tr>
-    <td class="tg-e3zv">MSEQ</td>
-    <td class="tg-031e">Meta-sequencer enable/sequence length</td>
-    <td class="tg-031e">OFF, 2, 3, 4, 5, 6, 7, 8</td>
-  </tr>
-  <tr>
-    <td class="tg-vv7f">SDIR</td>
-    <td class="tg-vn4c">Sequence direction</td>
-    <td class="tg-vn4c">LOOP, SWNG, RNDM</td>
-  </tr>
-  <tr>
-    <td class="tg-e3zv">WAV1</td>
-    <td class="tg-031e">Meta-sequence step 1 oscillator model</td>
-    <td class="tg-031e">Oscillator models</td>
-  </tr>
-  <tr>
-    <td class="tg-vv7f">RPT1</td>
-    <td class="tg-vn4c">Meta-sequence step 1 repeat count</td>
-    <td class="tg-vn4c">1 to 127</td>
-  </tr>
-  <tr>
-    <td class="tg-e3zv">...</td>
-    <td class="tg-031e">WAVn, RPTn where n=2 to 7</td>
-    <td class="tg-031e">...</td>
-  </tr>
-  <tr>
-    <td class="tg-vv7f">WAV8</td>
-    <td class="tg-vn4c">Meta-sequence step 8 oscillator model</td>
-    <td class="tg-vn4c">Oscillator models</td>
-  </tr>
-  <tr>
-    <td class="tg-e3zv">RPT8</td>
-    <td class="tg-031e">Meta-sequence step 8 repeat count</td>
-    <td class="tg-031e">1 to 127</td>
   </tr>
   <tr>
     <td class="tg-e3zv">OSYN</td>
@@ -275,9 +232,9 @@
     <td class="tg-031e">OFF, ON</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">RINV</td>
-    <td class="tg-031e">Internal modulator rate inversion</td>
-    <td class="tg-031e">OFF, ON</td>
+    <td class="tg-vv7f">RINV</td>
+    <td class="tg-vn4c">Internal modulator rate inversion</td>
+    <td class="tg-vn4c">OFF, ON</td>
   </tr>
   <tr>
     <td class="tg-vv7f">BRIG</td>
@@ -295,14 +252,19 @@
     <td class="tg-vn4c"></td>
   </tr>
   <tr>
-    <td class="tg-vv7f">RANG</td>
-    <td class="tg-vn4c">Oscillator frequency range</td>
-    <td class="tg-vn4c">EXT, FREE, XTND, 440, LFO</td>
+    <td class="tg-e3zv">RANG</td>
+    <td class="tg-031e">Oscillator frequency range</td>
+    <td class="tg-031e">EXT, FREE, XTND, 440, LFO</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">OCTV</td>
-    <td class="tg-031e">Oscillator octave offset</td>
-    <td class="tg-031e">-2, -1, 0, 1, 2</td>
+    <td class="tg-vv7f">OCTV</td>
+    <td class="tg-vn4c">Oscillator octave offset</td>
+    <td class="tg-vn4c">-2, -1, 0, 1, 2</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">FTUN</td>
+    <td class="tg-031e">Oscillator fine tune</td>
+    <td class="tg-031e">-13 to 31, 0=zero pitch offset</td>
   </tr>
   <tr>
     <td class="tg-vv7f">FS+H</td>
@@ -310,9 +272,9 @@
     <td class="tg-vn4c">OFF, ON</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">QNTS</td>
-    <td class="tg-031e">Frequency (oscillator pitch) quantisation</td>
-    <td class="tg-031e">OFF, QTR, SEMI</td>
+    <td class="tg-e3zv">QNTZ</td>
+    <td class="tg-031e">Frequency (oscillator pitch) 12-tone equal temperament quantisation/scales</td>
+    <td class="tg-031e">OFF, QTR (quarter tone), SEMI (semitones), ION (Ionian), DOR (Dorian), PHR (Phrygian), LYD (Lydian), MIXO (Mixolydian), AEOL (Aeolian), LOCR (Locrian), BLMJ (Blues major), BLMN (Blues minor), 5MAJ (Pentatonic major), 5MIN (Pentatonic minor), BHAI (Hindustani Bhairav), SHRI (Shri), RUPA (Rupavati), TODI (Todi), RAGE (Rageshri), KAAF (Kaafi), MEGH (Megh), MALK (Malkauns), DEEP (Deepak), FOLK (Folk), JAPN (Japanese), GAML (Gamelan), WHOL (Whole tone)</td>
   </tr>
   <tr>
     <td class="tg-vv7f">QVIB</td>
@@ -320,9 +282,9 @@
     <td class="tg-vn4c">OFF, ON</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">TDLY</td>
-    <td class="tg-vn4c">Trigger delay time</td>
-    <td class="tg-vn4c">NONE, 125u, 250u, 500u, 1ms, 2ms, 4ms</td>
+    <td class="tg-e3zv">TDLY</td>
+    <td class="tg-031e">Trigger delay time</td>
+    <td class="tg-031e">NONE, 125u, 250u, 500u, 1ms, 2ms, 4ms</td>
   </tr>
   <tr>
     <td class="tg-vv7f">TSRC</td>
@@ -345,16 +307,109 @@
     <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">RST</td>
-    <td class="tg-031e">Settings reset</td>
-    <td class="tg-031e">NO, DFLT, NO, FULL</td>
-  </tr>
-  <tr>
-    <td class="tg-vv7f">v3.0</td>
-    <td class="tg-vn4c">Bees-in-the-Trees firmware version</td>
+    <td class="tg-vv7f"></td>
+    <td class="tg-vn4c"></td>
     <td class="tg-vn4c"></td>
   </tr>
+  <tr>
+    <td class="tg-e3zv">MSEQ</td>
+    <td class="tg-031e">Meta-sequencer enable/sequence length</td>
+    <td class="tg-031e">OFF, 2, 3, 4, 5, 6, 7, 8</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">MDIV</td>
+    <td class="tg-vn4c">Meta-sequencer clock/trigger divider</td>
+    <td class="tg-vn4c">1 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">SDIR</td>
+    <td class="tg-031e">Sequence direction</td>
+    <td class="tg-031e">LOOP, SWNG, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">WAV1...WAV8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 oscillator model</td>
+    <td class="tg-vn4c">Oscillator models</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">NOT1...NOT8</td>
+    <td class="tg-031e">Meta-sequence steps 1 through 8 note (pitch) offset</td>
+    <td class="tg-031e">-31 to 31, in 12-note equally-tempered (TET) semitone increments</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RPT1...RPT8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 repeat count</td>
+    <td class="tg-vn4c">1 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">MSPD</td>
+    <td class="tg-031e">Meta-sequence parameter destinations</td>
+    <td class="tg-031e">NONE, TIMB, COLR, T+C, LEVL, T+L, C+L, TLC</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">PAR1...PAR8</td>
+    <td class="tg-vn4c">Meta-sequence steps 1 through 8 parameter</td>
+    <td class="tg-vn4c">1 to 127</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv"></td>
+    <td class="tg-031e"></td>
+    <td class="tg-031e"></td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">TRNG</td>
+    <td class="tg-vn4c">Turing Machine shift register length</td>
+    <td class="tg-vn4c">0 to 32 bits, 0 means OFF</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">SPAN</td>
+    <td class="tg-031e">Turing Machine note span</td>
+    <td class="tg-031e">Sets the span (range) of notes available to the Turing Machine, from 2 notes to 36 notes. The actual notes are selected from the chosen scale, set by <code>SCAL</code>.</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">PROB</td>
+    <td class="tg-vn4c">Turing Machine probability of flipping the LSB (least significant bit)</td>
+    <td class="tg-vn4c">0 to 127, with an implicit divisor of 512, so that 0 is <em>p</em>=0, 126 is approximately <em>p</em>=0.25, and 127 is a special-case resulting in <em>p</em>=1.0, that is, the least significant bit is flipped every time.</td>
+  </tr>
+    <td class="tg-e3zv">TDIV</td>
+    <td class="tg-031e">Turing Machine clock/trigger divider</td>
+    <td class="tg-031e">1 to 127</td>
+  </tr>
+  </tr>
+    <td class="tg-vv7f">SCAL</td>
+    <td class="tg-vn4c">Musical scale/mode used by Turing Machine</td>
+    <td class="tg-vn4c">CHRM (chromatic 12-tone equal temperament [12TET]),  ION (Ionian), DOR (Dorian), PHR (Phrygian), LYD (Lydian), MIXO (Mixolydian), AEOL (Aeolian), LOCR (Locrian), BLMJ (Blues major), BLMN (Blues minor), 5MAJ (Pentatonic major), 5MIN (Pentatonic minor), BHAI (Hindustani Bhairav), SHRI (Shri), RUPA (Rupavati), TODI (Todi), RAGE (Rageshri), KAAF (Kaafi), MEGH (Megh), MALK (Malkauns), DEEP (Deepak), FOLK (Folk), JAPN (Japanese), GAML (Gamelan), WHOL (Whole tone), HARM (Harmonic series)</td>
+  </tr>
+  </tr>
+    <td class="tg-e3zv">SEED</td>
+    <td class="tg-031e">Turing Machine shift register re-seed divider</td>
+    <td class="tg-031e">0 to 127, 0 is OFF, <em>n</em> re-seeds the shift register with a new random number (hence random bits) on the <em>n</em>th cycle of the shift register cycle.</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">RST</td>
+    <td class="tg-vn4c">Settings reset</td>
+    <td class="tg-vn4c">NO, DFLT, NO, FULL</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">v3.9</td>
+    <td class="tg-031e">Bees-in-the-Trees firmware version</td>
+    <td class="tg-031e"></td>
+  </tr>
 </table>
+
+<h2>
+<a id="Bees-in-the-Trees-changes" class="anchor" href="#Bees-in-the-Trees-changes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees: what's changed in Version 3.9, compared to Version 3.0?</h2>
+
+<ul>
+<li>several new values have been added to the <code>FMCV</code> setting: <b>DCAY</b>, <b>DCY1</b> and <b>DCY2</b> allow voltage control over envelope decay time, without affecting the attack time; <b>HARM</b> (harmonic series quantisation); <b>TRNG</b> which allows setting of the length of the Turing Machine shift register;  <b>PROB</b>, which allows CV control over the bit-flip probability in the built-in Turing Machine.</li>
+<li>note (pitch) values, <code>NOT1</code> to <code>NOT8</code>, and parameter values, <code>PAR1</code> to <code>PAR8</code>, have been added to the meta-sequencer, so that a melody can be programmed and stored. The notes are set as semitone positive or negative offsets. The additional parameter value for each step can be directed to scale the timbre, colour or level (gain), or combinations of all three, for each step.</li>
+<li>the <b>CLKN</b> oscillator model has been restored, but the <b>TWNQ</b>, <b>NOIS</b> and <b>PRTC</b> models have been removed to make space for other features.</li>
+<li>the <code>M1T2</code> and <code>M1C2</code> settings have been removed.</li>
+<li>a <code>FTUN</code> (oscillator fine-tune) setting has been added, immediately after <code>OCTV</code>, and <code>FTUN</code> settings are now bipolar, centred around zero.</li>
+<li>there is now a complete <a href="http://musicthing.co.uk/modular/?page_id=21">Turing Machine</a>/Richter NoiseRing implementation inside Bees-in-the-Trees! See below for details.</li>
+<li>quantisation of the 1V/octave pitch value now supports a wide range of scales (see table above), not just quarter-tone and semitone chromatic quantisation.
+</ul>
+
 
 <h2>
 <a id="Bees-in-the-Trees-enhancements" class="anchor" href="#Bees-in-the-Trees-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees: the gory details of all the changes made to the official Braids firmware</h2>
@@ -365,15 +420,15 @@
 <p>
 <li>Each internal modulator has a rate setting, <code>RAT1</code> and <code>RAT2</code> respectively, with ranges from 0 to 127. When in envelope mode, lower rate values produce shorter envelope segment (attack and decay) durations, and higher rate values produce longer envelope segment durations i.e. slower envelopes. When in LFO mode, lower rate values produce slower LFO speeds (lower LFO frequency), and higher rate values produce faster speeds (higher frequencies), if the <code>RINV</code> (rate inversion) setting is <b>ON</b> (which is the default). However, if you turn <code>RINV</code> off, then higher <code>RAT1</code> or <code>RAT2</code> settings will produce slower LFO speeds. This can be useful if you are controlling one envelope and one LFO with an external voltage - see below.</li>
 <p>
-<li>Each internal modulator has four depth controls: <code>M1→T</code>, <code>M1→C</code>, <code>M1→L</code> and <code>M1→F</code>; and <code>M2→T</code>, <code>M2→C</code>, <code>M2→L</code> and <code>M2→F</code>. These set the depth of modulation for each of timbre, color, level (amplitude), and frequency (pitch), respectively, between values of 0 to 250, except for frequency modulation depth, which is 0 to 127. Each modulation destination receives a weighted sum of the instantaneous modulator values. For example, if <code>M1→T</code>=30 and the instantaneous value of modulator 1 is, say, 100, and <code>M2→T</code>=60 and the instantaneous value of modulator 2 is 200, then the timbre parameter will receive a value of (30 * 100) + (60 * 200) = 15000. Obviously the values for modulator 1 and modulator 2 change each time the envelopes/LFOs are rendered, which is about 4000 times per second. </li>
+<li>Each internal modulator has four depth controls: <code>M1→T</code>, <code>M1→C</code>, <code>M1→L</code> and <code>M1→F</code>; and <code>M2→T</code>, <code>M2→C</code>, <code>M2→L</code> and <code>M2→F</code>. These set the depth of modulation for each of timbre, color, level (amplitude), and frequency (pitch), respectively, between values of 0 to 127. Each modulation destination receives a weighted sum of the instantaneous modulator values. For example, if <code>M1→T</code>=30 and the instantaneous value of modulator 1 is, say, 100, and <code>M2→T</code>=60 and the instantaneous value of modulator 2 is 200, then the timbre parameter will receive a value of (30 * 100) + (60 * 200) = 15000. Obviously the values for modulator 1 and modulator 2 change each time the envelopes/LFOs are rendered, which is about 4000 times per second. </li>
 <p>
-<li>The timbre and color potentiometers and/or the timbre and colour CV inputs act as offsets - the weighted sum of the modulator values is added to these offsets. The <code>LEVL</code> setting controls the initial level (gain) offset. It defaults to 250 (the maximum). Unlike timbre and color, which are added to whatever offset is set by timbre and color potentiometers and/or the timbre and color CV inputs, the the modulation values for level are subtracted from this initial offset value (<code>LEVL</code>). Thus, when a modulator is in <b>ENV+</b> mode, it will have no effect of the output level if the <code>LEVL</code> is already set to 250, its maximum. In order to hear the effect of a positive-going envelope on level, you must reduce <code>LEVL</code> to a lower value - all the way down to zero if you wish to hear nothing between envelope firings.</li>
+<li>The timbre and color potentiometers and/or the timbre and colour CV inputs act as offsets - the weighted sum of the modulator values is added to these offsets. The <code>LEVL</code> setting controls the initial level (gain) offset. It defaults to 127 (the maximum). Unlike timbre and color, which are added to whatever offset is set by timbre and color potentiometers and/or the timbre and color CV inputs, the the modulation values for level when <code>MOD1</code> or <code>MOD2</code> are in <b>LFO</b> or <b>ENV-</b> modes are subtracted from this initial offset value (<code>LEVL</code>), but are added when in <b>ENV+</b> mode. Thus, when a modulator is in <b>ENV+</b> mode, it will have no effect of the output level if the <code>LEVL</code> is already set to 127, its maximum. In order to hear the effect of a positive-going envelope on level, you must reduce <code>LEVL</code> to a lower value - all the way down to zero if you wish to hear nothing between envelope firings.</li>
 <p>
 <li>The <code>M1→2</code> settings controls the degree of frequency modulation of modulator 2 by modulator 1. Yes, LFO 1 can frequency modulate LFO 2! </li>
 <p>
-<li><code>M1T2</code>, <code>M1C2</code> and <code>M1F2</code> are ON/OFF switches which determine whether the depth of modulation of timbre, color and pitch by modulator 2 is itself modulated by the current value of modulator 1. That is, when enabled, these settings mean that modulator 1 determines depth of modulator 2 modulation of timbre, color and oscillator frequency, respectively. Thus, if you set modulator 1 to be a slow envelope with a gentle attack, and set <code>M1F2</code> on, with <code>M2→F</code> set to some positive amount, and modulator 2 in LFO mode, then the effect will be vibrato that slowly fades in after a trigger is received. There are many other interesting variations possible.</li>
+<li><code>M1F2</code> is an ON/OFF switch which determines whether the depth of modulation of timbre and pitch by modulator 2 is itself modulated by the current value of modulator 1. That is, when enabled, this setting means that modulator 1 determines depth of modulator 2 modulation of oscillator frequency. Thus, if you set modulator 1 to be a slow envelope with a gentle attack, and set <code>M1F2</code> on, with <code>M2→F</code> set to some positive amount, and modulator 2 in LFO mode, then the effect will be vibrato that slowly fades in after a trigger is received. There are many other interesting variations possible.</li>
 <p>
-<li>The ratio between the attack and decay segments of each envelope, or the rising part of the waveform and the falling part in <b>LFO</b> mode, can be set by menu choices labelled <code>⇑⇓1</code> and <code>⇑⇓2</code>. These provide value choices ranging between 2 and 5000 (these are ratios expressed as a percentage, thus 100 is a ratio of 1:1). These values refer to the ratio between the duration of the attack segment of the attack-decay (AD) envelope, or the rising segment of the LFO waveform, and the duration of the decay segment or falling segment, respectively. Thus a value of 10 means that the attack part of the envelope is a tenth of the duration of the decay part. Likewise, at a setting of 10 the LFO waveform is asymmetrical, with the rising portion only one-tenth as long as the falling portion. Obviously a ratio setting of 100 produces a symmetrical waveform, and an envelope in which attack and decay are of equal duration. At a setting of 5000, the decay/falling arm of the envelope is 50 times as long as the attack/rising arm. <ul><li><b>Note</b>: the LFO frequency or the total envelope duration will change as the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. This is a known deficiency which may be able to be addressed in future versions of Bees-in-the-Trees. For now, you may need to re-adjust <code>RAT1</code> or <code>RAT2</code> after changing <code>⇑⇓1</code> and <code>⇑⇓2</code>.</li></ul></li>
+<li>The ratio between the attack and decay segments of each envelope, or the rising part of the waveform and the falling part in <b>LFO</b> mode, can be set by menu items labelled <code>⇑⇓1</code> and <code>⇑⇓2</code>. These provide value choices ranging between 0 and 127. These values refer to the ratio between the duration of the attack segment of the attack-decay (AD) envelope, or the rising segment of the LFO waveform, and the duration of the decay segment or falling segment, respectively. A value of 10 means that the attack part of the envelope is a 10/(128-10) fraction (that is, 10/118, or 0.085, or 8.5%) of the of the duration of the decay part. Likewise, at a setting of 10 the LFO waveform is asymmetrical, with the rising portion only 10/117 as long as the as the falling portion. A setting of 63 produces an almost symmetrical waveform (attack/rising is 63/64 of the duration of the decay/falling duration). At a setting of 127, the decay/falling arm of the envelope is 127 times as long as the attack/rising arm. However, you don't need to think too hard about the underlying arithmetic, just set the value to whatever sounds correct, remembering that values below 63 means attack is shorter than decay, and above 63 means decay is shorter than the attack.<ul><li><b>Note</b>: the LFO frequency or the total envelope duration will change slightly as the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. This is a known deficiency which may be able to be addressed in future versions of Bees-in-the-Trees. For now, you may need to re-adjust <code>RAT1</code> or <code>RAT2</code> after changing <code>⇑⇓1</code> and <code>⇑⇓2</code>.</li></ul></li>
 <p>
 <li>Each of the two internal modulators has its own pair of shape settings (<code>⇑SH1</code> and <code>⇓SH1</code>, and <code>⇑SH2</code> and <code>⇓SH2</code>). These set the shape of the curve used for the attack/rising and decay/falling parts of the envelope/LFO waveform respectively, for each of modulator 1 and modulator 2. Thus, an envelope can have different shapes for the attack and decay portions, and an LFO waveform can not only be asymmetrical, but have a different curvature or shape on the raising and falling arms of its cycle. The following curve shapes are available:
 <ul>
@@ -396,26 +451,35 @@
 <li><b>RATE</b>, in which voltage on the FM input sets the duration of the envelope segments, or the frequency of the LFOs - thus providing voltage-controlled envelopes and/or LFOs, with the FM voltage affecting the duration/speed of both internal modulators. <ul><li><em><b>Tip</b></em>: if you have <code>MOD1</code> set as an envelope, and <code>MOD2</code> set as an LFO, or <em>vice versa</em>, and you are using <code>FMCV</code>=<b>RATE</b>, then it may be useful to set <code>RINV</code> to <b>OFF</b>, so that the CV operates in the same direction on both <code>MOD1</code> and <code>MOD2</code>.</li></ul></li>
 <li><b>RAT1</b> is the same except the FM voltage only affects modulator 1;</li>
 <li><b>RAT2</b> is also the same but the FM voltage only affects modulator 2. Note that for the rate settings, the voltage on the FM input is added to the <b>RAT1</b> and <b>RAT2</b> values for each each modulator, thus a base LFO speed or envelope duration can be set using <b>RAT1</b> and <b>RAT2</b>, and that can then be modified by voltage on the FM input.</li>
+<li><b>DCAY</b> is the same as <b>RATE</b> except the FM voltage only affects the decay duration of both modulators - thus, you can have a sharp attack and vary the decay time only under voltage control if using envelope modes, or you can alter the shape (the symmetry, at least) of the LFO waveform under voltage control;</li>
+<li><b>DCY1</b> is the same as <b>RAT1</b> except it only affects decay/fall time of modulator 1;</li>
+<li><b>DCY2</b> is the same as <b>RAT2</b> except it only affects decay/fall time of modulator 2;</li>
 <li><b>LEVL</b> provides voltage control over the level (amplitude, gain). You may need to reduce the initial gain (<code>GAIN</code>) down to zero to hear the full effect - approximately 5V at the FM CV input should produce full gain. This setting provides Braids with a built-in virtual VCA, in the same way that the Level input in Tides/Sheep acts as a virtual VCA.</li>
+<li><b>HARM</b> allows the FM CV input to offset the current note as a quantised harmonic series. The <a href="http://en.wikipedia.org/wiki/Harmonic_series_(music)">harmonic series</a> is the base frequency of the current note multiplied by 2, 3, 4 and so on. In Bees-in-the-Trees, approximately +5V into the FM CV input (with the attenuverter fully clockwise) gives the 15th harmonic overtone (that is, the base frequency times 15), although higher voltages will produce up to the 30th harmonic overtone. It is bipolar, so negative voltages on the FM CV input divide the current note frequency by 2, 3, 4 and so on, down to 30. You can use the FM attenuvertor to change positive voltages into negative voltages, of course. Try it! It sounds really nice when fed with an external LFO or a complex slowly fluctuating voltage source. The harmonic series (also called harmonic overtones and undertones) doesn’t depend on a particular musical key, so you can still play a normal melody and “bend” the notes up or down in the harmonic series. Of course, it is better if you use just intonation (or Pythagorean tuning) to play those notes, and if you have more than one Braids, or use multi-tracking to record one Braids several times, you will get “perfect” chords. Yarns can do just intonation or Pythagorean scales for you.</li>
+<li><b>TRNG</b> provides voltage control over the length (in bits) of the shift register used by the built-in Turing Machine pseudo-random sequencer. See below for more details of the Turing Machine. This value is added to that set by the <code>TRNG</code> menu setting. Approximately 5V input results in a value of 32 (the values are constrained to between 0 and 32. Note that a value of 0 stops the Turing Macine. It is suggested that you set a minimum shift Register length using the <code>TRNG</code> menu setting, and then use the <code>FMCV</code>=<b>TRNG</b> setting with a voltage into the FM CV input to alter the length of the shift register on-the-fly.</li>
+<li><b>PROB</b> provides voltage control over the probability that a bit will be flipped on each step of the built-in Turing Machine pseudo-random sequencer. See below for more details of the Turing Machine. This value is added to that set by the <code>PROB</code> menu setting. Approximately 5V input results in <em>p</em>=1, that is, certainty that a bit will be flipped on every step. Note that you can just "ping" the FMCV with a gate signal to cause a bit flip on just a single step, provided the "ping" or gate is synchronised or overlaps the trigger/clock signal input into the Trigger input, which drives the Turing Machine sequence.</li>
+<li><b>SPAN</b> provides voltage control over the span of notes available to the Turing Machine, from 2 to 36 notes (see the section on the Turing Machine below). It is added to the value of the <code>SPAN</code> setting - in other words, <code>SPAN</code> sets a minimum or floor for the Turing Machine note span, and voltages on the FM CV input when <code>FMCV</code>=<b>SPAN</b> add to this floor value. Approximately 5 volts represents the maximum span of 36. Negative voltages are ignored.</li>
 <li><b>JITR</b> provides voltage control over VCO jitter (drift), with a base level set by the <code>JITR</code> menu setting.</li>
 <li><b>BITS</b> provides voltage control over bit crush depth, with a base level set by the <code>BITS</code> menu setting. Increasing voltage reduces the number of bits in the output signal.</li>
 <li><b>SRAT</b> provides voltage control over sample rate (decimation), with a base level set by the <code>SRAT</code> menu setting. Increasing voltage reduces the sample rate (that is, increases the decimation) of the output signal.</li>
-<li><b>SMUT</b> provides simultaneous voltage control over both bit crushing (<code>BITS</code>) and VCO jitter (<code>JITR</code>).</li>
-<li><b>DIRT</b> provides simultaneous voltage control over both sample rate reduction (<code>SRAT</code>) and VCO jitter (<code>JITR</code>).</li>
-<li><b>FLTH</b> provides simultaneous voltage control over both sample rate reduction (<code>SRAT</code>) and bit crushing (<code>BITS</code>).</li>
-<li>The final setting provides simultaneous voltage control over sample rate reduction (<code>SRAT</code>), bit crushing (<code>BITS</code>) and VCO jitter (<code>JITR</code>).</li>
+<li><b>SMUT</b> provides simultaneous voltage control over both sample rate reduction (<code>SRAT</code>) and bit crushing (<code>BITS</code>).</li>
+<li>The final over-the-top setting provides simultaneous voltage control over sample rate reduction (<code>SRAT</code>), bit crushing (<code>BITS</code>) and VCO jitter (<code>JITR</code>).</li>
 </ul>
 </li>
 <p>
-<li>LFO range has been enabled in the range (<code>RANG</code>) menu. This LFO range was always present in the Braids source code, but its selection was disabled. The LFO range seems to go down to about 1Hz or so - thus it doesn't make Braids into a proper LFO, but it is low enough for many LFO modulation duties. Braids certainly produces many more interesting LFO waveforms than your average voltage-controlled LFO, And of course the two internal LFOs can still modulate Braids when its set to LFO - thus you can use Braids as two voltage-controlled LFOs (<code>MOD1</code> and <code>MOD2</code>) inside your voltage-controlled LFO (the main Braids VCO when in LFO range)! </li>
+<li>LFO range has been enabled in the range (<code>RANG</code>) menu. This LFO range was always present in the Braids source code, but its selection was disabled. The LFO range seems to go down to about 1Hz or so - thus it doesn't make Braids into a proper LFO, but it is low enough for many LFO modulation duties. Braids certainly produces many more interesting LFO waveforms than your average voltage-controlled LFO! And of course the two internal LFOs can still modulate Braids when its set to LFO range - thus you can use Braids as two voltage-controlled LFOs (<code>MOD1</code> and <code>MOD2</code>) inside your voltage-controlled LFO (the main Braids VCO when in LFO range)! </li>
 <p>
 <li><code>DRFT</code> (VCO drift) has been renamed <code>JITR</code> (jitter), and is now a settable value, from zero (off) to 127. At a setting of 127, you get noisy sonic destruction, but lower levels of jitter can add some nice dirt to some oscillator models. <code>JITR</code> can also be put under voltage control via the <code>FMCV</code> setting. Note that <code>JITR</code> causes the oscillator pitch to change (not sure why) to some degree.</li>
 <p>
 <li>The <code>RATE</code> (sample rate) setting in Braids has been renamed <code>SRAT</code> in Bees-in-the-Trees.
 <p>
-<li>The <code>TSRC</code>, <code>TDLY</code>, <code>OCTV</code>, <code>QNTZ</code>, <code>BITS</code>, <code>BRIG</code>, <code>CAL.</code> and CV testing menu choices are unchanged and function exactly as they do in the official Braids firmware.</li>
+<li>The <code>TSRC</code>, <code>TDLY</code>, <code>OCTV</code>, <code>BITS</code>, <code>BRIG</code>, <code>CAL.</code> and CV testing menu choices are unchanged and function exactly as they do in the official Braids firmware.</li>
 <p>
-<li>However, immediately following <code>QNTZ</code> (pitch quantisation), there is a new menu selection called <code>QVIB</code>, which stands for "quantise vibrato". It defaults to <b>OFF</b> - that is, vibrato from the internal modulators (or from the external FM input) is applied after pitch quantisation has been performed, if pitch quantisation is enabled (via the <code>QNTZ</code> setting). However, if <code>QVIB</code> is set to <b>ON</b>, then quantisation will be performed <b>after</b> pitch modulation from the internal modulators has been added. Thus, a triangle pitch (frequency) modulation, provided by, say, <code>MOD1</code> via the <code>M1→F</code> level, will result in rising and falling chromatic arpeggio effects, more or less. It can be quite effective when the <b>RNDM</b> modulator shape is used, for example.</li>
+<li>The <code>QNTZ</code> menu setting now offers a much wider range of scales, based on 12-tone equal temperament tuning, to which the pitch can be constrained - apart from just quarter-tone and chromatic semitones, there is a full range of traditional Western scales, a selection of Hindustani raga scales, and a few others. Note that the non-Western scales still use the 12-tone equal temperament (12-TET) tuning, and thus they are not absolutely accurate representations of these scales and associated non-equal tunings, but they are close enough for most purposes. The full list of available quantisation scales is shown in the table above.</li>
+<p>
+<li>Immediately following <code>QNTZ</code> (pitch quantisation), there is a new menu selection called <code>QVIB</code>, which stands for "quantise vibrato". It defaults to <b>OFF</b> - that is, vibrato from the internal modulators (or from the external FM input) is applied after pitch quantisation has been performed, if pitch quantisation is enabled (via the <code>QNTZ</code> setting). However, if <code>QVIB</code> is set to <b>ON</b>, then quantisation will be performed <b>after</b> pitch modulation from the internal modulators has been added. Thus, a triangle pitch (frequency) modulation, provided by, say, <code>MOD1</code> via the <code>M1→F</code> level, will result in rising and falling arpeggio effects, more or less. It can be quite effective when the <b>RNDM</b> modulator shape is used, for example. All of the quantisation scales also work with this, of course.</li>
+<p>
+<li>There is a new menu item called <code>FTUN</code> (oscillator fine-tune). This allows very fine tuning of the oscillator frequency (pitch). Why is this needed, since Braids already has a fine-tune knob, you may ask? The fine-tune knob on Braids acts through the FM CV input. Because Bees-in-the-Trees re-purposes (some would say abuses) the FM CV input for several other purposes, there is no way to fine tune your oscillator using the fine-tune knob when these alternative uses of the FM CV input are enabled. The <code>FTUN</code> setting provides a work-around for this. <code>FTUN</code> defaults to 0, which represents zero pitch offset. Negative values flatten the pitch, positive values sharpen the pitch. Note that it is very fine-grained:  each increment is less than one cent, and the range is only about one quarter of a semi-tine in each direction.</li>
 <p>
 <li>There is a new menu item called <code>FS+H</code>, immediately following <code>OCTV</code>. <code>FS+H</code> stands for "frequency (i.e. pitch) sample-and-hold". It is disabled (<b>OFF</b>) by default, but when enabled (<b>ON</b>), the pitch as set by the V/octave pitch input is sampled whenever a trigger is received on the trigger input, and then that pitch is held until the next trigger input. Note that the "hold" pitch initialises to 440Hz prior to the first trigger being received after enabling <code>FS+H</code>. If <code>FS+H</code>=<b>OFF</b>, then pitch sampling is disabled even if triggers are being received, and thus when you then enable <code>FS+H</code>, Braids will return to the last sampled pitch, at least until a new external trigger signal is received. <ul><li><b>Note</b>: <code>FS+H</code> only works with external triggers, not internally generated triggers, thus if you enable <code>FS+H</code>, first ensure that <code>TSRC</code>=<b>EXT</b>, not <b>AUTO</b>. Also, although the value of <code>FS+H</code> is stored along with other settings, the sampled frequency is not, and thus does not persist between reboots - it is an ephemeral value.</li></ul></li>
 <p> 
@@ -423,7 +487,17 @@
 <p>
 <li><code>OSYN</code> (oscillator sync) determines whether oscillator phase synchronisation is enabled or not. It defaults to <b>OFF</b>. When enabled, (external or auto) triggers may cause audible clicks in some oscillator modes. Disabling it prevents those clicks, at the expense of not resetting the oscillator phase. However, the official Braids firmware disables oscillator sync whenever the internal envelope was used, in any case, probably for the same reason.</li>
 <p>
-<li>Bees-in-the-Trees adds a simple step meta-sequencer to your Braids. There are eight steps available in the sequence, and the sequence is advanced by triggers received on the trigger input jack. The <code>MSEQ</code> setting enables the meta-sequencer. The value of <code>MSEQ</code>, from 2 to 8, also sets the number of steps. The <code>SDIR</code> setting determines the direction of the meta-sequence: <b>LOOP</b> means that the sequence increments from 1 to the number of steps as set by <code>MSEQ</code>, and then it loops round to step 1 again; <b>SWNG</b> causes the sequence to swing up then down between step 1 and step indicated by <code>MSEQ</code>; and <b>RNDM</b> chooses an oscillator model randomly from the eight specified for each meta-sequence step. The probability density function is uniform, but a bias towards particular oscillator models can be introduced by specifying that model for more than one of the eight available steps. The settings <code>WAV1</code>, <code>WAV2</code>...<code>WAV8</code> allow the oscillator model for each step to be chosen. The settings <code>RPT1</code>, <code>RPT2</code>...<code>RPT8</code> determine the number of trigger inputs that each step is repeated (held) for - all these settings default to 1. Thus, <code>RPT4</code>=3 means that the sequence of oscillator models will stay on step 4 for 3 successive input triggers. Using this, a "rhythm" of oscillator models can be set up, even when the triggers come from a regular clock signal. Note that if <code>MSEQ</code> is enabled, then <code>FMCV</code>=<b>META</b> mode is disabled if it is set. However, other <code>FMCV</code> modes still work when <code>MSEQ</code> is enabled. <ul><li><b>Trap</b>: if <code>MSEQ</code> was enabled when you last saved your settings (by clicking or long-clicking on <code>SAVE</code>), then it will still be enabled when you next power up. If there is no trigger input when you power up, the meta-sequence will not be stepping through its stored sequence, and thus it may not be obvious that <code>MSEQ</code> is turned on. Furthermore, oscillator selection will not seem to work. Do not panic! Simply click or long-click on the encoder to get to the settings menu, navigate to <code>MSEQ</code> and turn it off, and all will be well again. Remember to save your settings before powering off, by clicking or long-clicking on <code>SAVE</code>!</li> <li><b>Peculiarity</b>: if <code>MSEQ</code> is enabled when your Braids boots up, but if there is no trigger being received, then it will initialise on the <b>second</b> step of the meta-sequence - that is, the oscillator model specified by <code>WAV2</code> will be set. That's because Braids generates an internal trigger when it boots, and thus the meta-sequence advances one step, even without an external trigger.</li></ul></li>
+<li>Bees-in-the-Trees adds a simple step meta-sequencer to your Braids. There are eight steps available in the sequence, and the sequence is advanced by triggers received on the trigger input jack. The <code>MSEQ</code> setting enables the meta-sequencer. The value of <code>MSEQ</code>, from 2 to 8, also sets the number of steps. The <code>SDIR</code> setting determines the direction of the meta-sequence: <b>LOOP</b> means that the sequence increments from 1 to the number of steps as set by <code>MSEQ</code>, and then it loops round to step 1 again; <b>SWNG</b> causes the sequence to swing up then down between step 1 and step indicated by <code>MSEQ</code>; and <b>RNDM</b> chooses an oscillator model randomly from the eight specified for each meta-sequence step. The probability density function is uniform, but a bias towards particular oscillator models can be introduced by specifying that model for more than one of the eight available steps, or by increasing the <code>RPT</code> setting for that step (see below). The settings <code>WAV1</code>, <code>WAV2</code>...<code>WAV8</code> allow the oscillator model for each step to be chosen. The settings <code>NOT1</code>, <code>NOT2</code>...<code>NOT8</code> allow positive or negative pitch offsets (musical note) for each step to be specified. Zero (the default) means no offset, 1 means one semitone higher pitch, 2 means two semitones higher, and so on up to 31. Likewise, -1 means one semi-tone lower pitch, and so on down to -31. These offsets are relative to whatever note or pitch is currently playing - so the sequence can be transposed up and down using a keyboard as a controller (via a MIDI-to_CV convertor such as Yarns) or an external sequencer, or, indeed, by the Turing Machine inside Braids. The settings <code>PAR1</code>, <code>PAR2</code>...<code>PAR8</code> act as a multiplier for the value sent to timbre, colour, level (gain) or combinations of these three. The destination of the <code>PAR</code> multiplier for each step is set by the <code>MSPD</code> setting. For example, if <code>MSPD</code>=<b>TIMB</b> and <code>PAR1</code> is 63, then the value sent to the timbre input will be halved (63/127). For this reason, the <code>PAR</code> settings all default to 127. The settings <code>RPT1</code>, <code>RPT2</code>...<code>RPT8</code> determine the number of trigger inputs that each step is repeated (held) for - all these settings default to 1. Thus, <code>RPT4</code>=3 means that the sequence of oscillator models will stay on step 4 for 3 successive input triggers. Using this, a "rhythm" of oscillator models can be set up, even when the triggers come from a regular clock signal. Note that if <code>MSEQ</code> is enabled, then <code>FMCV</code>=<b>META</b> mode is disabled if it is set. However, other <code>FMCV</code> modes still work when <code>MSEQ</code> is enabled. <ul><li><b>Trap</b>: if <code>MSEQ</code> was enabled when you last saved your settings (by clicking or long-clicking on <code>SAVE</code>), then it will still be enabled when you next power up. If there is no trigger input when you power up, the meta-sequence will not be stepping through its stored sequence, and thus it may not be obvious that <code>MSEQ</code> is turned on. Furthermore, oscillator selection will not seem to work. Do not panic! Simply click or long-click on the encoder to get to the settings menu, navigate to <code>MSEQ</code> and turn it off, and all will be well again. Remember to save your settings before powering off, by clicking or long-clicking on <code>SAVE</code>!</li> <li><b>Peculiarity</b>: if <code>MSEQ</code> is enabled when your Braids boots up, but if there is no trigger being received, then it will initialise on the <b>second</b> step of the meta-sequence - that is, the oscillator model specified by <code>WAV2</code> will be set. That's because Braids generates an internal trigger when it boots, and thus the meta-sequence advances one step, even without an external trigger.</li></ul></li>
+<p>
+<li>Embedded Music Thing <a href="http://musicthing.co.uk/modular/?page_id=21">Turing Machine</a>/Richter NoiseRing implementation: it is strongly recommended that you read Tom Whitwell's <a href="http://musicthing.co.uk/modular/wp-content/uploads/2012/05/random-sequencer-documentation-v2-1.pdf">explanation of the how the hardware Turing Machine works</a> so that the following explanations make more sense. The Turing Machine implementation in Bees-in-the-Trees is not an exact recreation of Tom Whitwell's hardware Turing Machine module, but it is inspired by it.
+<ul><li><code>TRNG</code> sets the length of the Turing Machine shift register, with a length of zero to 32 bits. Zero disables the Turing Machine. Unlike the hardware Turing machine, which is restricted to 8 or 16 bits for the shift register length, the shift register length for the Turing Machine in Bees-in-the-Trees is adjustable on-the-fly in 1 bit increments right up to 32 bits. In this respect, it acts somewhat like the <a href="http://www.circuitshaman.com/p/bytes.html">Circuit Shaman Bytes expander module</a> for the Turing Machine. Note that slightly weird, but potentially interesting things can happen as very small lengths of the shift register (lengths under 4). Using short lengths with a small <code>SPAN</code> value (see below) and <code>PROB</code>=126 or 127 can be useful, but don't ask me to explain why it behaves the way it does with these settings! Interestingly, there are similar descriptions of weird behaviour in the <a href="https://docs.google.com/file/d/0B1jw1Qp2qZVJTTgtNVlibTZoTkU/edit">manual</a> for the Circuit Shaman Bytes (hardware) expander for the (hardware) Turing Machine. You can use an external control voltage into the FM CV input to control the TRNG shift register length parameter as well, if <code>FMCV</code>=<B>TRNG</b>. This external <code>FMCV</code>=<B>TRNG</b> value is added to the <code>TRNG</code> setting. It is best to set a minimum shift register length using <code>TRNG</code> and then modulate it upwards using an external CV with <code>FMCV</code>=<B>TRNG</b>, if you wish.</li>
+<li><code>SPAN</code> sets the span (or range) of notes available to the Turing Machine, from a minimum of 2 notes up to 36 notes, with a default of 12 notes. The actual notes played are determined by the <code>SCAL</code> setting. Shorter spans create a more restrained, sombre feel to the sequence, while longer spans sound livelier and more bouncy, but it is easy to go too far with the span. Very short snote spans, or 3 or 4, can be effective when used with heavy timbral and/or colour modulation. Note that the spans interacts with the chosen scale: scales with fewer notes per octave (eg the pentatonic scales) will require shorter note spans, and <em>v-v</em>. You can use an external control voltage into the FM CV input to control the SPAN parameter as well, if <code>FMCV</code>=<B>SPAN</b>. This external <code>FMCV</code>=<B>SPAN</b> value is added to the <code>SPAN</code> setting. It is best to set a minimum span of notes using <code>SPAN</code> and then modulate it upwards using an external CV with <code>FMCV</code>=<B>SPAN</b>, if you wish.</li>
+<li><code>PROB</code> sets the probability that a bit in the LSB (least significant bit) position of the shift register will be flipped. There is an implicit divisor of 512. Thus 0 means zero probability (no flipping, ever), 126 means a probability of approximately 0.25 (126/512). Note that the value 127 is a special case which forces the probability to be 1 (that is, every bit is flipped at every step), thus turning the shift register into a Moebius strip and effectively doubling its length (to a maximum of 64 steps). In general, low settings of 2 to 20 work best, and the shorter the length of the shift register, as set by <code>TRNG</code>, the lower the <code>PROB</code> setting needs to be in order to maintain a given rate (strictly, expectation) of a bit being flipped in any arbitrary time period. Remember, the probability is tested at every step of the shift register, so if you only want a bit to be flipped every few cycles of the register, you will need a quite low per-shift probability. In general, low probabilities are the sweet spot. For example, if the shift register length <code>TRNG</code> is set to 8 bits, and the bit-flip probability <code>PROB</code> is set to 64, then there is approximately one chance in eight that a bit will be flipped in the shift register pattern each step (64/512), and thus in any one 8-step cycle of the shift register, the expectation is that one bit will be flipped and thus the pattern will change. That does not mean that the pattern <b>will</b> change every cycle - just that in the long-run the rate of pattern change will be about once per cycle (which is probably too high for most purposes). However, if the bit shift register is 32 bits, that is, four times as long, then at the same <code>PROB</code> setting of 64, a bit flip in the pattern in any cycle is four times less likely.</li>
+<li><code>TDIV</code> sets the Turing Machine clock/trigger divider. It defaults to one, but if set to <em>n</em>, then the Turing Machine shift register will only advance a step on every <em>n</em>th trigger input. This is effective when used in conjunction with the <code>MDIV</code> setting, which does the same for the meta-sequencer. For example, if the Turing Machine shift register length is 16 (<code>TRNG</code>=16), and <code>MDIV</code>=16, then each step of the meta-sequencer can be used to transpose the Turing Machine sequence, and/or change the oscillator model on each sequence repeat. The same applies in reverse - by setting <code>TDIV</code> to a multiple of the meta-sequence length, then the meta-sequence can be transposed by a pseudo-random amount each <em>n</em> cycles.</li>
+<li><code>SCAL</code> sets the scale of notes which the Turing Machine choses from, up to 32 notes (when <code>WIND</code>=5). The scales available are listed in the table above.</li>
+<li><code>SEED</code> enables re-seeding of the Turing Machine shift register with a fresh random 32-bit value. Zero means no re-initialisation. Values greater than 0 mean it will re-seed the shift register with a random value every <em>n</em>th cycle of the shift register. Thus you can have sudden discontinuities in the random pattern every so many "bars" (where "bar" means one cycle of the shift register) if you set <code>SEED</code> to some multiple of the <code>TRNG</code> shift register length setting.</li>
+</ul>
+</li>
 <p>
 <li>There is a new oscillator model, called <b>ZERO</b>, right at the end of the model list, after <b>PRTC</b>. Don't get too excited, because this model fills the audio buffer with zeroes, and thus produces absolute silence. This was added to enable "rests" to be inserted in the <code>MSEQ</code> meta-sequencer. The downside is that there is an audible click when switching to it, because the signal amplitude immediately goes to zero. I can't think of any easy way to avoid this, however. The same problem occurs, to a lesser degree, and in the factory firmware as well, when switching to some of the other models, for similar reasons. Note that the <b>ZERO</b> model isn't accessible via <code>FMCV</code>=<b>META</b> mode.</li>
 <p>
@@ -443,12 +517,12 @@
 <h2>
 <a id="anti-enhancements" class="anchor" href="#anti-enhancements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Anti-enhancements</h2>
 
-<p>These changes were required in order to free up space in the firmware storage for the enhancements described above.</p>
+<p>These changes, with respect to the official Braids version 1.7 firmware, were required in order to free up space in the firmware storage for the enhancements described above.</p>
 
 <ul>
 <li>A <em>paschal oophorectomy</em> has been performed: the Easter egg oscillator model has been removed and the ability to trigger Easter egg mode has been disabled. One could say that the code for it has been Pynchoned off...</li>
 <li>The marquee feature has been removed.</li>
-<li>The QPSK oscillator model has been removed.</li>
+<li>The NOIS, TWNQ, PRTC and QPSK oscillator models have been removed.</li>
 <li>VCO tune flattening (<code>FLAT</code>) and signature waveshapping (<code>SIGN</code>) have been removed.</li>
 </ul>
 
@@ -494,12 +568,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <ol>
 <li>Use the audio bootloader, <a href="http://mutable-instruments.net/modules/braids/manual#firmware">as described in the Braids manual</a>, to first load the very latest Braids v1.7 firmware – see the link to it above. Verify that works correctly. The reason for first upgrading to Braids v1.7 (or later) before installing Bees-in-the-Trees is to confirm that audio firmware updates are working correctly in your system. It is much better to confirm that using the official Braids v1.7 firmware than with Bees-in-the-Trees. Common reasons for audio updates not working are insufficient volume level when playing the firmware WAV file into your Braids module, or extraneous sounds, such as email or Facebook post notifications, being generated in your computer while you are playing the firmware WAV file.</li>
 <li>Practice the Braids re-calibration procedure and verify that has worked.</li>
-<li>Proceed to load the latest Bees-in-the-Trees version via the audio bootloader in the same way. Compiled firmware images in WAV format for Bees-in-the-Trees are available at the following locations. Be sure to download the files, using the download icon in the middle of the top of the page - don't listen to the file! And check that the downloaded size is exactly as shown below. You can also check the SHA1 or MD5 hash values if you like, but that is not essential.</li>
-  <ul>
-    <li><a href="https://drive.google.com/file/d/0BykuVdPr-by8N3pSbllyWWo3V0U/view?usp=sharing">Bees-in-the-Trees version 3.0 firmware update file in WAV format - for Braids manufactured by Mutable Instruments</a> (8,540,972 bytes, SHA-1 5a35fc4c1299a5d72f5bc46cee4ff08be7c8ddae, MD5 cd32d0b0e80bb0872baaa603b97ab919)</li>
-    <li><a href="https://drive.google.com/file/d/0BykuVdPr-by8ZTFLMHBrNnpvWms/view?usp=sharing">Bees-in-the-Trees version 3.0 firmware update file in WAV format - for DIY Braids with Bourns or similar reversed encoder</a> (8,540,972 bytes, SHA-1 4d4a65f04e98221e598306459ddde8f839aeaf62, MD5 2720cf6aeb8f21c8ecd116be814244e6)</li>
-  </ul>
-<li>Re-calibrate your Braids.</li>
+<li>Proceed to load the latest Bees-in-the-Trees version via the audio bootloader in the same way. Compiled firmware images in WAV format for Bees-in-the-Trees v3.9.0 are available from the <a href="https://github.com/timchurches/Mutated-Mutables/releases/latest">release page</a>. After downloading the appropriate file (the "factory encoder" file if you have a factory-made Braids, or the "reversed encoder" file for DIY Braids), unzip the file and <a href="http://mutable-instruments.net/modules/braids/manual#firmware">upload it to your Braids</a>.</li>
+<li><a href="http://mutable-instruments.net/modules/braids/manual#calibration">Re-calibrate</a> your Braids.</li>
 <li>Go crazy with it.</li>
 </ol>
 
@@ -524,7 +594,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <a id="to-do-and-roadmap" class="anchor" href="#to-do-and-roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>TO-DO and Roadmap</h1>
 
 <ul>
-<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change. Due to it being a form of non-linear FM, perhaps?</li>
+<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change. Is it due to it being a form of non-linear FM, perhaps?</li>
 <li>PENDING: Prevent the LFO frequency or the total envelope duration from changing when the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. Did I mention that integer arithmetic is a pain in the arse?</li>
 </ul>
 <p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured in the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>.</p>
@@ -557,6 +627,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li><a href="#Bees-in-the-Trees-audience">Intended audience for Bees-in-the-Trees</a></li>
 <li><a href="#Dislike-menu-diving">But I hate menu-diving</a></li>
 <li><a href="#TLDR">TL;DR</a>
+<li><a href="#Bees-in-the-Trees-changes">Changes in the latest version</a></li>
 <li><a href="#Bees-in-the-Trees-enhancements">Bees-in-the-Trees: the gory details of all the changes made to the official Braids firmware</a></li>   
 <li><a href="#modulation-map">The Modulation Graph</a></li>
 <li><a href="#anti-enhancements">Anti-enhancements</a></li>
@@ -588,7 +659,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li><a href="https://www.youtube.com/watch?v=gnWaZ93zqbQ">RyuX using Bees-in-the-Trees for some sonic destruction</a></li>
 <li><a href="https://www.youtube.com/watch?v=lGYnOIE5Pn4">Chris Penalosa using Bees-in-the-Trees v3.0 to create a really interesting soundscape with just a few modules</a></li>
 <li><a href="https://www.youtube.com/watch?v=SZM1fnzwkEc">A video of a jam session by SunFalls, featuring Braids running Bees-in-the-Trees v3.0</a></li>
-<li><a href="https://www.youtube.com/watch?v=GrlohD0lSRE">A long and turgid tour through Bees-in-the-Trees version 3.g, which was an earlier development version, but broadly similar to the current version 3.0</a></li>
+<li><a href="https://www.youtube.com/watch?v=C2fdGqA1Fa8">Sneak-Thief (aka Michel Morin) in Berlin demonstrating the use of a piezo controller tapped with the fingers to trigger 4 Braids, each running Bees-in-the-Trees v3.4 with a pseudo-random "melody" provided by the Turing Machine built into Bees-in-the-Trees.</a></li>
+<li><a href="https://www.youtube.com/watch?v=GrlohD0lSRE">A long and turgid tour through Bees-in-the-Trees version 3.g, which was an earlier development version, but broadly similar to the current version 3.4</a></li>
 <li><a href="https://www.youtube.com/watch?v=9Rp7Mrl0gZc">Michael Nyman</a></li>
 </ul>
 
