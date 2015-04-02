@@ -127,19 +127,19 @@
     <td class="tg-vn4c">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-e3zv">⇑SH1</td>
-    <td class="tg-031e">Shape of rising arm of LFO or attack part of envelope</td>
-    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
-  </tr>
-  <tr>
-    <td class="tg-vv7f">⇓SH1</td>
-    <td class="tg-vn4c">Shape of falling arm of LFO or decay part of envelope</td>
-    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
-  </tr>
-  <tr>
     <td class="tg-e3zv">⇑⇓1</td>
     <td class="tg-031e">Ratio of rising/attack LFO/envelope duration to falling/decay duration</td>
     <td class="tg-031e">0 to 127, with 63 representing equal attack/rising to decay/falling times</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇑SH1</td>
+    <td class="tg-vn4c">Shape of rising arm of LFO or attack part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇓SH1</td>
+    <td class="tg-031e">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
   </tr>
   <tr>
     <td class="tg-vv7f">M1SY</td>
@@ -182,19 +182,19 @@
     <td class="tg-031e">0 to 127</td>
   </tr>
   <tr>
-    <td class="tg-vv7f">⇑SH2</td>
-    <td class="tg-vn4c">Shape of rising arm of LFO or attack part of envelope</td>
-    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
-  </tr>
-  <tr>
-    <td class="tg-e3zv">⇓SH2</td>
-    <td class="tg-031e">Shape of falling arm of LFO or decay part of envelope</td>
-    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
-  </tr>
-  <tr>
     <td class="tg-vv7f">⇑⇓2</td>
     <td class="tg-vn4c">Ratio of rising/attack LFO/envelope duration to falling/decay duration</td>
     <td class="tg-vn4c">0 to 127, with 63 representing equal attack/rising to decay/falling times</td>
+  </tr>
+  <tr>
+    <td class="tg-e3zv">⇑SH2</td>
+    <td class="tg-031e">Shape of rising arm of LFO or attack part of envelope</td>
+    <td class="tg-031e">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
+  </tr>
+  <tr>
+    <td class="tg-vv7f">⇓SH2</td>
+    <td class="tg-vn4c">Shape of falling arm of LFO or decay part of envelope</td>
+    <td class="tg-vn4c">EXPO, LINR, WIGL, SINE, SQRE, BOWF, RNDE, RNDL, RNDS, RNDM</td>
   </tr>
   <tr>
     <td class="tg-e3zv">M2SY</td>
@@ -381,8 +381,8 @@
     <td class="tg-vn4c">CHRM (chromatic 12-tone equal temperament [12TET]),  ION (Ionian), DOR (Dorian), PHR (Phrygian), LYD (Lydian), MIXO (Mixolydian), AEOL (Aeolian), LOCR (Locrian), BLMJ (Blues major), BLMN (Blues minor), 5MAJ (Pentatonic major), 5MIN (Pentatonic minor), BHAI (Hindustani Bhairav), SHRI (Shri), RUPA (Rupavati), TODI (Todi), RAGE (Rageshri), KAAF (Kaafi), MEGH (Megh), MALK (Malkauns), DEEP (Deepak), FOLK (Folk), JAPN (Japanese), GAML (Gamelan), WHOL (Whole tone), HARM (Harmonic series)</td>
   </tr>
   </tr>
-    <td class="tg-e3zv">TINT</td>
-    <td class="tg-031e">Turing Machine shift register re-initialise divider</td>
+    <td class="tg-e3zv">SEED</td>
+    <td class="tg-031e">Turing Machine shift register re-seed divider</td>
     <td class="tg-031e">0 to 127, 0 is OFF, <em>n</em> re-seeds the shift register with a new random number (hence random bits) on the <em>n</em>th cycle of the shift register cycle.</td>
   </tr>
   <tr>
@@ -495,7 +495,7 @@
 <li><code>PROB</code> sets the probability that a bit in the LSB (least significant bit) position of the shift register will be flipped. There is an implicit divisor of 512. Thus 0 means zero probability (no flipping, ever), 126 means a probability of approximately 0.25 (126/512). Note that the value 127 is a special case which forces the probability to be 1 (that is, every bit is flipped at every step), thus turning the shift register into a Moebius strip and effectively doubling its length (to a maximum of 64 steps). In general, low settings of 2 to 20 work best, and the shorter the length of the shift register, as set by <code>TRNG</code>, the lower the <code>PROB</code> setting needs to be in order to maintain a given rate (strictly, expectation) of a bit being flipped in any arbitrary time period. Remember, the probability is tested at every step of the shift register, so if you only want a bit to be flipped every few cycles of the register, you will need a quite low per-shift probability. In general, low probabilities are the sweet spot. For example, if the shift register length <code>TRNG</code> is set to 8 bits, and the bit-flip probability <code>PROB</code> is set to 64, then there is approximately one chance in eight that a bit will be flipped in the shift register pattern each step (64/512), and thus in any one 8-step cycle of the shift register, the expectation is that one bit will be flipped and thus the pattern will change. That does not mean that the pattern <b>will</b> change every cycle - just that in the long-run the rate of pattern change will be about once per cycle (which is probably too high for most purposes). However, if the bit shift register is 32 bits, that is, four times as long, then at the same <code>PROB</code> setting of 64, a bit flip in the pattern in any cycle is four times less likely.</li>
 <li><code>TDIV</code> sets the Turing Machine clock/trigger divider. It defaults to one, but if set to <em>n</em>, then the Turing Machine shift register will only advance a step on every <em>n</em>th trigger input. This is effective when used in conjunction with the <code>MDIV</code> setting, which does the same for the meta-sequencer. For example, if the Turing Machine shift register length is 16 (<code>TRNG</code>=16), and <code>MDIV</code>=16, then each step of the meta-sequencer can be used to transpose the Turing Machine sequence, and/or change the oscillator model on each sequence repeat. The same applies in reverse - by setting <code>TDIV</code> to a multiple of the meta-sequence length, then the meta-sequence can be transposed by a pseudo-random amount each <em>n</em> cycles.</li>
 <li><code>SCAL</code> sets the scale of notes which the Turing Machine choses from, up to 32 notes (when <code>WIND</code>=5). The scales available are listed in the table above.</li>
-<li><code>TINT</code> enables re-initialisation of the Turing Machine shift register with a fresh random 32-bit value. Zero means no re-initialisation. Values greater than 0 mean it will re-seed the shift register with a random value every <em>n</em>th cycle of the shift register. Thus you can have sudden discontinuities in the random pattern every so many "bars" (where "bar" means one cycle of the shift register) if you set <code>TINT</code> to some multiple of the <code>TRNG</code> shift register length setting.</li>
+<li><code>SEED</code> enables re-seeding of the Turing Machine shift register with a fresh random 32-bit value. Zero means no re-initialisation. Values greater than 0 mean it will re-seed the shift register with a random value every <em>n</em>th cycle of the shift register. Thus you can have sudden discontinuities in the random pattern every so many "bars" (where "bar" means one cycle of the shift register) if you set <code>SEED</code> to some multiple of the <code>TRNG</code> shift register length setting.</li>
 </ul>
 </li>
 <p>
@@ -568,12 +568,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <ol>
 <li>Use the audio bootloader, <a href="http://mutable-instruments.net/modules/braids/manual#firmware">as described in the Braids manual</a>, to first load the very latest Braids v1.7 firmware – see the link to it above. Verify that works correctly. The reason for first upgrading to Braids v1.7 (or later) before installing Bees-in-the-Trees is to confirm that audio firmware updates are working correctly in your system. It is much better to confirm that using the official Braids v1.7 firmware than with Bees-in-the-Trees. Common reasons for audio updates not working are insufficient volume level when playing the firmware WAV file into your Braids module, or extraneous sounds, such as email or Facebook post notifications, being generated in your computer while you are playing the firmware WAV file.</li>
 <li>Practice the Braids re-calibration procedure and verify that has worked.</li>
-<li>Proceed to load the latest Bees-in-the-Trees version via the audio bootloader in the same way. Compiled firmware images in WAV format for Bees-in-the-Trees are available at the following locations. Be sure to download the files, using the download icon in the middle of the top of the page - don't listen to the file! And check that the downloaded size is exactly as shown below. You can also check the SHA1 or MD5 hash values if you like, but that is not essential.</li>
-  <ul>
-    <li><a href="https://drive.google.com/file/d/0BykuVdPr-by8NTRNRjlYeUNYY0k/view?usp=sharing">Bees-in-the-Trees version 3.8 firmware update file in WAV format - for Braids manufactured by Mutable Instruments</a> (8,540,972, SHA-1 6f11f549a9af106fb15323df168361e031937fda, MD5 d7a52baf6c3f6c624374c975cc669d49)</li>
-    <li><a href="https://drive.google.com/file/d/0BykuVdPr-by8WmtUU1ladzhJREE/view?usp=sharing">Bees-in-the-Trees version 3.8 firmware update file in WAV format - for DIY Braids with Bourns or similar reversed encoder</a> (8,540,972 bytes, SHA-1 716250d4a1ae173a32adf4497553e1b3c4e863eb, MD5 80fa255aeeb77a96ce2242fce534262b)</li>
-  </ul>
-<li>Re-calibrate your Braids.</li>
+<li>Proceed to load the latest Bees-in-the-Trees version via the audio bootloader in the same way. Compiled firmware images in WAV format for Bees-in-the-Trees v3.9.0 are available from the <a href="https://github.com/timchurches/Mutated-Mutables/releases/latest">release page</a>. After downloading, unzip the file and <a href="http://mutable-instruments.net/modules/braids/manual#firmware">upload it to your Braids</a>.</li>
+<li><a href="http://mutable-instruments.net/modules/braids/manual#calibration">Re-calibrate</a> your Braids.</li>
 <li>Go crazy with it.</li>
 </ol>
 
