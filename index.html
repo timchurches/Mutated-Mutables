@@ -573,7 +573,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <li>Go crazy with it.</li>
 </ol>
 
-<p>You shouldn’t need to manually reset the stored settings if you follow this procedure – your Braids should do that automatically when it boots up after installing the Bees-in-the-Trees code (and likewise when you re-install the latest v1.7 or later factory firmware).<.p>
+<p>You shouldn’t need to manually reset the stored settings if you follow this procedure – your Braids should do that automatically when it boots up after installing the Bees-in-the-Trees code (and likewise when you re-install the latest v1.7 or later factory firmware).</p>
 
 <p>However, if your Braids does seem confused, you can trigger a manual settings reset in Braids v1.7 firmware by navigating to the version string right at the end of the menu choices, and doing a long-click on the encoder. Warning: this also resets your calibration data, so you’ll need to re-calibrate yet again.</p>
 
@@ -594,10 +594,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <a id="to-do-and-roadmap" class="anchor" href="#to-do-and-roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>TO-DO and Roadmap</h1>
 
 <ul>
-<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a pitch change. Is it due to it being a form of non-linear FM, perhaps?</li>
+<li>For version 4, save all settings in up to 10 "preset" slots, so that more than one configuration can be stored.</li>
+<li>PENDING: Work out why VCO drift (<code>JITR</code>) causes a slight pitch change. Is it due to it being a form of non-linear FM, perhaps?</li>
 <li>PENDING: Prevent the LFO frequency or the total envelope duration from changing when the <code>⇑⇓1</code> and <code>⇑⇓2</code> settings are adjusted. Did I mention that integer arithmetic is a pain in the arse?</li>
 </ul>
-<p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured in the <a href="https://github.com/timchurches/Mutated-Mutables/wiki">Mutated Mutables wiki</a>.</p>
+<p>Other ideas, which could be implemented in future versions of Bees-in-the-Trees, are captured on <a href="https://github.com/timchurches/Mutated-Mutables/wiki/Design-notes-for-Bees-in-the-Trees-Version-4">this wiki page</a>.</p>
 
 <h1>
 <a id="encoder-direction" class="anchor" href="#encoder-direction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoder direction and firmware image size</h1>
@@ -643,7 +644,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <ul>
 <li><a href="https://github.com/timchurches/Mutated-Mutables/wiki/Patch-notes-and-ideas-for-using-Bees-in-the-Trees">Bees-in-the-Trees patch notes and techniques</a></li>
-<li><a href="https://github.com/timchurches/Mutated-Mutables/wiki/The-Quick-Start-Guide-to-Bees-in-the-Trees">Bees-in-the-Trees quick-start guide 9a work-in-progress)</a></li>
+<li><a href="https://github.com/timchurches/Mutated-Mutables/wiki/The-Quick-Start-Guide-to-Bees-in-the-Trees">Bees-in-the-Trees quick-start guide (a work-in-progress)</a></li>
 </ul>
 
        
@@ -675,6 +676,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <p>
 <h3>Some Bees-in-the-Trees recordings</h3>
 <ul>
+<li><a href="http://sneak-thief.com/modular/Barron_Welwet_-_A_Hive_in_my_Timpany.mp3"><em>A Hive in my Timpany</em> by Barron Welwet, aka Sneak-Thief aka Michel Morin, using four Braids modules each running Bees-in-the-Trees v3.9, together with a Yamaha drum pad triggered by a 4ms SCM.</a></li> 
 <li><a href="https://soundcloud.com/steven-barsky/turing-mode-test-1">Bees-in-the-Trees Turing Machine demo by Steven Barksy</a></li>
 <li><a href="https://soundcloud.com/steven-barsky/braids-meta-sequencer-test-1">Bees-in-the-Trees meta-sequencer demo by Steven Barsky</a></li>
 <li><a href="https://soundcloud.com/bennelong-bicyclist/bees-in-trees-v3f-demo">Demo of the dual internal LFOs in an early version of Bees-in-the_Trees (the LFOs in the latest version function identically to this), by Bennelong Bicyclist</a></li>
