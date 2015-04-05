@@ -2315,6 +2315,73 @@ void DigitalOscillator::RenderSilence(
   }
 }
 
+void DigitalOscillator::RenderBytebeat0(
+    const uint8_t* sync,
+    int16_t* buffer,
+    uint8_t size) {
+//     if (strike_) {
+//       t_ = 0;
+//       strike_ = false;
+//     }
+  while (size) {
+    phase_ += 1 ;
+    if (phase_ % ((16384 - pitch_) >> 12) == 0) ++t_; // was .. 8
+    uint32_t p0 = parameter_[0] >> 9;
+    uint32_t p1 = parameter_[1] >> 11;
+    // from http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/
+    // (atmospheric, hopeful)
+    int32_t sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
+    // int32_t sample = (( ((t_*((t_>>8) | (t_>>9))) & p0 & (t_>>8)) ^ ((t_ & (t_>>p1)) | (t_>>6)) ) & 0xFF) << 8;
+    *buffer++ = sample;
+    *buffer++ = sample;
+   size -= 2;
+  }
+}
+
+void DigitalOscillator::RenderBytebeat1(
+    const uint8_t* sync,
+    int16_t* buffer,
+    uint8_t size) {
+//     if (strike_) {
+//       t_ = 0;
+//       strike_ = false;
+//     }
+  while (size) {
+    phase_ += 1 ;
+    if (phase_ % ((16384 - pitch_) >> 12) == 0) ++t_; // was .. 8
+    uint32_t p0 = parameter_[0] >> 11;
+    uint32_t p1 = parameter_[1] >> 11;
+    // equation based on one by skurk, modified by raer to eliminate trig functions
+    // from https://github.com/kragen/viznut-music/blob/master/e-skurk-raer.c
+    // also in https://www.youtube.com/watch?v=qlrs2Vorw2Y at 3:23
+    int32_t sample = (( (t_ & 4096) ? (( (t_ * (t_ ^ (t_ % p0))) | ((t_ >> 4)) >> 1) ) : (t_ >> p1)|((t_ & 8192) ? (t_ << 2) : t_)) & 0xFF) << 8;
+    *buffer++ = sample;
+    *buffer++ = sample;
+   size -= 2;
+  }
+}
+
+void DigitalOscillator::RenderBytebeat2(
+    const uint8_t* sync,
+    int16_t* buffer,
+    uint8_t size) {
+//     if (strike_) {
+//       t_ = 0;
+//       strike_ = false;
+//     }
+  while (size) {
+    phase_ += 1 ;
+    if (phase_ % ((16384 - pitch_) >> 12) == 0) ++t_; // was .. 8
+    uint32_t p0 = parameter_[0] >> 11;
+    uint32_t p1 = parameter_[1] >> 11;
+    // equation by stephth via https://www.youtube.com/watch?v=tCRPUv8V22o at 3:38
+    int32_t sample = ( (((t_*p0) & (t_>>4)) | ((t_*5) & (t_>>7)) | ((t_*p1) & (t_>>10)))  & 0xFF) << 8;
+    *buffer++ = sample;
+    *buffer++ = sample;
+   size -= 2;
+  }
+}
+
 /* static */
 DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderTripleRingMod,
@@ -2349,6 +2416,9 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderClockedNoise,
   &DigitalOscillator::RenderGranularCloud,
   // &DigitalOscillator::RenderParticleNoise,
+  &DigitalOscillator::RenderBytebeat0,
+  &DigitalOscillator::RenderBytebeat1,
+  &DigitalOscillator::RenderBytebeat2,
   &DigitalOscillator::RenderSilence,
 };
 

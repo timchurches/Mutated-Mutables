@@ -95,6 +95,9 @@ enum DigitalOscillatorShape {
   OSC_SHAPE_CLOCKED_NOISE,
   OSC_SHAPE_GRANULAR_CLOUD,
   // OSC_SHAPE_PARTICLE_NOISE,
+  OSC_SHAPE_BYTEBEAT0,
+  OSC_SHAPE_BYTEBEAT1,
+  OSC_SHAPE_BYTEBEAT2,
   OSC_SHAPE_SILENCE,
 
   // Leave this here because it marks the end of the oscillator model list.
@@ -248,6 +251,7 @@ class DigitalOscillator {
     svf_[1].Init();
     svf_[2].Init();
     phase_ = 0;
+    t_ = 0;
     strike_ = true;
     init_ = true;
   }
@@ -319,7 +323,10 @@ class DigitalOscillator {
   void RenderSnare(const uint8_t*, int16_t*, uint8_t);
   void RenderCymbal(const uint8_t*, int16_t*, uint8_t);
   void RenderQuestionMark(const uint8_t*, int16_t*, uint8_t);
-  
+ 
+  void RenderBytebeat0(const uint8_t*, int16_t*, uint8_t);
+  void RenderBytebeat1(const uint8_t*, int16_t*, uint8_t);
+  void RenderBytebeat2(const uint8_t*, int16_t*, uint8_t);
   void RenderSilence(const uint8_t*, int16_t*, uint8_t);
   
   uint32_t ComputePhaseIncrement(int16_t midi_pitch);
@@ -333,6 +340,7 @@ class DigitalOscillator {
   uint32_t phase_;
   uint32_t phase_increment_;
   uint32_t delay_;
+  uint32_t t_; // for bytebeat
 
   int16_t parameter_[2];
   int16_t previous_parameter_[2];
