@@ -97,7 +97,7 @@ enum DigitalOscillatorShape {
   // OSC_SHAPE_PARTICLE_NOISE,
   OSC_SHAPE_BYTEBEAT0,
   OSC_SHAPE_BYTEBEAT1,
-  OSC_SHAPE_BYTEBEAT2,
+  // OSC_SHAPE_BYTEBEAT2,
   OSC_SHAPE_SILENCE,
 
   // Leave this here because it marks the end of the oscillator model list.
@@ -326,7 +326,7 @@ class DigitalOscillator {
  
   void RenderBytebeat0(const uint8_t*, int16_t*, uint8_t);
   void RenderBytebeat1(const uint8_t*, int16_t*, uint8_t);
-  void RenderBytebeat2(const uint8_t*, int16_t*, uint8_t);
+  // void RenderBytebeat2(const uint8_t*, int16_t*, uint8_t);
   void RenderSilence(const uint8_t*, int16_t*, uint8_t);
   
   uint32_t ComputePhaseIncrement(int16_t midi_pitch);
