@@ -2355,14 +2355,18 @@ void DigitalOscillator::RenderBytebeat2(
     const uint8_t* sync,
     int16_t* buffer,
     uint8_t size) {
-    uint32_t p0 = parameter_[0] >> 10;
-    uint32_t p1 = parameter_[1] >> 10;
+    uint32_t p0 = parameter_[0] >> 11;
+    uint32_t p1 = parameter_[1] >> 11;
     uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
   while (size--) {
     phase_ += 1 ;
     if (phase_ %  bytepitch == 0) ++t_; 
     // modified version of bear @ celephais from http://pelulamu.net/countercomplex/music_formula_collection.txt
-    int32_t sample = (  ((t_ + (t_ ^ (t_ >> 6) )) - (t_ * ( ( (t_ >> p0) & ( (t_ % 16) ? 2 : 6) & (t_ >> p1) )))) & 0xFF) << 8;
+    // int32_t sample = (  ((t_ + (t_ ^ (t_ >> 6) )) - (t_ * ( ( (t_ >> p0) & ( (t_ % 16) ? 2 : 6) & (t_ >> p1) )))) & 0xFF) << 8;
+    // int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
+    int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
+    uint32_t tplus = t_ + 1 ;
+    sample = sample | ( (((tplus >> p0) & tplus) * (tplus >> p1)) & 0xFF) ;
     *buffer++ = sample;
   }
 }
