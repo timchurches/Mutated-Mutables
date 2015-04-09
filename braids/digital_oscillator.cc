@@ -2361,12 +2361,17 @@ void DigitalOscillator::RenderBytebeat2(
   while (size--) {
     phase_ += 1 ;
     if (phase_ %  bytepitch == 0) ++t_; 
+    /*
     // modified version of bear @ celephais from http://pelulamu.net/countercomplex/music_formula_collection.txt
     // int32_t sample = (  ((t_ + (t_ ^ (t_ >> 6) )) - (t_ * ( ( (t_ >> p0) & ( (t_ % 16) ? 2 : 6) & (t_ >> p1) )))) & 0xFF) << 8;
     // int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
+    */
+    // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/
     int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
-    uint32_t tplus = t_ + 1 ;
-    sample = sample | ( (((tplus >> p0) & tplus) * (tplus >> p1)) & 0xFF) ;
+    // Not sure if this is worth doing to fill in the lower 8 bits of the sample...
+    // Actually, it isn't!
+    // uint32_t tplus = t_ + 1 ;
+    // sample = sample | ( (((tplus >> p0) & tplus) * (tplus >> p1)) & 0xFF) ;
     *buffer++ = sample;
   }
 }
