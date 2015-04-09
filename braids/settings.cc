@@ -217,7 +217,7 @@ const char* const algo_values[] = {
     // "PRTC",
     "BYT0",
     "BYT1",
-    // "BYT2",
+    "BYT2",
     "ZERO", // this is the RenderSilence digital model 
 };
 
