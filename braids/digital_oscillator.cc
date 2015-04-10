@@ -2323,7 +2323,7 @@ void DigitalOscillator::RenderBytebeat0(
     uint32_t p1 = parameter_[1] >> 11;
     uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
   while (size--) {
-    phase_ += 1 ;
+    ++phase_;
     if (phase_ % bytepitch == 0) ++t_; 
     // from http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/
     // (atmospheric, hopeful)
@@ -2341,7 +2341,7 @@ void DigitalOscillator::RenderBytebeat1(
     uint32_t p1 = parameter_[1] >> 11;
     uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
   while (size--) {
-    phase_ += 1 ;
+    ++phase_;
     if (phase_ % bytepitch == 0) ++t_; 
     // equation by stephth via https://www.youtube.com/watch?v=tCRPUv8V22o at 3:38
     int32_t sample = ((((t_*p0) & (t_>>4)) | ((t_*5) &
@@ -2358,19 +2358,12 @@ void DigitalOscillator::RenderBytebeat2(
     uint32_t p0 = parameter_[0] >> 11;
     uint32_t p1 = parameter_[1] >> 11;
     uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
-  while (size) {
-    phase_ += 1 ;
+  while (size--) {
+    ++phase_;
     if (phase_ %  bytepitch == 0) ++t_; 
     // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/ (t>>13&t)*(t>>8)
     int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
-    uint32_t t_plus = t_ + 1;
-    int32_t next_sample = ( (((t_plus >> p0) & t_plus) * (t_plus >> p1)) & 0xFF) << 8 ;
-    int32_t diff = next_sample - sample;
     *buffer++ = sample;
-    *buffer++ = sample + (diff >> 2);
-    *buffer++ = sample + (diff >> 1);
-    *buffer++ = sample + (diff >> 2) + (diff >> 1);
-    size -= 4;
   }
 }
 
