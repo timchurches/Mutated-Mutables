@@ -2358,27 +2358,21 @@ void DigitalOscillator::RenderBytebeat2(
     uint32_t p0 = parameter_[0] >> 11;
     uint32_t p1 = parameter_[1] >> 11;
     uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
-  while (size--) {
+  while (size) {
     phase_ += 1 ;
     if (phase_ %  bytepitch == 0) ++t_; 
-    /*
-    // modified version of bear @ celephais from http://pelulamu.net/countercomplex/music_formula_collection.txt
-    // int32_t sample = (  ((t_ + (t_ ^ (t_ >> 6) )) - (t_ * ( ( (t_ >> p0) & ( (t_ % 16) ? 2 : 6) & (t_ >> p1) )))) & 0xFF) << 8;
-    // int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
-    */
-    // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/
+    // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/ (t>>13&t)*(t>>8)
     int32_t sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
-    // Not sure if this is worth doing to fill in the lower 8 bits of the sample...
-    // Actually, it isn't!
-    // uint32_t tplus = t_ + 1 ;
-    // sample = sample | ( (((tplus >> p0) & tplus) * (tplus >> p1)) & 0xFF) ;
+    uint32_t t_plus = t_ + 1;
+    int32_t next_sample = ( (((t_plus >> p0) & t_plus) * (t_plus >> p1)) & 0xFF) << 8 ;
+    int32_t diff = next_sample - sample;
     *buffer++ = sample;
+    *buffer++ = sample + (diff >> 2);
+    *buffer++ = sample + (diff >> 1);
+    *buffer++ = sample + (diff >> 2) + (diff >> 1);
+    size -= 4;
   }
 }
-
-
-// others
-// (t>>13&t)*(t>>8)
 
 /* static */
 DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
