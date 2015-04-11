@@ -85,7 +85,7 @@
 
 <p>In addition, there is a <a href="https://github.com/timchurches/Mutated-Mutables/wiki/The-Quick-Start-Guide-to-Bees-in-the-Trees">quick-start guide to Bees-in-the-Trees</a>, by Steven Barsky and Tim Churches, as well as a series of <a href="https://github.com/timchurches/Mutated-Mutables/wiki/Patch-notes-and-ideas-for-using-Bees-in-the-Trees">patch notes</a>, both of which are still works-in-progress.</p>
   
-<p>The following documentation relates to Bees-in-the-Trees version 3.9</p>
+<p>The following documentation relates to Bees-in-the-Trees version 4.0</p>
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#aabcfe;margin:0px auto;}
@@ -398,7 +398,7 @@
 </table>
 
 <h2>
-<a id="Bees-in-the-Trees-changes" class="anchor" href="#Bees-in-the-Trees-changes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees: what's changed in Version 3.9, compared to Version 3.0?</h2>
+<a id="Bees-in-the-Trees-changes" class="anchor" href="#Bees-in-the-Trees-changes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bees-in-the-Trees: what's changed in Version 4.0, compared to Version 3.0?</h2>
 
 <ul>
 <li>several new values have been added to the <code>FMCV</code> setting: <b>DCAY</b>, <b>DCY1</b> and <b>DCY2</b> allow voltage control over envelope decay time, without affecting the attack time; <b>HARM</b> (harmonic series quantisation); <b>TRNG</b> which allows setting of the length of the Turing Machine shift register;  <b>PROB</b>, which allows CV control over the bit-flip probability in the built-in Turing Machine.</li>
@@ -407,7 +407,8 @@
 <li>the <code>M1T2</code> and <code>M1C2</code> settings have been removed.</li>
 <li>a <code>FTUN</code> (oscillator fine-tune) setting has been added, immediately after <code>OCTV</code>, and <code>FTUN</code> settings are now bipolar, centred around zero.</li>
 <li>there is now a complete <a href="http://musicthing.co.uk/modular/?page_id=21">Turing Machine</a>/Richter NoiseRing implementation inside Bees-in-the-Trees! See below for details.</li>
-<li>quantisation of the 1V/octave pitch value now supports a wide range of scales (see table above), not just quarter-tone and semitone chromatic quantisation.
+<li>quantisation of the 1V/octave pitch value now supports a wide range of scales (see table above), not just quarter-tone and semitone chromatic quantisation.</li>
+<li>Three "bytebeat" oscillator models have been added.</li>
 </ul>
 
 
@@ -499,7 +500,14 @@
 </ul>
 </li>
 <p>
-<li>There is a new oscillator model, called <b>ZERO</b>, right at the end of the model list, after <b>PRTC</b>. Don't get too excited, because this model fills the audio buffer with zeroes, and thus produces absolute silence. This was added to enable "rests" to be inserted in the <code>MSEQ</code> meta-sequencer. The downside is that there is an audible click when switching to it, because the signal amplitude immediately goes to zero. I can't think of any easy way to avoid this, however. The same problem occurs, to a lesser degree, and in the factory firmware as well, when switching to some of the other models, for similar reasons. Note that the <b>ZERO</b> model isn't accessible via <code>FMCV</code>=<b>META</b> mode.</li>
+<li>There are three new "bytebeat" oscillator models, called <b>BYT0</b>, <b>BYT0</b> and <b>BYT0</b>, right at the end of the model list, after <b>CLOU</b>. For background information on bytebeats, see <a href="http://canonical.org/~kragen/bytebeat/">this page</a> by <em>kragen</em>. The three new oscillator models use the following byte beat equations:
+<ul><li><b>BYT0</b> is <code>((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128)</code> where t_ is a 32-bit time accumulator, driven by the oscillator phase accumulator divided down via a modulus set by the pitch setting, and p0 and p1 are the parameters set by the Timbre and Color controls, respectively. This algorithm is by Jamie DeLorio and can be found <a href="http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/">here</a>.</li>
+<ul><li><b>BYT1</b> is <code>((t_*p0) & (t_>>4)) | ((t_*5) & (t_>>7)) | ((t_*p1) & (t_>>10))</code>, by stephth via <a href="https://www.youtube.com/watch?v=tCRPUv8V22o">https://www.youtube.com/watch?v=tCRPUv8V22o</a> (watch at about 3:38).</li>
+<ul><li><b>BYT2</b> is <code>((t_ >> p0) & t_) * (t_ >> p1)</code>, from the list of byte beat equations compiled by a2aaron at <a href="http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/">http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/</a></li>
+</ul>
+Note that both of these play "tunes", thus pitch is more an offset or transposition of the tune: the pitch controls (the pitch knobs and the V/oct and FM inputs) affect the speed at which the time accumulator advances, and thus affect both loop speed and the pitch of the notes played. Timbre and Color modulate other parameters in the equations. Note that all the internal modulation sources in Bees-in-the-Trees, the meta-sequencer, Turing Machine etc, all still work with these models. You probably want to filter their outputs through a low-pass filter to remove some of the high-frequency digital noise they can produce - they can be harsh, but appropriately filtered, they can sound rather nice too.</li>
+<p>
+<li>There is a new oscillator model, called <b>ZERO</b>, right at the very end of the model list, after <b>BYT2</b>. Don't get too excited, because this model fills the audio buffer with zeroes, and thus produces absolute silence. This was added to enable "rests" to be inserted in the <code>MSEQ</code> meta-sequencer. The downside is that there is an audible click when switching to it, because the signal amplitude immediately goes to zero. I can't think of any easy way to avoid this, however. The same problem occurs, to a lesser degree, and in the factory firmware as well, when switching to some of the other models, for similar reasons. Note that the <b>ZERO</b> model isn't accessible via <code>FMCV</code>=<b>META</b> mode.</li>
 <p>
 <li>There is now a shortcut between menu mode and oscillator model selection mode. If you are in menu mode, if you do a long-click (hold down the encoder for more than half a second), then you will be taken directly back to oscillator selection mode. In oscillator selection mode, if you do a long-click, you will be dropped back to menu mode on the menu choice you were last on when you used the long-click shortcut. This makes it easy to switch back-and-forward without losing your place in the menu. Note that this long-click shortcut doesn't work when actually editing a setting value (edit mode), only when you in menu mode. <ul><li><b>Note:</b> your settings are saved when you short-click or long-click on the <code>SAVE</code> menu item, but they are <b>not</b> saved when you use the long-click shortcut to swap to oscillator model selection mode from any other menu item - as in the standard Braids (in which <code>SAVE</code> is called <code>WAVE</code>), only clicking (or long-clicking) on <code>SAVE</code>/<code>WAVE</code> causes your settings to be saved.</li></ul></li>
 <p>
