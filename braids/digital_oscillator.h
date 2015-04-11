@@ -251,7 +251,7 @@ class DigitalOscillator {
     svf_[1].Init();
     svf_[2].Init();
     phase_ = 0;
-    t_ = 0;
+    // t_ = 0; // Don't reset the bytebeat counter to allow continuity when switch models
     strike_ = true;
     init_ = true;
   }
