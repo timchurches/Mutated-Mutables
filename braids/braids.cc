@@ -76,6 +76,17 @@ volatile bool trigger_flag;
 uint16_t trigger_delay;
 static int32_t sh_pitch;
 
+// Templated function to do parameter clipping
+template <typename ParamType> 
+static ParamType ParamClip(ParamType param, ParamType min_param, ParamType max_param) {
+    if (param < min_param) {
+	   return min_param ;
+    } else if (param > max_param) {
+	   return max_param ;
+    } else {
+       return param;
+    }
+}
 
 extern "C" {
   
@@ -356,16 +367,19 @@ void RenderBlock() {
   }
 
   // Clip at zero and 127
-  if (env_a_param < 0) {
-	 env_a_param = 0 ;
-  } else if (env_a_param > 127) {
-	 env_a_param = 127 ;
-  } 
-  if (env_d_param < 0) {
-	 env_d_param = 0 ;
-  } else if (env_d_param > 127) {
-	 env_d_param = 127 ;
-  } 
+//   if (env_a_param < 0) {
+// 	 env_a_param = 0 ;
+//   } else if (env_a_param > 127) {
+// 	 env_a_param = 127 ;
+//   } 
+  env_a_param = ParamClip(env_a_param, 0ul, 127ul);
+  
+//   if (env_d_param < 0) {
+// 	 env_d_param = 0 ;
+//   } else if (env_d_param > 127) {
+// 	 env_d_param = 127 ;
+//   } 
+  env_d_param = ParamClip(env_d_param, 0ul, 127ul);
 
   // Invert if in LFO mode, so higher CVs create higher LFO frequency.
   if (modulator1_mode == 1 && settings.rate_inversion()) {
@@ -379,16 +393,19 @@ void RenderBlock() {
   env_d = ((128 - (settings.GetValue(SETTING_MOD1_AD_RATIO))) * env_d_param) >> 6;   
 
   // Clip at zero and 127
-  if (env_a < 0) {
-	 env_a = 0 ;
-  } else if (env_a > 127) {
-	 env_a = 127 ;
-  } 
-  if (env_d < 0) {
-	 env_d = 0 ;
-  } else if (env_d > 127) {
-	 env_d = 127 ;
-  } 
+//   if (env_a < 0) {
+// 	 env_a = 0 ;
+//   } else if (env_a > 127) {
+// 	 env_a = 127 ;
+//   } 
+  env_a = ParamClip(env_a, 0ul, 127ul);
+
+//   if (env_d < 0) {
+// 	 env_d = 0 ;
+//   } else if (env_d > 127) {
+// 	 env_d = 127 ;
+//   } 
+  env_d = ParamClip(env_d, 0ul, 127ul);
 
   // Render envelope in LFO mode, or not
   // envelope 1
@@ -428,16 +445,19 @@ void RenderBlock() {
 	env2_a_param +=  (ad_value * mod1_mod2_depth) >> 18;
   }
   // Clip at zero and 127
-  if (env2_a_param < 0) { 
-	 env2_a_param = 0 ;
-  } else if (env2_a_param > 127) {
-	 env2_a_param = 127 ;
-  } 
-  if (env2_d_param < 0) { 
-	 env2_d_param = 0 ;
-  } else if (env2_d_param > 127) {
-	 env2_d_param = 127 ;
-  } 
+//   if (env2_a_param < 0) { 
+// 	 env2_a_param = 0 ;
+//   } else if (env2_a_param > 127) {
+// 	 env2_a_param = 127 ;
+//   } 
+  env2_a_param = ParamClip(env2_a_param, 0ul, 127ul);
+//   if (env2_d_param < 0) { 
+// 	 env2_d_param = 0 ;
+//   } else if (env2_d_param > 127) {
+// 	 env2_d_param = 127 ;
+//   } 
+  env2_d_param = ParamClip(env2_d_param, 0ul, 127ul);
+  
   if (modulator2_mode == 1 && settings.rate_inversion()) { 
 	 env2_a_param = 127 - env2_a_param ;
 	 env2_d_param = 127 - env2_d_param ;
@@ -448,16 +468,18 @@ void RenderBlock() {
   env2_d = ((128 - settings.GetValue(SETTING_MOD2_AD_RATIO)) * env2_d_param) >> 6; 
 
   // Clip at zero and 127
-  if (env2_a < 0) {
-	 env2_a = 0 ;
-  } else if (env2_a > 127) {
-	 env2_a = 127 ;
-  } 
-  if (env2_d < 0) {
-	 env2_d = 0 ;
-  } else if (env2_d > 127) {
-	 env2_d = 127 ;
-  } 
+//   if (env2_a < 0) {
+// 	 env2_a = 0 ;
+//   } else if (env2_a > 127) {
+// 	 env2_a = 127 ;
+//   } 
+  env2_a = ParamClip(env2_a, 0ul, 127ul);
+//   if (env2_d < 0) {
+// 	 env2_d = 0 ;
+//   } else if (env2_d > 127) {
+// 	 env2_d = 127 ;
+//   } 
+  env2_d = ParamClip(env2_d, 0ul, 127ul);
  
   // Render envelope in LFO mode, or not
   // envelope 2
@@ -532,11 +554,12 @@ void RenderBlock() {
      // add the FM CV amount
 	 turing_length += settings.adc_to_fm(adc.channel(3)) >> 7;
      // Clip at zero and 32
-     if (turing_length < 0) { 
-        turing_length = 0 ;
-     } else if (turing_length > 32) {
-        turing_length = 32 ;
-     } 
+//      if (turing_length < 0) { 
+//         turing_length = 0 ;
+//      } else if (turing_length > 32) {
+//         turing_length = 32 ;
+//      } 
+        turing_length = ParamClip(turing_length, static_cast<int16_t>(0), static_cast<int16_t>(32));
   }
   if (trigger_flag && turing_length) {
      ++turing_div_counter;
@@ -584,11 +607,13 @@ void RenderBlock() {
 	       turing_prob += settings.adc_to_fm(adc.channel(3)) >> 5;
         }
         // Clip at zero and 127
-        if (turing_prob < 0) { 
-	       turing_prob = 0 ;
-        } else if (turing_prob > 127) {
-	       turing_prob = 127 ;
-        } 
+//         if (turing_prob < 0) { 
+// 	       turing_prob = 0 ;
+//         } else if (turing_prob > 127) {
+// 	       turing_prob = 127 ;
+//         } 
+        turing_prob = ParamClip(turing_prob, static_cast<int16_t>(0), static_cast<int16_t>(127));
+
         if ((static_cast<uint8_t>(Random::GetWord() >> 23) < turing_prob) || turing_prob == 127) {
            // bit-flip the LSB, bit-shift was 25 but try making is 4 times less sensitive
            // yes, leave at 23 but force bit-flip if turing_prob is 127.
@@ -601,11 +626,13 @@ void RenderBlock() {
 	       turing_window += (settings.adc_to_fm(adc.channel(3)) >> 7) + 2;
         }
         // Clip at zero and 36
-        if (turing_window < 0) { 
-	       turing_window = 0 ;
-        } else if (turing_window > 36) {
-	       turing_window = 36 ;
-        }         
+//         if (turing_window < 0) { 
+// 	       turing_window = 0 ;
+//         } else if (turing_window > 36) {
+// 	       turing_window = 36 ;
+//         }         
+        turing_window = ParamClip(turing_window, static_cast<int16_t>(0), static_cast<int16_t>(36));
+
         uint32_t turing_byte = turing_shift_register & static_cast<uint32_t>(0xFF);
         uint8_t turing_value = (turing_byte * static_cast<uint8_t>(turing_window)) >> 8;
         // convert into a pitch increment
@@ -639,11 +666,12 @@ void RenderBlock() {
      parameter_1 = (parameter_1 * metaseq_parameter) >> 7;
   }
   // clip
-  if (parameter_1 > 32767) {
-	parameter_1 = 32767;
-  } else if (parameter_1 < 0) {
-	parameter_1 = 0;
-  }
+//   if (parameter_1 > 32767) {
+// 	parameter_1 = 32767;
+//   } else if (parameter_1 < 0) {
+// 	parameter_1 = 0;
+//   }
+  parameter_1 = ParamClip(parameter_1, static_cast<int32_t>(0), static_cast<int32_t>(32767));
 
   // modulate colour
   int32_t parameter_2 = adc.channel(1) << 3; 
@@ -662,11 +690,12 @@ void RenderBlock() {
      parameter_2 = (parameter_2 * metaseq_parameter) >> 7;
   }
   // clip
-  if (parameter_2 > 32767) {
-	parameter_2 = 32767;
-  } else if (parameter_2 < 0) {
-	parameter_2 = 0;
-  }
+//   if (parameter_2 > 32767) {
+// 	parameter_2 = 32767;
+//   } else if (parameter_2 < 0) {
+// 	parameter_2 = 0;
+//   }
+  parameter_2 = ParamClip(parameter_2, static_cast<int32_t>(0), static_cast<int32_t>(32767));
   
   // set the timbre and color parameters on the oscillator
   osc.set_parameters(uint16_t(parameter_1), uint16_t(parameter_2));
@@ -785,11 +814,12 @@ void RenderBlock() {
         fm_adc_code = previous_fm_adc_code;
      }
      int32_t harmonic_multiplier = settings.adc_to_fm(fm_adc_code) >> 8;
-     if (harmonic_multiplier < -31) {
-	    harmonic_multiplier = -31;
-     } else if (harmonic_multiplier > 31) {
-        harmonic_multiplier = 31;
-     }
+//      if (harmonic_multiplier < -31) {
+// 	    harmonic_multiplier = -31;
+//      } else if (harmonic_multiplier > 31) {
+//         harmonic_multiplier = 31;
+//      }
+     harmonic_multiplier = ParamClip(harmonic_multiplier, static_cast<int32_t>(-31), static_cast<int32_t>(31));
      if (harmonic_multiplier > 0) {
         pitch += (1536 * log2_table[harmonic_multiplier - 1]) >> 11;
      } else if (harmonic_multiplier < 0) {
@@ -827,11 +857,12 @@ void RenderBlock() {
      vco_drift += settings.adc_to_fm(adc.channel(3)) >> 6;
   } 
   if (vco_drift) {
-     if (vco_drift < 0) {
-	    vco_drift = 0 ;
-     } else if (vco_drift > 127) {
-        vco_drift = 127;
-     }
+//      if (vco_drift < 0) {
+// 	    vco_drift = 0 ;
+//      } else if (vco_drift > 127) {
+//         vco_drift = 127;
+//      }
+     vco_drift = ParamClip(vco_drift, static_cast<int32_t>(0), static_cast<int32_t>(127));
     // now apply the jitter
     pitch +=  (jitter_source.Render(adc.channel(1) << 3) >> 8) * vco_drift;
   }
@@ -915,33 +946,36 @@ void RenderBlock() {
      gain = (gain * metaseq_parameter) >> 7;
   }
   // clip the gain  
-  if (gain > 65535) {
-      gain = 65535;
-  }
-  else if (gain < 0) {
-      gain = 0;
-  }
+//   if (gain > 65535) {
+//       gain = 65535;
+//   }
+//   else if (gain < 0) {
+//       gain = 0;
+//   }
+  gain = ParamClip(gain, static_cast<int32_t>(0), static_cast<int32_t>(65535));
 
   // Voltage control of bit crushing
   uint8_t bits_value = settings.resolution();
   if (meta_mod == 14 || meta_mod == 16 || meta_mod == 17) {
      bits_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
-     if (bits_value < 0) {
-	    bits_value = 0 ;
-     } else if (bits_value > 6) {
-        bits_value = 6;
-     }
+//      if (bits_value < 0) {
+// 	    bits_value = 0 ;
+//      } else if (bits_value > 6) {
+//         bits_value = 6;
+//      }
+     bits_value = ParamClip(bits_value, static_cast<uint8_t>(0), static_cast<uint8_t>(6));
   }
 
   // Voltage control of sample rate decimation
   uint8_t sample_rate_value = settings.data().sample_rate;
   if (meta_mod == 15 || meta_mod == 16 || meta_mod == 17) {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
-     if (sample_rate_value < 0) {
-	    sample_rate_value = 0 ;
-     } else if (sample_rate_value > 6) {
-        sample_rate_value = 6;
-     }
+//      if (sample_rate_value < 0) {
+// 	    sample_rate_value = 0 ;
+//      } else if (sample_rate_value > 6) {
+//         sample_rate_value = 6;
+//      }
+     sample_rate_value = ParamClip(sample_rate_value, static_cast<uint8_t>(0), static_cast<uint8_t>(6));
   }
      
   // Copy to DAC buffer with sample rate and bit reduction applied.
