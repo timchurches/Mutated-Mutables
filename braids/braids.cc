@@ -78,7 +78,7 @@ static int32_t sh_pitch;
 
 // Templated function to do parameter clipping
 template <typename ParamType> 
-static ParamType ParamClip(ParamType param, ParamType min_param, ParamType max_param) {
+inline static ParamType ParamClip(ParamType param, ParamType min_param, ParamType max_param) {
     if (param < min_param) {
 	   return min_param ;
     } else if (param > max_param) {
