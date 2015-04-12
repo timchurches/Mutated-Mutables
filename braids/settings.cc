@@ -34,7 +34,9 @@
 
 #include <cstring>
 
-#include "stmlib/system/storage.h"
+// Replace with custom storage for version 4.1 and later
+// #include "stmlib/system/storage.h"
+#include "braids/page_storage.h"
 
 namespace braids {
 
