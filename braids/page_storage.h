@@ -93,12 +93,89 @@ class Storage {
     return checksum == Checksum(data, data_size);
   };
   
+/*
+//   template<typename T>
+//   static void ParsimoniousSave(const T& data, uint16_t* version_token) {
+//     return ParsimoniousSave((void*)(&data), sizeof(T), version_token);
+//   }
+//   
+//   static void ParsimoniousSave(
+//       const void* data,
+//       size_t data_size,
+//       uint16_t* version_token) {
+//     bool wrapped_around = false;
+//     
+//     // 2 bytes of checksum and 2 bytes of version are added to the block.
+//     size_t block_size = data_size + 2 + 2;
+//     uint32_t start = FLASH_STORAGE_BASE + block_size * *version_token;
+//     if (start + block_size >= last_address) {
+//       // Erase all pages and restart the versioning from scratch.
+//       *version_token = 0;
+//       start = FLASH_STORAGE_BASE;
+//       wrapped_around = true;
+//     }
+//     FLASH_Unlock();
+//     
+//     if (wrapped_around) {
+//       for (size_t i = 0; i < num_pages; ++i) {
+//         FLASH_ErasePage(FLASH_STORAGE_BASE + i * PAGE_SIZE);
+//       }
+//     } else {
+//       // If we will write into a new page, erase it.
+//       uint32_t previous_page = start - 1;
+//       previous_page -= previous_page % PAGE_SIZE;
+//       uint32_t this_page = start + block_size;
+//       this_page -= this_page % PAGE_SIZE;
+//       if (this_page != previous_page) {
+//         FLASH_ErasePage(this_page);
+//       }
+//     }
+// 
+//     WriteBlock(start, data, data_size);
+//     FLASH_ProgramHalfWord(start + data_size + 2, *version_token);
+//     *version_token = *version_token + 1;
+//   }
+//   
+//   template<typename T>
+//   static bool ParsimoniousLoad(T* data, uint16_t* version_token) {
+//     return ParsimoniousLoad((void*)(data), sizeof(T), version_token);
+//   }
+//   
+//   static bool ParsimoniousLoad(
+//       void* data,
+//       size_t data_size,
+//       uint16_t* version_token) {
+//     size_t block_size = data_size + 2 + 2;
+// 
+//     // Try from the end of the reserved area until we find a block with 
+//     // the right checksum and the right version index. 
+//     for (int16_t candidate_version = (num_pages * PAGE_SIZE / block_size) - 1;
+//          candidate_version >= 0;
+//          --candidate_version) {
+//       uint32_t start = FLASH_STORAGE_BASE + candidate_version * block_size;
+//       
+//       memcpy(data, (void*)(start), data_size);
+//       uint16_t expected_checksum = Checksum(data, data_size);
+//       uint16_t read_checksum = (*(uint16_t*)(start + data_size));
+//       uint16_t version_number = (*(uint16_t*)(start + data_size + 2));
+//       if (read_checksum == expected_checksum &&
+//           version_number == candidate_version) {
+//         *version_token = version_number + 1;
+//         return true;
+//       }
+//     }
+//     // Memory appears to be corrupted or virgin - restart from scratch.
+//     *version_token = 0;
+//     return false;
+//   }
+*/
+
   template<typename T>
-  static void ParsimoniousSave(const T& data, uint16_t* version_token) {
-    return ParsimoniousSave((void*)(&data), sizeof(T), version_token);
+  static void PresetSave(const T& data, uint16_t* version_token) {
+    return PresetSave((void*)(&data), sizeof(T), version_token);
   }
   
-  static void ParsimoniousSave(
+  static void PresetSave(
       const void* data,
       size_t data_size,
       uint16_t* version_token) {
@@ -136,11 +213,11 @@ class Storage {
   }
   
   template<typename T>
-  static bool ParsimoniousLoad(T* data, uint16_t* version_token) {
-    return ParsimoniousLoad((void*)(data), sizeof(T), version_token);
+  static bool PresetLoad(T* data, uint16_t* version_token) {
+    return PresetLoad((void*)(data), sizeof(T), version_token);
   }
   
-  static bool ParsimoniousLoad(
+  static bool PresetLoad(
       void* data,
       size_t data_size,
       uint16_t* version_token) {

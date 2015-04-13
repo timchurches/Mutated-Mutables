@@ -160,10 +160,14 @@ void Ui::OnLongClick() {
            last_setting_index_ = 0;
            mode_ = MODE_SPLASH;
         }
+      } else if (setting_ == SETTING_PRESET_SAVE) {
+         // preset saving code goes here
+      } else if (setting_ == SETTING_PRESET_LOAD) {
+         // preset loading code goes here
       } else {
-        if (setting_ == SETTING_OSCILLATOR_SHAPE) {
-           settings.Save();
-        }   
+//         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
+//            settings.Save();
+//         }   
         // short-cut   
         last_setting_ = setting_;
         last_setting_index_ = setting_index_;
@@ -195,9 +199,9 @@ void Ui::OnClick() {
     case MODE_MENU:
       if (setting_ <= SETTING_LAST_EDITABLE_SETTING) {
         mode_ = MODE_EDIT;
-        if (setting_ == SETTING_OSCILLATOR_SHAPE) {
-          settings.Save();
-        }
+//         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
+//           settings.Save();
+//         }
       } 
       else if (setting_ == SETTING_VERSION) {
         mode_ = MODE_SPLASH;

@@ -241,7 +241,9 @@ enum Setting {
   SETTING_TURING_PROB,
   SETTING_TURING_INIT,
   SETTING_MUSICAL_SCALE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MUSICAL_SCALE,
+  SETTING_PRESET_SAVE,
+  SETTING_PRESET_LOAD,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_PRESET_LOAD,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -333,7 +335,8 @@ struct SettingsData {
   uint8_t turing_prob;
   uint8_t turing_init;
   uint8_t musical_scale;
-  uint8_t extra_padding[2];
+  uint8_t preset_save;
+  uint8_t preset_load;
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
