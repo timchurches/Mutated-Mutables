@@ -173,7 +173,6 @@ void Settings::Reset(bool except_cal_data) {
 
 void Settings::Save(uint16_t preset_index) {
   data_.magic_byte = 'B';
-//  storage.ParsimoniousSave(data_, &version_token_);
   storage.PresetSave(data_, &version_token_, preset_index);
 }
 

@@ -161,7 +161,9 @@ void Ui::OnLongClick() {
            mode_ = MODE_SPLASH;
         }
       } else if (setting_ == SETTING_PRESET_SAVE) {
+         settings.SetValue(SETTING_PRESET_LOAD, static_cast<uint8_t>(settings.preset_save_index()));
          settings.Save(settings.preset_save_index());
+         settings.Load(settings.preset_load_index());
          mode_ = MODE_SPLASH;
       } else if (setting_ == SETTING_PRESET_LOAD) {
          settings.Load(settings.preset_load_index());
