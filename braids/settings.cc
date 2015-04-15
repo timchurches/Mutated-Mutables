@@ -135,7 +135,10 @@ const SettingsData kInitSettings = {
 Storage<0x8020000, 4> storage;
 
 void Settings::Init() {
-  if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
+//   if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
+//     Reset(false);
+//   }
+  if (!storage.PresetLoad(&data_, &version_token_, static_cast<uint16_t>(0))) {
     Reset(false);
   }
   bool settings_within_range = true;
@@ -168,9 +171,16 @@ void Settings::Reset(bool except_cal_data) {
   data_.magic_byte = 'B';
 }
 
-void Settings::Save() {
+void Settings::Save(uint16_t preset_index) {
   data_.magic_byte = 'B';
-  storage.ParsimoniousSave(data_, &version_token_);
+//  storage.ParsimoniousSave(data_, &version_token_);
+  storage.PresetSave(data_, &version_token_, preset_index);
+}
+
+void Settings::Load(uint16_t preset_index) {
+  if (!storage.PresetLoad(&data_, &version_token_, preset_index)) {
+    Reset(false);
+  }
 }
 
 const char* const boolean_values[] = { "OFF ", "ON  " };

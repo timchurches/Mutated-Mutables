@@ -154,16 +154,18 @@ void Ui::OnLongClick() {
            just_reset_ = true;
         }
         if (just_reset_) {
-           settings.Save();
+//           settings.Save(settings.preset_save_index());
            just_reset_ = false;
            last_setting_ = SETTING_OSCILLATOR_SHAPE;
            last_setting_index_ = 0;
            mode_ = MODE_SPLASH;
         }
       } else if (setting_ == SETTING_PRESET_SAVE) {
-         // preset saving code goes here
+         settings.Save(settings.preset_save_index());
+         mode_ = MODE_SPLASH;
       } else if (setting_ == SETTING_PRESET_LOAD) {
-         // preset loading code goes here
+         settings.Load(settings.preset_load_index());
+         mode_ = MODE_SPLASH;
       } else {
 //         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
 //            settings.Save();
