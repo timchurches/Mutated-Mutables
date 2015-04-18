@@ -125,7 +125,8 @@ const SettingsData kInitSettings = {
   0,                    // turing_prob
   0,                    // turing_init
   0,                    // musical_scale
-  { 0, 0 },             // padding
+  0,                    // turing_rhythm_window
+  0,                    // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -662,7 +663,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV8", algo_values },
   { 1, 127, "RPT8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
-  { 0, 2, "SDIR", metaseq_dir_values },
+  { 0, 2, "MDIR", metaseq_dir_values },
   { 0, 3, "RST ", reset_type_values },
   { 0, 1, "FS+H", boolean_values },
   { 0, 62, "NOT1", bipolar_values },
@@ -688,6 +689,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "SEED", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
+  { 0, 8, "RHYT", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v4.0", NULL },  // Placeholder for version string
@@ -774,6 +776,7 @@ const Setting Settings::settings_order_[] = {
   SETTING_METASEQ_PARAMETER8,
   SETTING_TURING_LENGTH,
   SETTING_TURING_WINDOW,
+  SETTING_TURING_RHYTHM_WINDOW,
   SETTING_MUSICAL_SCALE,
   SETTING_TURING_PROB,
   SETTING_TURING_INIT,
