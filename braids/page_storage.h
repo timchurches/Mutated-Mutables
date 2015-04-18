@@ -185,7 +185,6 @@ class Storage {
     size_t block_size = data_size + 2 + 2;
     uint32_t start = FLASH_STORAGE_BASE + block_size * preset_index;
     FLASH_Unlock();
-    
     WriteBlock(start, data, data_size);
 //    FLASH_ProgramHalfWord(start + data_size + 2, *version_token);
     FLASH_ProgramHalfWord(start + data_size + 2, preset_index);
