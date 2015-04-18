@@ -154,24 +154,16 @@ void Ui::OnLongClick() {
            just_reset_ = true;
         }
         if (just_reset_) {
-//           settings.Save(settings.preset_save_index());
+           settings.Save();
            just_reset_ = false;
            last_setting_ = SETTING_OSCILLATOR_SHAPE;
            last_setting_index_ = 0;
            mode_ = MODE_SPLASH;
         }
-      } else if (setting_ == SETTING_PRESET_SAVE) {
-         settings.SetValue(SETTING_PRESET_LOAD, static_cast<uint8_t>(settings.preset_save_index()));
-         settings.Save(settings.preset_save_index());
-         settings.Load(settings.preset_load_index());
-         mode_ = MODE_SPLASH;
-      } else if (setting_ == SETTING_PRESET_LOAD) {
-         settings.Load(settings.preset_load_index());
-         mode_ = MODE_SPLASH;
       } else {
-//         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
-//            settings.Save();
-//         }   
+        if (setting_ == SETTING_OSCILLATOR_SHAPE) {
+           settings.Save();
+        }   
         // short-cut   
         last_setting_ = setting_;
         last_setting_index_ = setting_index_;
@@ -203,9 +195,9 @@ void Ui::OnClick() {
     case MODE_MENU:
       if (setting_ <= SETTING_LAST_EDITABLE_SETTING) {
         mode_ = MODE_EDIT;
-//         if (setting_ == SETTING_OSCILLATOR_SHAPE) {
-//           settings.Save();
-//         }
+        if (setting_ == SETTING_OSCILLATOR_SHAPE) {
+          settings.Save();
+        }
       } 
       else if (setting_ == SETTING_VERSION) {
         mode_ = MODE_SPLASH;

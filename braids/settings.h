@@ -241,9 +241,7 @@ enum Setting {
   SETTING_TURING_PROB,
   SETTING_TURING_INIT,
   SETTING_MUSICAL_SCALE,
-  SETTING_PRESET_SAVE,
-  SETTING_PRESET_LOAD,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_PRESET_LOAD,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_MUSICAL_SCALE,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -335,8 +333,7 @@ struct SettingsData {
   uint8_t turing_prob;
   uint8_t turing_init;
   uint8_t musical_scale;
-  uint8_t preset_save;
-  uint8_t preset_load;
+  uint8_t extra_padding[2];
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -365,8 +362,7 @@ class Settings {
   ~Settings() { }
   
   void Init();
-  void Save(uint16_t preset_index);
-  void Load(uint16_t preset_index);
+  void Save();
   void Reset(bool except_cal_data);
   
   void SetValue(Setting setting, uint8_t value) {
@@ -471,14 +467,6 @@ class Settings {
   inline bool pitch_sample_hold() const {
     return data_.pitch_sample_hold;
   }
-
-  inline uint16_t preset_save_index() const {
-    return (static_cast<uint16_t>(data_.preset_save));
-  }
-
-  inline uint16_t preset_load_index() const {
-    return (static_cast<uint16_t>(data_.preset_load));
-  }
   
   inline const SettingsData& data() const { return data_; }
   inline SettingsData* mutable_data() { return &data_; }
@@ -494,7 +482,7 @@ class Settings {
           (scale * ((adc_code_c2 + adc_code_c4) >> 1) >> 12);
       data_.fm_cv_offset = adc_code_fm;
     }
-    Save(preset_save_index());
+    Save();
   }
   
   inline int32_t adc_to_pitch(int32_t pitch_adc_code) const {

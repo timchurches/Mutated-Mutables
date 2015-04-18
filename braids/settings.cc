@@ -125,8 +125,7 @@ const SettingsData kInitSettings = {
   0,                    // turing_prob
   0,                    // turing_init
   0,                    // musical_scale
-  0,                    // preset_save
-  0,                    // preset_load
+  { 0, 0 },             // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -135,10 +134,7 @@ const SettingsData kInitSettings = {
 Storage<0x8020000, 4> storage;
 
 void Settings::Init() {
-//   if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
-//     Reset(false);
-//   }
-  if (!storage.PresetLoad(&data_, &version_token_, static_cast<uint16_t>(0))) {
+  if (!storage.ParsimoniousLoad(&data_, &version_token_)) {
     Reset(false);
   }
   bool settings_within_range = true;
@@ -171,15 +167,9 @@ void Settings::Reset(bool except_cal_data) {
   data_.magic_byte = 'B';
 }
 
-void Settings::Save(uint16_t preset_index) {
+void Settings::Save() {
   data_.magic_byte = 'B';
-  storage.PresetSave(data_, &version_token_, preset_index);
-}
-
-void Settings::Load(uint16_t preset_index) {
-  if (!storage.PresetLoad(&data_, &version_token_, preset_index)) {
-    Reset(false);
-  }
+  storage.ParsimoniousSave(data_, &version_token_);
 }
 
 const char* const boolean_values[] = { "OFF ", "ON  " };
@@ -616,7 +606,7 @@ const char* const musical_scale_values[] = {
 
 /* static */
 const SettingMetadata Settings::metadata_[] = {
-  { 0, MACRO_OSC_SHAPE_LAST - 1, "WAVE", algo_values },
+  { 0, MACRO_OSC_SHAPE_LAST - 1, "SAVE", algo_values },
   { 0, RESOLUTION_LAST - 1, "BITS", bits_values },
   { 0, 1, "RINV", boolean_values },
   { 0, 1, "TSRC", trig_source_values },
@@ -698,11 +688,9 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "SEED", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
-  { 0, 9, "SAVE", mod_rate_values },
-  { 0, 9, "LOAD", mod_rate_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v4.1", NULL },  // Placeholder for version string
+  { 0, 0, "v4.0", NULL },  // Placeholder for version string
 };
 
 /* static */
@@ -792,8 +780,6 @@ const Setting Settings::settings_order_[] = {
   SETTING_TURING_CLOCK_DIV,
   SETTING_RESET_TYPE,
   SETTING_VERSION,
-  SETTING_PRESET_SAVE,
-  SETTING_PRESET_LOAD,
 };
 
 /* extern */
