@@ -662,7 +662,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, MACRO_OSC_SHAPE_LAST - 1, "WAV8", algo_values },
   { 1, 127, "RPT8", mod_rate_values },
   { 0, SAMPLE_RATE_LAST - 1, "SRAT", sample_rate_values },  
-  { 0, 2, "SDIR", metaseq_dir_values },
+  { 0, 2, "MDIR", metaseq_dir_values },
   { 0, 3, "RST ", reset_type_values },
   { 0, 1, "FS+H", boolean_values },
   { 0, 62, "NOT1", bipolar_values },
