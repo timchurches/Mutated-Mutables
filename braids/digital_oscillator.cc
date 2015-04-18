@@ -2367,6 +2367,22 @@ void DigitalOscillator::RenderBytebeat2(
   }
 }
 
+void DigitalOscillator::RenderBytebeat3(
+    const uint8_t* sync,
+    int16_t* buffer,
+    uint8_t size) {
+    uint32_t p0 = parameter_[0] >> 11;
+    uint32_t p1 = parameter_[1] >> 8;
+    uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
+  while (size--) {
+    ++phase_;
+    if (phase_ %  bytepitch == 0) ++t_; 
+    // This one is the second one listed at from http://xifeng.weebly.com/bytebeats.html
+    int32_t sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
+    *buffer++ = sample;
+  }
+}
+
 /* static */
 DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderTripleRingMod,
@@ -2404,6 +2420,7 @@ DigitalOscillator::RenderFn DigitalOscillator::fn_table_[] = {
   &DigitalOscillator::RenderBytebeat0,
   &DigitalOscillator::RenderBytebeat1,
   &DigitalOscillator::RenderBytebeat2,
+  &DigitalOscillator::RenderBytebeat3,
   &DigitalOscillator::RenderSilence,
 };
 

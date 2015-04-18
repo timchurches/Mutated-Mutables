@@ -220,6 +220,7 @@ const char* const algo_values[] = {
     "BYT0",
     "BYT1",
     "BYT2",
+    "BYT3",
     "ZERO", // this is the RenderSilence digital model 
 };
 
@@ -690,7 +691,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 25, "SCAL", musical_scale_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
-  { 0, 0, "v4.0", NULL },  // Placeholder for version string
+  { 0, 0, "v4.1", NULL },  // Placeholder for version string
 };
 
 /* static */
