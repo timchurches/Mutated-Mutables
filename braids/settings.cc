@@ -212,7 +212,7 @@ const char* const algo_values[] = {
     "WMAP",
     "WLIN",
     "WTx4",
-    // "NOIS",
+    "NOIS",
     // "TWNQ",
     "CLKN",
     "CLOU",
