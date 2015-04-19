@@ -2321,7 +2321,7 @@ void DigitalOscillator::RenderBytebeat0(
     uint8_t size) {
     uint32_t p0 = parameter_[0] >> 9;
     uint32_t p1 = parameter_[1] >> 11;
-    uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
+    uint16_t bytepitch = (16384 - pitch_) >> 11 ; // was 12
   while (size--) {
     ++phase_;
     if (phase_ % bytepitch == 0) ++t_; 
@@ -2339,7 +2339,7 @@ void DigitalOscillator::RenderBytebeat1(
     uint8_t size) {
     uint32_t p0 = parameter_[0] >> 11;
     uint32_t p1 = parameter_[1] >> 11;
-    uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
+    uint16_t bytepitch = (16384 - pitch_) >> 11 ; // was 12
   while (size--) {
     ++phase_;
     if (phase_ % bytepitch == 0) ++t_; 
@@ -2357,7 +2357,7 @@ void DigitalOscillator::RenderBytebeat2(
     uint8_t size) {
     uint32_t p0 = parameter_[0] >> 11;
     uint32_t p1 = parameter_[1] >> 11;
-    uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
+    uint16_t bytepitch = (16384 - pitch_) >> 11 ; // was 12
   while (size--) {
     ++phase_;
     if (phase_ %  bytepitch == 0) ++t_; 
@@ -2373,7 +2373,7 @@ void DigitalOscillator::RenderBytebeat3(
     uint8_t size) {
     uint32_t p0 = parameter_[0] >> 11;
     uint32_t p1 = parameter_[1] >> 8;
-    uint16_t bytepitch = (16384 - pitch_) >> 12 ; // was .. 8
+    uint16_t bytepitch = (16384 - pitch_) >> 11 ; // was 12
   while (size--) {
     ++phase_;
     if (phase_ %  bytepitch == 0) ++t_; 
