@@ -225,7 +225,8 @@ void Ui::OnIncrement(const Event& e) {
     case MODE_EDIT:
       {
         int16_t value = settings.GetValue(setting_);
-        value = settings.metadata(setting_).Clip(value + e.data);
+        // value = settings.metadata(setting_).Clip(value + e.data);
+        value = settings.metadata(setting_).Wrap(value + e.data);
         settings.SetValue(setting_, value);
         display_.set_brightness(settings.GetValue(SETTING_BRIGHTNESS) + 1);
       }

@@ -355,6 +355,16 @@ struct SettingMetadata {
     }
     return value;
   }
+
+  int16_t Wrap(int16_t value) const {
+    if (value > max_value) {
+      value = min_value;
+    } else if (value < min_value) {
+      value = max_value;
+    }
+    return value;
+  }
+
 };
 
 class Settings {
