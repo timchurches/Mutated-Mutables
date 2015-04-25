@@ -242,7 +242,8 @@ enum Setting {
   SETTING_TURING_PROB,
   SETTING_TURING_INIT,
   SETTING_MUSICAL_SCALE,
-  SETTING_LAST_EDITABLE_SETTING = SETTING_MUSICAL_SCALE,
+  SETTING_EDIT_WRAP,
+  SETTING_LAST_EDITABLE_SETTING = SETTING_EDIT_WRAP,
   
   // Not settings per se, but used for menu display!
   SETTING_CALIBRATION,
@@ -334,7 +335,8 @@ struct SettingsData {
   uint8_t turing_prob;
   uint8_t turing_init;
   uint8_t musical_scale;
-  uint8_t extra_padding[2];
+  uint8_t edit_wrap;
+  uint8_t extra_padding;
   int32_t pitch_cv_offset; 
   int32_t pitch_cv_scale; 
   int32_t fm_cv_offset; 
@@ -477,6 +479,10 @@ class Settings {
 
   inline bool pitch_sample_hold() const {
     return data_.pitch_sample_hold;
+  }
+
+  inline bool edit_wrap() const {
+    return data_.edit_wrap;
   }
   
   inline const SettingsData& data() const { return data_; }

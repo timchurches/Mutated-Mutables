@@ -125,7 +125,8 @@ const SettingsData kInitSettings = {
   0,                    // turing_prob
   0,                    // turing_init
   0,                    // musical_scale
-  { 0, 0 },             // padding
+  false,                // edit wrap
+  0,                    // padding
   50,                   // pitch_cv_offset
   15401,                // pitch_cv_scale
   2048,                 // fm_cv_offset
@@ -689,6 +690,7 @@ const SettingMetadata Settings::metadata_[] = {
   { 0, 127, "PROB", mod_rate_values },
   { 0, 127, "SEED", mod_rate_values },
   { 0, 25, "SCAL", musical_scale_values },
+  { 0, 1, "WRAP", boolean_values },
   { 0, 0, "CAL.", NULL },
   { 0, 0, "    ", NULL },  // Placeholder for CV tester
   { 0, 0, "v4.1", NULL },  // Placeholder for version string
@@ -724,11 +726,10 @@ const Setting Settings::settings_order_[] = {
   SETTING_OSC_SYNC,
   SETTING_RATE_INVERSION, 
   SETTING_BRIGHTNESS, 
+  SETTING_EDIT_WRAP,
   SETTING_CALIBRATION,
   SETTING_CV_TESTER,
   SETTING_PITCH_RANGE,
-  SETTING_PITCH_OCTAVE,
-  SETTING_FINE_TUNE,
   SETTING_PITCH_SAMPLE_HOLD,
   SETTING_PITCH_QUANTIZER,
   SETTING_QUANT_BEFORE_VIBRATO,
@@ -780,6 +781,8 @@ const Setting Settings::settings_order_[] = {
   SETTING_TURING_INIT,
   SETTING_TURING_CLOCK_DIV,
   SETTING_RESET_TYPE,
+  SETTING_PITCH_OCTAVE,
+  SETTING_FINE_TUNE,
   SETTING_VERSION,
 };
 
