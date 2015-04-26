@@ -500,7 +500,7 @@
 </ul>
 </li>
 <p>
-<li>There are three new "bytebeat" oscillator models, called <b>BYT0</b>, <b>BYT0</b> and <b>BYT0</b>, right at the end of the model list, after <b>CLOU</b>. For background information on bytebeats, see <a href="http://canonical.org/~kragen/bytebeat/">this page</a> by <em>kragen</em>. The three new oscillator models use the following byte beat equations:
+<li>There are three new "bytebeat" oscillator models, called <b>BYT0</b>, <b>BYT1</b> and <b>BYT2</b>, right at the end of the model list, after <b>CLOU</b>. For background information on bytebeats, see <a href="http://canonical.org/~kragen/bytebeat/">this page</a> by <em>kragen</em>. The three new oscillator models use the following byte beat equations:
 <ul><li><b>BYT0</b> is <code>((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128)</code> where t_ is a 32-bit time accumulator, driven by the oscillator phase accumulator divided down via a modulus set by the pitch setting, and p0 and p1 are the parameters set by the Timbre and Color controls, respectively. This algorithm is by Jamie DeLorio and can be found <a href="http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/">here</a>.</li>
 <li><b>BYT1</b> is <code>((t_*p0) & (t_>>4)) | ((t_*5) & (t_>>7)) | ((t_*p1) & (t_>>10))</code>, by stephth via <a href="https://www.youtube.com/watch?v=tCRPUv8V22o">https://www.youtube.com/watch?v=tCRPUv8V22o</a> (watch at about 3:38).</li>
 <li><b>BYT2</b> is <code>((t_ >> p0) & t_) * (t_ >> p1)</code>, from the list of byte beat equations compiled by a2aaron at <a href="http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/">http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/</a></li>
