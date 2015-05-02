@@ -116,8 +116,7 @@ void Ui::RefreshDisplay() {
           char text[] = "    ";
           if (!blink_) {
             for (uint8_t i = 0; i < kDisplayWidth; ++i) {
-              // text[i] = '\x90' + (cv_[i] * 7 >> 12);
-              text[i] = '\x90' + (cv_[i] * 7 >> 17);
+              text[i] = '\x90' + (cv_[i] * 7 >> 12);
             }
           }
           display_.Print(text);

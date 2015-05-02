@@ -127,7 +127,7 @@ void TIM1_UP_IRQHandler(void) {
   
   bool adc_scan_cycle_complete = adc.PipelinedScan();
   if (adc_scan_cycle_complete) {
-    // ui.UpdateCv(adc.channel(0), adc.channel(1), adc.channel(2), adc.channel(3));
+    ui.UpdateCv(adc.channel(0), adc.channel(1), adc.channel(2), adc.channel(3));
     if (trigger_detected_flag) {
       trigger_delay = settings.trig_delay()
           ? (1 << settings.trig_delay()) : 0;
@@ -884,11 +884,7 @@ void RenderBlock() {
      sample_rate_value -= settings.adc_to_fm(adc.channel(3)) >> 9;
      sample_rate_value = ParamClip(sample_rate_value, static_cast<uint8_t>(0), static_cast<uint8_t>(6));
   }
-
-  // Update CV tester values
-  ui.UpdateCv(adc.channel(0), adc.channel(1), ad_value, ad2_value);
-  
-       
+     
   // Copy to DAC buffer with sample rate and bit reduction applied.
   int16_t sample = 0;
   size_t decimation_factor = decimation_factors[sample_rate_value];  
