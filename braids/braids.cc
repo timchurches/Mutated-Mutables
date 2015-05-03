@@ -811,7 +811,9 @@ void RenderBlock() {
   osc.set_pitch(pitch + settings.pitch_transposition());
 
   if (trigger_flag) {
-    osc.Strike();
+    if (!(!settings.osc_sync() && settings.shape() == MACRO_OSC_SHAPE_WAVE_PARAPHONIC)) {
+       osc.Strike();
+    }
     // reset internal modulator phase if mod1_sync or mod2_sync > 0
     // and if a trigger counter for each = the setting of mod1_sync
     // or mod2_sync (defaults to 1 thus every trigger).
