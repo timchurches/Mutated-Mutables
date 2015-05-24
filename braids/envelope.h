@@ -80,13 +80,16 @@ class Envelope {
     phase_ = 0;
   }
   
-  inline uint16_t Render() {
+  inline uint16_t Render(bool *LfoCycleStart) {
     uint32_t increment = increment_[segment_];
     phase_ += increment;
     // Kickstart the LFO if in LFO mode and not already looping
     if (LfoMode_ && segment_ > ENV_SEGMENT_DECAY) {        
-         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK));  
-    } 
+         Trigger(static_cast<EnvelopeSegment>(ENV_SEGMENT_ATTACK)); 
+         *LfoCycleStart = true; 
+    } else {
+         *LfoCycleStart = false;
+    }
 
     if (phase_ < increment) {
       value_ = Mix(a_, b_, 65535);

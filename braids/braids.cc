@@ -343,6 +343,8 @@ void RenderBlock() {
   static uint8_t turing_init_counter = 0;
   static uint32_t turing_shift_register = 0;
   static int32_t turing_pitch_delta = 0;
+  bool modulator1_cycle_start = false;
+  bool modulator2_cycle_start = false;
   
   // debug_pin.High();
 
@@ -399,7 +401,7 @@ void RenderBlock() {
   // using the modified attack and decay values
   envelope.Update(env_a, env_d, 0, 0, LFO_mode, settings.GetValue(SETTING_MOD1_ATTACK_SHAPE), settings.GetValue(SETTING_MOD1_DECAY_SHAPE));  
   // Render the envelope
-  uint16_t ad_value = envelope.Render() ;
+  uint16_t ad_value = envelope.Render(&modulator1_cycle_start) ;
 
 
   // TO-DO: instead of repeating code, use an array for env params and a loop!
@@ -452,8 +454,12 @@ void RenderBlock() {
   // using the modified attack and decay values
   envelope2.Update(env2_a, env2_d, 0, 0, LFO_mode, settings.GetValue(SETTING_MOD2_ATTACK_SHAPE), settings.GetValue(SETTING_MOD2_DECAY_SHAPE));  
   // Render the envelope
-  uint16_t ad2_value = envelope2.Render() ;
+  uint16_t ad2_value = envelope2.Render(&modulator2_cycle_start) ;
 
+  if (modulator2_cycle_start) {
+    trigger_flag = true;
+  }
+  
   // meta-sequencer
   uint8_t metaseq_length = settings.GetValue(SETTING_METASEQ);
   if (trigger_flag && metaseq_length) {
