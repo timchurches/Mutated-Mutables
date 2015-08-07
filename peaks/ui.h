@@ -1,6 +1,10 @@
 // Copyright 2013 Olivier Gillet.
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
+// Modifications: Tim Churches (tim.churches@gmail.com)
+// Modifications may be determined by examining the differences between the last commit 
+// by Olivier Gillet (pichenettes) and the HEAD commit at 
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -76,6 +80,7 @@ struct Settings {
   uint8_t function[2];
   uint8_t pot_value[8];
   bool snap_mode;
+  uint8_t padding[4];
 };
 
 class Ui {
