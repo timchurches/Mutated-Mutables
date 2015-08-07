@@ -52,6 +52,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_PULSE_SHAPER, PROCESSOR_FUNCTION_PULSE_SHAPER },
   { PROCESSOR_FUNCTION_PULSE_RANDOMIZER, PROCESSOR_FUNCTION_PULSE_RANDOMIZER },
   { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
+  { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
 };
 
 Storage<0x8020000, 16> storage;
@@ -135,7 +136,20 @@ inline void Ui::RefreshLeds() {
       function() >= FUNCTION_FIRST_ALTERNATE_FUNCTION) {
     leds_.set_function(4);
   } else {
-    leds_.set_function(function() & 3);
+    switch (function()) {
+      case 8:
+        leds_.set_pattern(3);
+        break;
+//       case 9:
+//         leds_.set_pattern(5);
+//         break;
+//       case 10:
+//         leds_.set_pattern(9);
+//         break;
+      default:
+        leds_.set_function(function() & 3);
+        break;
+    }
   }
   
   uint8_t b[2];
@@ -304,7 +318,10 @@ void Ui::OnSwitchReleased(const Event& e) {
           if (f <= FUNCTION_DRUM_GENERATOR) {
             f = static_cast<Function>((f + 1) & 3);
           } else {
-            f = static_cast<Function>(((f + 1) & 3) + FUNCTION_FIRST_ALTERNATE_FUNCTION);
+            f = static_cast<Function>(f + 1);
+            if (f >= FUNCTION_LAST) {
+              f = static_cast<Function>(FUNCTION_FIRST_ALTERNATE_FUNCTION);
+            }
           }
         }
         SetFunction(edit_mode_ - EDIT_MODE_FIRST, f);
