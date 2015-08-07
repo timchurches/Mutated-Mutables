@@ -120,6 +120,10 @@ void Ui::SaveState() {
   settings_.function[0] = function_[0];
   settings_.function[1] = function_[1];
   copy(&pot_value_[0], &pot_value_[8], &settings_.pot_value[0]);
+  settings_.padding[0] = 0;
+  settings_.padding[1] = 0;
+  settings_.padding[2] = 0;
+  settings_.padding[3] = 0;
   storage.ParsimoniousSave(settings_, &version_token_);
 }
 
