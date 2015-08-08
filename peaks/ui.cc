@@ -57,6 +57,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_PULSE_RANDOMIZER, PROCESSOR_FUNCTION_PULSE_RANDOMIZER },
   { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
   { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
+  { PROCESSOR_FUNCTION_TURING_MACHINE, PROCESSOR_FUNCTION_TURING_MACHINE },
 };
 
 Storage<0x8020000, 16> storage;
@@ -145,12 +146,12 @@ inline void Ui::RefreshLeds() {
     leds_.set_function(4);
   } else {
     switch (function()) {
-      case 8:
+      case FUNCTION_BOUNCING_BALL:
         leds_.set_pattern(3);
         break;
-//       case 9:
-//         leds_.set_pattern(5);
-//         break;
+      case FUNCTION_TURING_MACHINE:
+        leds_.set_pattern(5);
+        break;
 //       case 10:
 //         leds_.set_pattern(9);
 //         break;
@@ -171,6 +172,7 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_LFO:
       case FUNCTION_TAP_LFO:
       case FUNCTION_MINI_SEQUENCER:
+      case FUNCTION_TURING_MACHINE:
         b[i] = static_cast<uint16_t>(brightness_[i] + 32768) >> 8;
         break;
       default:

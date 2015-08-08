@@ -40,6 +40,7 @@
 #include "peaks/modulations/bouncing_ball.h"
 #include "peaks/modulations/lfo.h"
 #include "peaks/modulations/mini_sequencer.h"
+#include "peaks/modulations/turing_machine.h"
 #include "peaks/modulations/multistage_envelope.h"
 #include "peaks/number_station/number_station.h"
 #include "peaks/pulse_processor/pulse_shaper.h"
@@ -62,6 +63,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_BOUNCING_BALL,
   PROCESSOR_FUNCTION_MINI_SEQUENCER,
   PROCESSOR_FUNCTION_NUMBER_STATION,
+  PROCESSOR_FUNCTION_TURING_MACHINE,
   PROCESSOR_FUNCTION_LAST
 };
 
@@ -201,6 +203,7 @@ class Processors {
   DECLARE_UNBUFFERED_PROCESSOR(BouncingBall, bouncing_ball_);
   DECLARE_UNBUFFERED_PROCESSOR(MiniSequencer, mini_sequencer_);
   DECLARE_BUFFERED_PROCESSOR(NumberStation, number_station_);
+  DECLARE_UNBUFFERED_PROCESSOR(TuringMachine, turing_machine_);
   
   DISALLOW_COPY_AND_ASSIGN(Processors);
 };
