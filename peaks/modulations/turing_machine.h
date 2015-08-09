@@ -51,106 +51,115 @@ class TuringMachine {
     turing_offset_ = 0;
     turing_span_ = 0;
     turing_shift_register_ = stmlib::Random::GetWord();
-    turing_pitch_delta_ = 0;
     turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);
-    turing_remainder_lsb_ = false;    
+    turing_remainder_lsb_ = false;  
+    turing_value_ = 0;  
   }
     
-  inline void set_turing_length(int16_t value) {
-    turing_length_ = value >> 11;
-    if (turing_length_ < 2) {
-      turing_length_ = 2 ;
+  inline void set_turing_length(uint16_t value) {
+    turing_length_ = value >> 11; // was 11
+    if (turing_length_ < 4) {
+      turing_length_ = 4 ;
     }
     if (turing_length_ > 32) {
       turing_length_ = 32 ;
     }
+    // override for debugging
+    // turing_length_ = 8 ;
   }
  
-  inline void set_turing_prob(int16_t value) {
-    turing_prob_ = value;
+  inline void set_turing_prob(uint16_t value) {
+    if (value < 1024) {
+      turing_prob_ = 0 ;
+    } else if (value > 63000) {
+      turing_prob_ = 65535;
+    } else {
+      turing_prob_ = value >> 3 ;
+    }
   }
 
-  inline void set_turing_offset(int16_t value) {
+  inline void set_turing_offset(uint16_t value) {
     turing_offset_ = value;
   }
   
-  inline void set_turing_span(int16_t value) {
+  inline void set_turing_span(uint16_t value) {
     turing_span_ = value;
   }
  
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
-      set_turing_prob(parameter[0] - 32768);
-      set_turing_length(parameter[1] - 32768);
+      set_turing_prob(parameter[0]);
+      set_turing_length(parameter[1]);
     } else {
-      set_turing_prob(parameter[0] - 32768);
-      set_turing_length(parameter[1] - 32768);
-      set_turing_offset(parameter[2] - 32768);
-      set_turing_span(parameter[3] - 32768);
+      set_turing_prob(parameter[0]);
+      set_turing_length(parameter[1]);
+      set_turing_offset(parameter[2]);
+      set_turing_span(parameter[3]);
     }
   }
   
   inline int16_t ProcessSingleSample(uint8_t control) {
     if (control & CONTROL_GATE_RISING) {
-        // read the LSB
-        turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);
-        // read the LSB in the remainder of the shift register
-        if (turing_length_ < 32) {
-           turing_remainder_lsb_ = turing_shift_register_ & (static_cast<uint32_t>(1) << turing_length_);
-        }
-        // rotate the shift register
-        turing_shift_register_ = turing_shift_register_ >> 1;
-        // add back the LSB into the MSB postion
-        if (turing_lsb_) {
-           turing_shift_register_ |= (static_cast<uint32_t>(1) << (turing_length_ - 1));
-        } else {
-           turing_shift_register_ &= (~(static_cast<uint32_t>(1) << (turing_length_ - 1)));
-        }
-        // add back the LSB to the remainder of the shift register
-        if (turing_length_ < 32) {
-           if (turing_remainder_lsb_) {
-              turing_shift_register_ |= (static_cast<uint32_t>(1) << 31);
-           } else {
-              turing_shift_register_ &= (~(static_cast<uint32_t>(1) << 31));
-           }
-        }
-        // decide whether to flip the LSB
-        turing_prob_ = turing_prob_ >> 8;
-        // Clip at zero and 127
-          // turing_prob = ParamClip(turing_prob, static_cast<int16_t>(0), static_cast<int16_t>(127));
+        // Decide whether to re-initialise and skip the rest, or not
+        if (turing_offset_ > 32768) {
+            turing_shift_register_ = stmlib::Random::GetWord();
+            turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);        
+        } else { 
+			// read the LSB
+			turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);
+			// read the LSB in the remainder of the shift register
+			if (turing_length_ < 32) {
+			   turing_remainder_lsb_ = turing_shift_register_ & (static_cast<uint32_t>(1) << turing_length_);
+			}
+			// rotate the shift register
+			turing_shift_register_ = turing_shift_register_ >> 1;
+			// add back the LSB into the MSB postion
+			if (turing_lsb_) {
+			   turing_shift_register_ |= (static_cast<uint32_t>(1) << (turing_length_ - 1));
+			} else {
+			   turing_shift_register_ &= (~(static_cast<uint32_t>(1) << (turing_length_ - 1)));
+			}
+			// add back the LSB to the remainder of the shift register
+			if (turing_length_ < 32) {
+			   if (turing_remainder_lsb_) {
+				  turing_shift_register_ |= (static_cast<uint32_t>(1) << 31);
+			   } else {
+				  turing_shift_register_ &= (~(static_cast<uint32_t>(1) << 31));
+			   }
+			}
+			// decide whether to flip the LSB
+			uint16_t random = stmlib::Random::GetSample();
+			if (random < turing_prob_) {
+			   // bit-flip the LSB
+			   turing_shift_register_ = turing_shift_register_ ^ static_cast<uint32_t>(1) ;
+			}
 
-        if (static_cast<uint16_t>(stmlib::Random::GetWord() >> 17) < turing_prob_) {
-           // bit-flip the LSB
-           turing_shift_register_ = turing_shift_register_ ^ static_cast<uint32_t>(1) ;
+			// read the window and calculate pitch increment
+			// int16_t turing_window = settings.GetValue(SETTING_TURING_WINDOW);
+			// if (meta_mod == 12) {
+			   // add the FM CV amount, offset by 2
+			//   turing_window += (settings.adc_to_fm(adc.channel(3)) >> 7) + 2;
+			// }
+			// Clip at zero and 36
+			// turing_window = ParamClip(turing_window, static_cast<int16_t>(0), static_cast<int16_t>(36));
         }
-
-// Up to here
-
-       // read the window and calculate pitch increment
-        // int16_t turing_window = settings.GetValue(SETTING_TURING_WINDOW);
-        // if (meta_mod == 12) {
-           // add the FM CV amount, offset by 2
-	    //   turing_window += (settings.adc_to_fm(adc.channel(3)) >> 7) + 2;
-        // }
-        // Clip at zero and 36
-        // turing_window = ParamClip(turing_window, static_cast<int16_t>(0), static_cast<int16_t>(36));
-
         turing_byte_ = turing_shift_register_ & static_cast<uint32_t>(0xFF);
         // uint8_t turing_value = (turing_byte * static_cast<uint8_t>(turing_window)) >> 8;
+        turing_value_ = (turing_byte_ - 127) * (turing_span_ >> 8) ;
     }
-    return turing_byte_ << 8;
+    return (turing_value_);
   }
   
  private:
-  int16_t turing_length_;
-  int16_t turing_prob_;
-  int16_t turing_offset_;
-  int16_t turing_span_;
+  uint16_t turing_length_;
+  uint16_t turing_prob_;
+  uint16_t turing_offset_;
+  uint16_t turing_span_;
   uint32_t turing_shift_register_;
-  int32_t turing_pitch_delta_;
   bool turing_lsb_;
   bool turing_remainder_lsb_;
   uint32_t turing_byte_;
+  int16_t turing_value_;
   
   DISALLOW_COPY_AND_ASSIGN(TuringMachine);
 };
