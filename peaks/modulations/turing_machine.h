@@ -57,22 +57,24 @@ class TuringMachine {
   }
     
   inline void set_turing_length(uint16_t value) {
-    turing_length_ = value >> 11; // was 11
-    if (turing_length_ < 4) {
-      turing_length_ = 4 ;
-    }
-    if (turing_length_ > 32) {
-      turing_length_ = 32 ;
-    }
-    // override for debugging
-    // turing_length_ = 8 ;
+    if (value < 13107) {
+      turing_length_ = 4;
+    } else if (value < 26214U) {
+      turing_length_ = 8;
+    } else if (value < 39321U) {
+      turing_length_ = 16;
+    } else if (value < 52428U) {
+      turing_length_ = 24;
+    } else {
+      turing_length_ = 32;
+    }     
   }
  
   inline void set_turing_prob(uint16_t value) {
-    if (value < 1024) {
+    if (value < 2048U) {
       turing_prob_ = 0 ;
-    } else if (value > 63000) {
-      turing_prob_ = 65535;
+    } else if (value > 63487U) {
+      turing_prob_ = 65535U;
     } else {
       turing_prob_ = value >> 3 ;
     }
@@ -129,7 +131,7 @@ class TuringMachine {
 			}
 			// decide whether to flip the LSB
 			uint16_t random = stmlib::Random::GetSample();
-			if (random < turing_prob_) {
+			if (random <= turing_prob_) {
 			   // bit-flip the LSB
 			   turing_shift_register_ = turing_shift_register_ ^ static_cast<uint32_t>(1) ;
 			}
@@ -145,7 +147,7 @@ class TuringMachine {
         }
         turing_byte_ = turing_shift_register_ & static_cast<uint32_t>(0xFF);
         // uint8_t turing_value = (turing_byte * static_cast<uint8_t>(turing_window)) >> 8;
-        turing_value_ = (turing_byte_ - 127) * (turing_span_ >> 8) ;
+        turing_value_ = (turing_byte_ * (turing_span_ >> 8)) - 32768 ;
     }
     return (turing_value_);
   }
