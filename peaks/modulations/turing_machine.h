@@ -46,7 +46,7 @@ class TuringMachine {
   ~TuringMachine() { }
   
   void Init() {
-    turing_length_ = 0;
+    turing_length_ = 4;
     turing_prob_ = 0;
     turing_offset_ = 0;
     turing_span_ = 0;
@@ -59,11 +59,11 @@ class TuringMachine {
   inline void set_turing_length(uint16_t value) {
     if (value < 13107) {
       turing_length_ = 4;
-    } else if (value < 26214U) {
+    } else if (value < 26214) {
       turing_length_ = 8;
-    } else if (value < 39321U) {
+    } else if (value < 39321) {
       turing_length_ = 16;
-    } else if (value < 52428U) {
+    } else if (value < 52428) {
       turing_length_ = 24;
     } else {
       turing_length_ = 32;
@@ -71,10 +71,8 @@ class TuringMachine {
   }
  
   inline void set_turing_prob(uint16_t value) {
-    if (value < 2048U) {
-      turing_prob_ = 0 ;
-    } else if (value > 63487U) {
-      turing_prob_ = 65535U;
+    if (value > 63487) {
+      turing_prob_ = 65535;
     } else {
       turing_prob_ = value >> 3 ;
     }
@@ -100,10 +98,11 @@ class TuringMachine {
     }
   }
   
-  inline int16_t ProcessSingleSample(uint8_t control) {
+  inline int16_t ProcessSingleSample(uint8_t control) __attribute__((optimize(0))) {
     if (control & CONTROL_GATE_RISING) {
         // Decide whether to re-initialise and skip the rest, or not
-        if (turing_offset_ > 32768) {
+//        if (turing_offset_ > 32768) {
+       if (false) {
             turing_shift_register_ = stmlib::Random::GetWord();
             turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);        
         } else { 
@@ -147,13 +146,13 @@ class TuringMachine {
         }
         turing_byte_ = turing_shift_register_ & static_cast<uint32_t>(0xFF);
         // uint8_t turing_value = (turing_byte * static_cast<uint8_t>(turing_window)) >> 8;
-        turing_value_ = (turing_byte_ * (turing_span_ >> 8)) - 32768 ;
+        turing_value_ = (turing_byte_ * (turing_span_ >> 9));
     }
     return (turing_value_);
   }
   
  private:
-  uint16_t turing_length_;
+  uint8_t turing_length_;
   uint16_t turing_prob_;
   uint16_t turing_offset_;
   uint16_t turing_span_;
