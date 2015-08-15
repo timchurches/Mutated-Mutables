@@ -323,22 +323,15 @@ void Ui::OnSwitchReleased(const Event& e) {
       {
         Function f = function();
         if (e.data > kLongPressDuration) {
-          if (f < FUNCTION_FIRST_ALTERNATE_FUNCTION) {
-            f = static_cast<Function>(f + FUNCTION_FIRST_ALTERNATE_FUNCTION);
-          } else if (f < FUNCTION_FIRST_EXTENDED_FUNCTION) {
-            f = static_cast<Function>(f - FUNCTION_FIRST_ALTERNATE_FUNCTION);
-          } else {
-            f = static_cast<Function>(f - FUNCTION_FIRST_EXTENDED_FUNCTION);
-          }
+          f = static_cast<Function>((f + FUNCTION_FIRST_ALTERNATE_FUNCTION) % FUNCTION_LAST);
         } else {
-          if (f < FUNCTION_DRUM_GENERATOR) {
-            f = static_cast<Function>(f + 1);
-          } else if (f == FUNCTION_DRUM_GENERATOR) {
-            f = static_cast<Function>(FUNCTION_FIRST_FUNCTION);
-          } else if (f < (FUNCTION_LAST - 1)) {
-            f = static_cast<Function>(f + 1);          
+          if (f <= FUNCTION_DRUM_GENERATOR) {
+            f = static_cast<Function>((f + 1) & 3);
           } else {
-            f = static_cast<Function>(FUNCTION_FIRST_ALTERNATE_FUNCTION);
+            f = static_cast<Function>(f + 1);
+            if (f >= FUNCTION_LAST) {
+              f = static_cast<Function>(FUNCTION_FIRST_ALTERNATE_FUNCTION);
+            }
           }
         }
         SetFunction(edit_mode_ - EDIT_MODE_FIRST, f);
