@@ -46,31 +46,36 @@ class TuringMachine {
   ~TuringMachine() { }
   
   void Init() {
-    turing_length_ = 4;
+    turing_length_ = 8;
     turing_prob_ = 0;
-    turing_offset_ = 0;
+    turing_divider_ = 1;
     turing_span_ = 0;
     turing_shift_register_ = stmlib::Random::GetWord();
     turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);
     turing_remainder_lsb_ = false;  
     turing_value_ = 0;  
+    turing_div_counter_ = 0;
   }
     
-  inline void set_turing_length(int16_t value) {
-    if (value < 13107) {
-      turing_length_ = 4;
-    } else if (value < 26214) {
+  inline void set_turing_length(uint16_t value) {
+    if (value < 9362) {
       turing_length_ = 8;
-    } else if (value < 39321) {
+    } else if (value < 18724) {
+      turing_length_ = 12;
+    } else if (value < 28086) {
       turing_length_ = 16;
-    } else if (value < 52428) {
+    } else if (value < 37449) {
+      turing_length_ = 20;
+    } else if (value < 46822) {
       turing_length_ = 24;
+    } else if (value < 56173) {
+      turing_length_ = 28;
     } else {
       turing_length_ = 32;
     }     
   }
  
-  inline void set_turing_prob(int16_t value) {
+  inline void set_turing_prob(uint16_t value) {
     if (value > 63487) {
       turing_prob_ = 65535;
     } else {
@@ -78,28 +83,31 @@ class TuringMachine {
     }
   }
 
-  inline void set_turing_offset(int16_t value) {
-    turing_offset_ = value;
+  inline void set_turing_divider(uint16_t value) {
+    turing_divider_ = (value >> 13) + 1;
   }
   
-  inline void set_turing_span(int16_t value) {
+  inline void set_turing_span(uint16_t value) {
     turing_span_ = value;
   }
  
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_turing_prob(parameter[0]);
-      set_turing_length(parameter[1]);
+      set_turing_span(parameter[1]);
     } else {
       set_turing_prob(parameter[0]);
-      set_turing_length(parameter[1]);
-      set_turing_offset(parameter[2]);
-      set_turing_span(parameter[3]);
+      set_turing_span(parameter[1]);
+      set_turing_length(parameter[2]);
+      set_turing_divider(parameter[3]);
     }
   }
   
   inline int16_t ProcessSingleSample(uint8_t control) {
     if (control & CONTROL_GATE_RISING) {
+      ++turing_div_counter_;
+      if (turing_div_counter_ >= turing_divider_) {
+        turing_div_counter_ = 0 ;
         // read the LSB
         turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);
         // read the LSB in the remainder of the shift register
@@ -123,7 +131,7 @@ class TuringMachine {
            }
         }
         // Decide whether to re-initialise and skip the rest, or not
-        if (turing_offset_ > 63487) {
+        if (false) {
             turing_shift_register_ = stmlib::Random::GetWord();
             turing_lsb_ = turing_shift_register_ & static_cast<uint32_t>(1);        
         } else { 
@@ -157,7 +165,8 @@ class TuringMachine {
 	        }
 	    }    
         turing_byte_ = turing_shift_register_ & static_cast<uint32_t>(0xFF);
-        turing_value_ = (turing_byte_ * (turing_span_ >> 9));
+        turing_value_ = (turing_byte_ * (turing_span_ >> 10)); // was 9
+      }
     }
     return turing_value_;
   }
@@ -165,13 +174,14 @@ class TuringMachine {
  private:
   uint16_t turing_length_;
   uint16_t turing_prob_;
-  uint16_t turing_offset_;
+  uint16_t turing_divider_;
   uint16_t turing_span_;
   uint32_t turing_shift_register_;
   bool turing_lsb_;
   bool turing_remainder_lsb_;
   uint32_t turing_byte_;
   int16_t turing_value_;
+  uint8_t turing_div_counter_;
   
   DISALLOW_COPY_AND_ASSIGN(TuringMachine);
 };

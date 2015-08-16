@@ -172,8 +172,10 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_LFO:
       case FUNCTION_TAP_LFO:
       case FUNCTION_MINI_SEQUENCER:
-      case FUNCTION_TURING_MACHINE:
         b[i] = static_cast<uint16_t>(brightness_[i] + 32768) >> 8;
+        break;
+      case FUNCTION_TURING_MACHINE:
+        b[i] = static_cast<uint16_t>(brightness_[i]) >> 5;
         break;
       default:
         b[i] = brightness_[i] >> 7;
