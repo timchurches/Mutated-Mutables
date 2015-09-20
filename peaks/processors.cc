@@ -59,11 +59,13 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_BUFFERED_PROCESSOR(FmDrum)
   REGISTER_BUFFERED_PROCESSOR(PulseShaper)
   REGISTER_BUFFERED_PROCESSOR(PulseRandomizer)
-  REGISTER_UNBUFFERED_PROCESSOR(BouncingBall)
   REGISTER_UNBUFFERED_PROCESSOR(MiniSequencer)
   REGISTER_BUFFERED_PROCESSOR(NumberStation)
-  REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
   REGISTER_UNBUFFERED_PROCESSOR(DualAttackEnvelope)
+  REGISTER_UNBUFFERED_PROCESSOR(RepeatingAttackEnvelope)
+  REGISTER_UNBUFFERED_PROCESSOR(LoopingEnvelope)
+  REGISTER_UNBUFFERED_PROCESSOR(BouncingBall)
+  REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
 };
 
 void Processors::Init(uint8_t index) {
@@ -94,6 +96,8 @@ void Processors::Init(uint8_t index) {
   number_station_.set_voice(index == 1);
   turing_machine_.Init();
   dual_attack_envelope_.Init();
+  looping_envelope_.Init();
+  repeating_attack_envelope_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
   set_function(PROCESSOR_FUNCTION_ENVELOPE);
