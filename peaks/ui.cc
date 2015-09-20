@@ -58,6 +58,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
   { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
   { PROCESSOR_FUNCTION_TURING_MACHINE, PROCESSOR_FUNCTION_TURING_MACHINE },
+  { PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE, PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE },
 };
 
 Storage<0x8020000, 16> storage;
@@ -152,9 +153,9 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_TURING_MACHINE:
         leds_.set_pattern(5);
         break;
-//       case 10:
-//         leds_.set_pattern(9);
-//         break;
+      case FUNCTION_DUAL_ATTACK_ENVELOPE:
+        leds_.set_pattern(9);
+        break;
       default:
         leds_.set_function(function() & 3);
         break;

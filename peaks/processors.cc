@@ -63,6 +63,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_UNBUFFERED_PROCESSOR(MiniSequencer)
   REGISTER_BUFFERED_PROCESSOR(NumberStation)
   REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
+  REGISTER_UNBUFFERED_PROCESSOR(DualAttackEnvelope)
 };
 
 void Processors::Init(uint8_t index) {
@@ -92,6 +93,7 @@ void Processors::Init(uint8_t index) {
   number_station_.Init();
   number_station_.set_voice(index == 1);
   turing_machine_.Init();
+  dual_attack_envelope_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
   set_function(PROCESSOR_FUNCTION_ENVELOPE);
