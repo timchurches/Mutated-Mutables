@@ -306,7 +306,7 @@ class RepeatingAttackEnvelope {
     time_[1] = decay;
     
     shape_[0] = ENV_SHAPE_QUARTIC;
-    shape_[1] = ENV_SHAPE_EXPONENTIAL;
+    shape_[1] = ENV_SHAPE_QUARTIC;
     
     loop_start_ = 0;
     loop_end_ = 2;
@@ -330,7 +330,7 @@ class RepeatingAttackEnvelope {
     time_[2] = release;
     
     shape_[0] = ENV_SHAPE_QUARTIC;
-    shape_[1] = ENV_SHAPE_EXPONENTIAL;
+    shape_[1] = ENV_SHAPE_QUARTIC;
     shape_[2] = ENV_SHAPE_EXPONENTIAL;
     
     loop_start_ = 0;
@@ -414,7 +414,7 @@ class LoopingEnvelope {
     time_[1] = decay;
     
     shape_[0] = ENV_SHAPE_QUARTIC;
-    shape_[1] = ENV_SHAPE_EXPONENTIAL;
+    shape_[1] = ENV_SHAPE_QUARTIC;
     
     loop_start_ = 0;
     loop_end_ = 2;
@@ -438,8 +438,8 @@ class LoopingEnvelope {
     time_[2] = release;
     
     shape_[0] = ENV_SHAPE_QUARTIC;
-    shape_[1] = ENV_SHAPE_EXPONENTIAL;
-    shape_[2] = ENV_SHAPE_EXPONENTIAL;
+    shape_[1] = ENV_SHAPE_QUARTIC;
+    shape_[2] = ENV_SHAPE_QUARTIC;
     
     loop_start_ = 0;
     loop_end_ = 3;
