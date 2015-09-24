@@ -64,6 +64,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_UNBUFFERED_PROCESSOR(DualAttackEnvelope)
   REGISTER_UNBUFFERED_PROCESSOR(RepeatingAttackEnvelope)
   REGISTER_UNBUFFERED_PROCESSOR(LoopingEnvelope)
+  REGISTER_UNBUFFERED_PROCESSOR(RandomisedEnvelope)  
   REGISTER_UNBUFFERED_PROCESSOR(BouncingBall)
   REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
 };
@@ -98,6 +99,7 @@ void Processors::Init(uint8_t index) {
   dual_attack_envelope_.Init();
   looping_envelope_.Init();
   repeating_attack_envelope_.Init();
+  randomised_envelope_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
   set_function(PROCESSOR_FUNCTION_ENVELOPE);

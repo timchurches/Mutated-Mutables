@@ -471,6 +471,132 @@ class LoopingEnvelope {
   DISALLOW_COPY_AND_ASSIGN(LoopingEnvelope);
 };
 
+// randomised AD envelope class
+class RandomisedEnvelope {
+ public:
+  RandomisedEnvelope() { }
+  ~RandomisedEnvelope() { }
+  
+  void Init();
+  int16_t ProcessSingleSample(uint8_t control);
+  
+  void Configure(uint16_t* parameter, ControlMode control_mode) {
+    if (control_mode == CONTROL_MODE_HALF) {
+      set_rad_half(parameter[0], parameter[1]);
+    } else {
+      set_rad(parameter[0], parameter[1], parameter[2], parameter[3]);
+    }
+    if (segment_ > num_segments_) {
+      segment_ = 0;
+      phase_ = 0;
+      value_ = 0;
+    }
+  }
+  
+  inline void set_time(uint16_t segment, uint16_t time) {
+    time_[segment] = time;
+  }
+  
+  inline void set_level(uint16_t segment, int16_t level) {
+    level_[segment] = level;
+  }
+  
+  inline void set_num_segments(uint16_t num_segments) {
+    num_segments_ = num_segments;
+  }
+  
+  inline void set_sustain_point(uint16_t sustain_point) {
+    sustain_point_ = sustain_point;
+  }
+  
+  inline void set_rad(uint16_t attack,
+                      uint16_t decay,
+                      uint16_t level_randomness,
+                      uint16_t decay_randomness) {
+    num_segments_ = 2;
+    sustain_point_ = 0;
+    
+    level_randomness_ = level_randomness;
+    decay_randomness_ = decay_randomness;
+
+    base_level_[0] = 0;
+    base_level_[1] = 32767;
+    base_level_[2] = 0;
+
+    level_[0] = 0;
+    level_[1] = 32767;
+    level_[2] = 0;
+
+    base_time_[0] = attack;
+    base_time_[1] = decay;
+
+    time_[0] = attack;
+    time_[1] = decay;
+    
+    shape_[0] = ENV_SHAPE_QUARTIC;
+    shape_[1] = ENV_SHAPE_EXPONENTIAL;
+    
+    loop_start_ = loop_end_ = 0;
+  }
+
+  inline void set_rad_half(uint16_t attack, uint16_t decay) {
+    num_segments_ = 2;
+    sustain_point_ = 0;
+
+    base_level_[0] = 0;
+    base_level_[1] = 32767;
+    base_level_[2] = 0;
+
+    level_[0] = 0;
+    level_[1] = 32767;
+    level_[2] = 0;
+
+    base_time_[0] = attack;
+    base_time_[1] = decay;
+
+    time_[0] = attack;
+    time_[1] = decay;
+    
+    shape_[0] = ENV_SHAPE_QUARTIC;
+    shape_[1] = ENV_SHAPE_EXPONENTIAL;
+    
+    loop_start_ = 0;
+    loop_end_ = 0;
+  }
+    
+  inline void set_hard_reset(bool hard_reset) {
+    hard_reset_ = hard_reset;
+  }
+  
+ private:
+  int16_t level_[kMaxNumSegments];
+  int16_t base_level_[kMaxNumSegments];
+
+  uint16_t base_time_[kMaxNumSegments];
+  uint16_t time_[kMaxNumSegments];
+  EnvelopeShape shape_[kMaxNumSegments];
+  
+  int16_t segment_;
+  int16_t start_value_;
+  int16_t value_;
+
+  uint32_t phase_;
+  uint32_t phase_increment_;
+  
+  uint16_t num_segments_;
+  uint16_t sustain_point_;
+  uint16_t loop_start_;
+  uint16_t loop_end_;
+  
+  bool hard_reset_;
+  
+  uint16_t level_randomness_ ;
+  uint16_t decay_randomness_ ;
+  
+  DISALLOW_COPY_AND_ASSIGN(RandomisedEnvelope);
+};
+
+
 }  // namespace peaks
 
 #endif  // PEAKS_MODULATIONS_MULTISTAGE_ENVELOPE_H_
