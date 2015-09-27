@@ -99,5 +99,4 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   return hh;
 }
 
-
 }  // namespace peaks

@@ -124,12 +124,9 @@ class RandomisedSnareDrum {
       set_snappy(parameter[1]);
     } else {
       set_frequency(parameter[0] - 32768);
-      base_frequency_ = parameter[0] - 32768;
       set_tone(parameter[1]);
       set_snappy(parameter[2]);
-      // set_decay(parameter[3]);
-      set_decay(32768);
-      set_frequency_randomness(parameter[3]);
+      set_decay(parameter[3]);
     }
   }
 
@@ -161,10 +158,6 @@ class RandomisedSnareDrum {
     noise_.set_frequency(base_note + (48 << 7));
   }
 
-  void set_frequency_randomness(uint16_t frequency_randomness) {
-    frequency_randomness_ = frequency_randomness;
-  }
-
  private:
   Excitation excitation_1_up_;
   Excitation excitation_1_down_;
@@ -183,6 +176,10 @@ class RandomisedSnareDrum {
   uint16_t hit_randomness_ ;
 
   int16_t base_frequency_ ;
+  uint16_t base_tone_ ;
+  uint16_t base_decay_ ;
+  uint16_t base_snappy_ ;
+  uint32_t hit_random_offset_ ;
 
   DISALLOW_COPY_AND_ASSIGN(RandomisedSnareDrum);
 };
