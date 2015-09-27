@@ -99,4 +99,78 @@ int16_t SnareDrum::ProcessSingleSample(uint8_t control) {
   return sd;
 }
 
+// randomised version
+void RandomisedSnareDrum::Init() {
+  excitation_1_up_.Init();
+  excitation_1_up_.set_delay(0);
+  excitation_1_up_.set_decay(1536);
+  
+  excitation_1_down_.Init();
+  excitation_1_down_.set_delay(1e-3 * 48000);
+  excitation_1_down_.set_decay(3072);
+
+  excitation_2_.Init();
+  excitation_2_.set_delay(1e-3 * 48000);
+  excitation_2_.set_decay(1200);
+  
+  excitation_noise_.Init();
+  excitation_noise_.set_delay(0);
+  
+  body_1_.Init();
+  body_2_.Init();
+
+  noise_.Init();
+  noise_.set_resonance(2000);
+  noise_.set_mode(SVF_MODE_BP);
+  
+  set_tone(0);
+  set_snappy(32768);
+  set_decay(32768);
+  set_frequency(0);
+}
+
+int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
+  if (control & CONTROL_GATE_RISING) {
+    // randomise parameters
+    // frequency
+    int32_t frequency_random_offset = ((32767 - (stmlib::Random::GetSample())) * frequency_randomness_) >> 16;
+    int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
+    // constrain randomised frequency
+    if (randomised_frequency < -32767) { 
+      randomised_frequency = -32767; 
+    } else if (randomised_frequency > 32767) { 
+      randomised_frequency = 32767; 
+    }
+    // set new random frequency
+    set_frequency(randomised_frequency) ;  
+    
+    excitation_1_up_.Trigger(15 * 32768);
+    excitation_1_down_.Trigger(-1 * 32768);
+    excitation_2_.Trigger(13107);
+    excitation_noise_.Trigger(snappy_);
+  }
+  
+  int32_t excitation_1 = 0;
+  excitation_1 += excitation_1_up_.Process();
+  excitation_1 += excitation_1_down_.Process();
+  excitation_1 += !excitation_1_down_.done() ? 2621 : 0;
+  
+  int32_t body_1 = body_1_.Process(excitation_1) + (excitation_1 >> 4);
+  
+  int32_t excitation_2 = 0;
+  excitation_2 += excitation_2_.Process();
+  excitation_2 += !excitation_2_.done() ? 13107 : 0;
+
+  int32_t body_2 = body_2_.Process(excitation_2) + (excitation_2 >> 4);
+  int32_t noise_sample = Random::GetSample();
+  int32_t noise = noise_.Process(noise_sample);
+  int32_t noise_envelope = excitation_noise_.Process();
+  int32_t sd = 0;
+  sd += body_1 * gain_1_ >> 15;
+  sd += body_2 * gain_2_ >> 15;
+  sd += noise_envelope * noise >> 15;
+  CLIP(sd);
+  return sd;
+}
+
 }  // namespace peaks
