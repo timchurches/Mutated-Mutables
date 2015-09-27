@@ -96,6 +96,83 @@ class BassDrum {
   DISALLOW_COPY_AND_ASSIGN(BassDrum);
 };
 
+class RandomisedBassDrum {
+ public:
+  RandomisedBassDrum() { }
+  ~RandomisedBassDrum() { }
+
+  void Init();
+  int16_t ProcessSingleSample(uint8_t control) IN_RAM;
+  
+  void Configure(uint16_t* parameter, ControlMode control_mode) {
+    if (control_mode == CONTROL_MODE_HALF) {
+      set_frequency(parameter[0] - 32768);
+      base_frequency_ = parameter[0] - 32768;
+      set_punch(40000);
+      // set_tone(8192 + (parameter[0] >> 1));
+      set_tone(8192);
+      set_decay(parameter[1]);
+    } else {
+      set_frequency(parameter[0] - 32768);
+      base_frequency_ = parameter[0] - 32768;
+      set_punch(40000);
+      // set_tone(8192 + (parameter[0] >> 1));
+      set_tone(8192);
+      set_decay(parameter[1]);
+      set_frequency_randomness(parameter[2]);
+      set_hit_randomness(parameter[3]);
+    }
+  }
+  
+  void set_frequency(int16_t frequency) {
+    frequency_ = (31 << 7) + (static_cast<int32_t>(frequency) * 896 >> 15);
+  }
+  
+  void set_decay(uint16_t decay) {
+    uint32_t scaled;
+    uint32_t squared;
+    scaled = 65535 - decay;
+    squared = scaled * scaled >> 16;
+    scaled = squared * scaled >> 18;
+    resonator_.set_resonance(32768 - 128 - scaled);
+  }
+  
+  void set_tone(uint16_t tone) {
+    uint32_t coefficient = tone;
+    coefficient = coefficient * coefficient >> 16;
+    lp_coefficient_ = 512 + (coefficient >> 2) * 3;
+  }
+
+  void set_punch(uint16_t punch) {
+    resonator_.set_punch(punch * punch >> 16);
+  }
+
+  void set_hit_randomness(uint16_t hit_randomness) {
+    hit_randomness_ = hit_randomness;
+  }
+
+  void set_frequency_randomness(uint16_t frequency_randomness) {
+    frequency_randomness_ = frequency_randomness;
+  }
+
+ private:
+  Excitation pulse_up_;
+  Excitation pulse_down_;
+  Excitation attack_fm_;
+  Svf resonator_;
+
+  int32_t frequency_;
+  int32_t lp_coefficient_;
+  int32_t lp_state_;
+  
+  uint16_t frequency_randomness_ ;
+  uint16_t hit_randomness_ ;
+
+  int16_t base_frequency_ ;
+  
+  DISALLOW_COPY_AND_ASSIGN(RandomisedBassDrum);
+};
+
 }  // namespace peaks
 
 #endif  // PEAKS_DRUMS_BASS_DRUM_H_

@@ -31,6 +31,7 @@
 #include <cstdio>
 
 #include "stmlib/utils/dsp.h"
+#include "stmlib/utils/random.h"
 
 #include "peaks/resources.h"
 
@@ -83,5 +84,74 @@ int16_t BassDrum::ProcessSingleSample(uint8_t control) {
   CLIP(output);
   return output;
 }
+
+// randomised version
+void RandomisedBassDrum::Init() {
+  pulse_up_.Init();
+  pulse_down_.Init();
+  attack_fm_.Init();
+  resonator_.Init();
+  
+  pulse_up_.set_delay(0);
+  pulse_up_.set_decay(3340);
+
+  pulse_down_.set_delay(1.0e-3 * 48000);
+  pulse_down_.set_decay(3072);
+
+  attack_fm_.set_delay(4.0e-3 * 48000);
+  attack_fm_.set_decay(4093);
+  
+  resonator_.set_punch(32768);
+  resonator_.set_mode(SVF_MODE_BP);
+  
+  set_frequency(0);
+  set_decay(32768);
+  set_tone(32768);
+  set_punch(65535);
+  
+  lp_state_ = 0;
+}
+
+int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
+  if (control & CONTROL_GATE_RISING) {
+    // randomise parameters
+    // frequency
+    int32_t frequency_random_offset = ((32767 - (stmlib::Random::GetSample())) * frequency_randomness_) >> 16;
+    int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
+    // constrain randomised frequency
+    if (randomised_frequency < -32767) { 
+      randomised_frequency = -32767; 
+    } else if (randomised_frequency > 32767) { 
+      randomised_frequency = 32767; 
+    }
+    // set new random frequency
+    set_frequency(randomised_frequency) ;  
+    // now random excitation level
+    int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
+    pulse_up_.Trigger(12 * hit_random_offset * 0.7);
+    pulse_down_.Trigger(-(hit_random_offset >> 1) * 0.7);
+    attack_fm_.Trigger(hit_random_offset);
+    // original excitation  
+    // pulse_up_.Trigger(12 * 32768 * 0.7);
+    // pulse_down_.Trigger(-19662 * 0.7);
+    // attack_fm_.Trigger(18000);
+    // set random tone and punch to match random level
+    set_tone(8192 + (hit_random_offset >> 4));
+    set_punch(30000 + (hit_random_offset >> 3));
+  }
+  int32_t excitation = 0;
+  excitation += pulse_up_.Process();
+  excitation += !pulse_down_.done() ? 16384 : 0;
+  excitation += pulse_down_.Process();
+  attack_fm_.Process();
+  resonator_.set_frequency(frequency_ + (attack_fm_.done() ? 0 : 17 << 7));
+
+  int32_t resonator_output = (excitation >> 4) + resonator_.Process(excitation);
+  lp_state_ += (resonator_output - lp_state_) * lp_coefficient_ >> 15;
+  int32_t output = lp_state_;
+  CLIP(output);
+  return output;
+}
+
 
 }  // namespace peaks

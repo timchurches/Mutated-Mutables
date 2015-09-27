@@ -66,6 +66,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_UNBUFFERED_PROCESSOR(LoopingEnvelope)
   REGISTER_UNBUFFERED_PROCESSOR(RandomisedEnvelope)  
   REGISTER_UNBUFFERED_PROCESSOR(BouncingBall)
+  REGISTER_UNBUFFERED_PROCESSOR(RandomisedBassDrum)
   REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
 };
 
@@ -100,6 +101,7 @@ void Processors::Init(uint8_t index) {
   looping_envelope_.Init();
   repeating_attack_envelope_.Init();
   randomised_envelope_.Init();
+  randomised_bass_drum_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
   set_function(PROCESSOR_FUNCTION_ENVELOPE);

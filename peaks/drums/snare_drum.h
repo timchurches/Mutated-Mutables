@@ -107,6 +107,83 @@ class SnareDrum {
   DISALLOW_COPY_AND_ASSIGN(SnareDrum);
 };
 
+// Randomised version
+class RandomisedSnareDrum {
+ public:
+  RandomisedSnareDrum() { }
+  ~RandomisedSnareDrum() { }
+
+  void Init();
+  int16_t ProcessSingleSample(uint8_t control) IN_RAM;
+  
+  void Configure(uint16_t* parameter, ControlMode control_mode) {
+    if (control_mode == CONTROL_MODE_HALF) {
+      set_frequency(0);
+      set_decay(32768);
+      set_tone(parameter[0]);
+      set_snappy(parameter[1]);
+    } else {
+      set_frequency(parameter[0] - 32768);
+      set_tone(parameter[1]);
+      set_snappy(parameter[2]);
+      set_decay(parameter[3]);
+    }
+  }
+
+  void set_tone(uint16_t tone) {
+    gain_1_ = 22000 - (tone >> 2);
+    gain_2_ = 22000 + (tone >> 2);
+  }
+
+  void set_snappy(uint16_t snappy) {
+    snappy >>= 1;
+    if (snappy >= 28672) {
+      snappy = 28672;
+    }
+    snappy_ = 512 + snappy;
+  }
+
+  void set_decay(uint16_t decay) {
+    body_1_.set_resonance(29000 + (decay >> 5));
+    body_2_.set_resonance(26500 + (decay >> 5));
+    excitation_noise_.set_decay(4092 + (decay >> 14));
+  }
+  
+  void set_frequency(int16_t frequency) {
+    int16_t base_note = 52 << 7;
+    int32_t transposition = frequency;
+    base_note += transposition * 896 >> 15;
+    body_1_.set_frequency(base_note);
+    body_2_.set_frequency(base_note + (12 << 7));
+    noise_.set_frequency(base_note + (48 << 7));
+  }
+
+ private:
+  Excitation excitation_1_up_;
+  Excitation excitation_1_down_;
+  Excitation excitation_2_;
+  Excitation excitation_noise_;
+  Svf body_1_;
+  Svf body_2_;
+  Svf noise_;
+  
+  int32_t gain_1_;
+  int32_t gain_2_;
+  
+  uint16_t snappy_;
+
+  uint16_t frequency_randomness_ ;
+  uint16_t hit_randomness_ ;
+
+  int16_t base_frequency_ ;
+  uint16_t base_tone_ ;
+  uint16_t base_decay_ ;
+  uint16_t base_snappy_ ;
+  uint32_t hit_random_offset_ ;
+
+  DISALLOW_COPY_AND_ASSIGN(RandomisedSnareDrum);
+};
+
 }  // namespace peaks
 
 #endif  // PEAKS_DRUMS_SNARE_DRUM_H_

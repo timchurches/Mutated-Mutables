@@ -67,6 +67,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_LOOPING_ENVELOPE,
   PROCESSOR_FUNCTION_RANDOMISED_ENVELOPE,
   PROCESSOR_FUNCTION_BOUNCING_BALL,
+  PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM,
   PROCESSOR_FUNCTION_TURING_MACHINE,
   PROCESSOR_FUNCTION_LAST
 };
@@ -211,6 +212,7 @@ class Processors {
   DECLARE_UNBUFFERED_PROCESSOR(LoopingEnvelope, looping_envelope_);
   DECLARE_UNBUFFERED_PROCESSOR(RepeatingAttackEnvelope, repeating_attack_envelope_);
   DECLARE_UNBUFFERED_PROCESSOR(RandomisedEnvelope, randomised_envelope_);
+  DECLARE_UNBUFFERED_PROCESSOR(RandomisedBassDrum, randomised_bass_drum_);
   DECLARE_UNBUFFERED_PROCESSOR(TuringMachine, turing_machine_);
   
   DISALLOW_COPY_AND_ASSIGN(Processors);
