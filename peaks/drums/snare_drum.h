@@ -118,18 +118,21 @@ class RandomisedSnareDrum {
   
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
-      set_frequency(0);
+      set_frequency(parameter[0] - 32768);
       set_decay(32768);
-      set_tone(parameter[0]);
+      // set_tone(parameter[0]);
+      set_tone(32768);
       set_snappy(parameter[1]);
     } else {
       set_frequency(parameter[0] - 32768);
       base_frequency_ = parameter[0] - 32768;
-      set_tone(parameter[1]);
-      set_snappy(parameter[2]);
+      // set_tone(parameter[1]);
+      set_tone(32768);
+      set_snappy(parameter[1]);
       // set_decay(parameter[3]);
       set_decay(32768);
-      set_frequency_randomness(parameter[3]);
+      set_frequency_randomness(parameter[2]);
+      set_hit_randomness(parameter[3]);
     }
   }
 
@@ -163,6 +166,10 @@ class RandomisedSnareDrum {
 
   void set_frequency_randomness(uint16_t frequency_randomness) {
     frequency_randomness_ = frequency_randomness;
+  }
+
+  void set_hit_randomness(uint16_t hit_randomness) {
+    hit_randomness_ = hit_randomness;
   }
 
  private:
