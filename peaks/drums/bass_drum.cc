@@ -125,19 +125,28 @@ int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
       randomised_frequency = 32767; 
     }
     // set new random frequency
-    set_frequency(randomised_frequency) ;  
-    // now random excitation level
+    set_frequency(randomised_frequency) ; 
+    // now random excitation level and decay
     int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
-    pulse_up_.Trigger(12 * hit_random_offset * 0.7);
-    pulse_down_.Trigger(-(hit_random_offset >> 1) * 0.7);
-    attack_fm_.Trigger(hit_random_offset);
+    int32_t randomised_decay = base_decay_ + (hit_random_offset >> 2);
+    // constrain randomised decay
+    if (randomised_decay < 0) { 
+      randomised_decay = 0; 
+    } else if (randomised_decay > 65335) { 
+      randomised_decay = 65335; 
+    }
+    set_decay(randomised_decay);
+    pulse_up_.Trigger(12 * (16384 + (hit_random_offset >> 1)) * 0.7);
+    // pulse_down_.Trigger(-(hit_random_offset >> 2) * 0.7); // was >> 1
+    attack_fm_.Trigger(14000 + (hit_random_offset >> 3));
     // original excitation  
     // pulse_up_.Trigger(12 * 32768 * 0.7);
-    // pulse_down_.Trigger(-19662 * 0.7);
+    pulse_down_.Trigger(-19662 * 0.7);
     // attack_fm_.Trigger(18000);
     // set random tone and punch to match random level
-    set_tone(8192 + (hit_random_offset >> 4));
-    set_punch(30000 + (hit_random_offset >> 3));
+    // set_tone(8192 + (hit_random_offset >> 3));
+    // set_punch(40000 + (hit_random_offset >> 2));
+    set_punch(24000 + (hit_random_offset >> 1));
   }
   int32_t excitation = 0;
   excitation += pulse_up_.Process();

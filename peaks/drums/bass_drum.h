@@ -109,16 +109,18 @@ class RandomisedBassDrum {
       set_frequency(parameter[0] - 32768);
       base_frequency_ = parameter[0] - 32768;
       set_punch(40000);
-      // set_tone(8192 + (parameter[0] >> 1));
-      set_tone(8192);
+      set_tone(8192 + (parameter[0] >> 1));
+      // set_tone(8192);
       set_decay(parameter[1]);
+      base_decay_ = parameter[1] ;
     } else {
       set_frequency(parameter[0] - 32768);
       base_frequency_ = parameter[0] - 32768;
-      set_punch(40000);
-      // set_tone(8192 + (parameter[0] >> 1));
-      set_tone(8192);
+      set_punch(40000); // FM
+      set_tone(8192 + (parameter[0] >> 1));
+      // set_tone(8192);
       set_decay(parameter[1]);
+      base_decay_ = parameter[1] ;
       set_frequency_randomness(parameter[2]);
       set_hit_randomness(parameter[3]);
     }
@@ -169,6 +171,7 @@ class RandomisedBassDrum {
   uint16_t hit_randomness_ ;
 
   int16_t base_frequency_ ;
+  uint16_t base_decay_ ;
   
   DISALLOW_COPY_AND_ASSIGN(RandomisedBassDrum);
 };

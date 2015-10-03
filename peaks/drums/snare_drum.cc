@@ -144,7 +144,7 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
     // set new random frequency
     set_frequency(randomised_frequency) ;  
     // now randomise the hit
-    int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 17;
+    int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
     
     excitation_1_up_.Trigger(15 * hit_random_offset);
     excitation_1_down_.Trigger(-1 * hit_random_offset);
@@ -152,7 +152,8 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
     // excitation_1_up_.Trigger(15 * 32768);
     // excitation_1_down_.Trigger(-1 * 32768);
     // excitation_2_.Trigger(13107);
-    excitation_noise_.Trigger(snappy_ + (hit_random_offset >> 1));
+    excitation_noise_.Trigger(snappy_ + ((snappy_ * (hit_random_offset >> 3)) >> 16));
+    // excitation_noise_.Trigger(snappy_);
   }
   
   int32_t excitation_1 = 0;
