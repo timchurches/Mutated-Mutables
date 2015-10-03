@@ -170,6 +170,7 @@ class Processors {
   
  private:
   void Configure() {
+    /*
     if (function_ == PROCESSOR_FUNCTION_SNARE_DRUM ||
         function_ == PROCESSOR_FUNCTION_HIGH_HAT) {
       uint16_t tone_parameter = control_mode_ == CONTROL_MODE_FULL
@@ -186,6 +187,7 @@ class Processors {
         }
       }
     }
+    */
     (this->*callbacks_.configure)(&parameter_[0], control_mode_);
   }
   
