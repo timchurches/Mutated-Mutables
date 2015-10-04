@@ -63,6 +63,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
   { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
   { PROCESSOR_FUNCTION_TURING_MACHINE, PROCESSOR_FUNCTION_TURING_MACHINE },
+  { PROCESSOR_FUNCTION_BYTEBEATS, PROCESSOR_FUNCTION_BYTEBEATS },
 };
 
 Storage<0x8020000, 16> storage;
@@ -171,6 +172,9 @@ inline void Ui::RefreshLeds() {
         break;
       case FUNCTION_TURING_MACHINE:
         leds_.set_pattern(15);
+        break;
+      case FUNCTION_BYTEBEATS:
+        leds_.set_pattern(6);
         break;
       default:
         leds_.set_function(function() & 3);

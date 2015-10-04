@@ -45,6 +45,7 @@
 #include "peaks/number_station/number_station.h"
 #include "peaks/pulse_processor/pulse_shaper.h"
 #include "peaks/pulse_processor/pulse_randomizer.h"
+#include "peaks/number_station/bytebeats.h"
 
 #include "peaks/gate_processor.h"
 
@@ -62,6 +63,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_PULSE_RANDOMIZER,
   PROCESSOR_FUNCTION_MINI_SEQUENCER,
   PROCESSOR_FUNCTION_NUMBER_STATION,
+  PROCESSOR_FUNCTION_BYTEBEATS,
   PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE,
   PROCESSOR_FUNCTION_REPEATING_ATTACK_ENVELOPE,
   PROCESSOR_FUNCTION_LOOPING_ENVELOPE,
@@ -212,6 +214,7 @@ class Processors {
   DECLARE_UNBUFFERED_PROCESSOR(BouncingBall, bouncing_ball_);
   DECLARE_UNBUFFERED_PROCESSOR(MiniSequencer, mini_sequencer_);
   DECLARE_BUFFERED_PROCESSOR(NumberStation, number_station_);
+  DECLARE_BUFFERED_PROCESSOR(ByteBeats, bytebeats_);
   DECLARE_UNBUFFERED_PROCESSOR(DualAttackEnvelope, dual_attack_envelope_);
   DECLARE_UNBUFFERED_PROCESSOR(LoopingEnvelope, looping_envelope_);
   DECLARE_UNBUFFERED_PROCESSOR(RepeatingAttackEnvelope, repeating_attack_envelope_);
