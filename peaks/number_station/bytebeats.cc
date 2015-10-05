@@ -56,17 +56,23 @@ void ByteBeats::FillBuffer(
   uint32_t p1 = 0;
   // uint32_t p2 = 0;
   int32_t sample = 0;
+  // temporary vars
+  uint32_t p ;
+  uint32_t q ;
+  
   uint16_t bytepitch = (65535 - frequency_) >> 11 ; // was 12
   if (bytepitch < 1) {
     bytepitch = 1;
   }
-  equation_index_ = p2_ >> 14 ;
+  equation_index_ = p2_ >> 13 ;
   uint8_t size = kBlockSize / kDownsample;
   while (size--) {
     for (uint8_t i = 0; i < kDownsample; ++i) {
       uint8_t control = input_buffer->ImmediateRead();
       if (control & CONTROL_GATE_RISING) {
-        (void)0; // noop
+        // (void)0; // noop
+        phase_ = 0;
+        t_ = 0 ;
         // ++equation_index_;
         // if (equation_index_ > kMaxEquationIndex) {
         //   equation_index_ = 0 ;
@@ -83,11 +89,9 @@ void ByteBeats::FillBuffer(
       case 0:
         // from http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/
         // (atmospheric, hopeful)
-        p0 = p0_ >> 9;
-        p1 = p1_ >> 11;
-        // p2 = p2_ >> 11;
+        p0 = p0_ >> 9; // was 9
+        p1 = p1_ >> 9; // was 11
         sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
-        // sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*p2) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
         break;
       case 1:
         p0 = p0_ >> 11;
@@ -105,9 +109,35 @@ void ByteBeats::FillBuffer(
         break;
       case 3: 
         p0 = p0_ >> 11;
-        p1 = p1_ >> 8;
+        p1 = p1_ >> 9;
         // This one is the second one listed at from http://xifeng.weebly.com/bytebeats.html
         sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
+        break;
+      case 4: 
+        p0 = p0_ >> 9; // was 11
+        p1 = p1_ >> 11; // was 8
+        //  BitWiz Transplant from Equation Composer Ptah bank        
+        sample = (t_-((t_&p0)*p1-1668899)*((t_>>15)%15*t_))>>((t_>>12)%16)>>(p1%15);
+        break;
+      case 5:
+        p0 = p0_ >> 11;
+        p1 = p1_ >> 9;
+        // Arpeggiation from Equation Composer Khepri bank
+        p = ((t_/(1236+p0)) % 128) & ((t_>>(p1>>5))*p1);
+        q = (t_/(t_/((500*p1) % 5) + 1)) % p;
+        sample = (t_>>q>>(p1>>5)) + (t_/(t_>>((p1>>5)&12))>>p);
+        break;
+      case 6:
+        p0 = p0_ >> 9;
+        p1 = p1_ >> 9;
+        // Question/Answer from Equation Composer Ptah bank        
+        sample = ((t_*(t_>>8|t_>>p1)&p0&t_>>8))^((t_&(t_>>p0))|(t_>>6));
+        break;
+      default:
+        p0 = p0_ >> 9;
+        p1 = p1_ >> 10; // was 9
+        // The Smoker from Equation Composer Khepri bank
+        sample = sample ^ (t_>>(p1>>4)) >> ((t_/6988*t_%(p0+1))+(t_<<t_/(p1 * 4)));
         break;
     }
     CLIP(sample)
