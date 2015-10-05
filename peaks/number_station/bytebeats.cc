@@ -45,7 +45,7 @@ void ByteBeats::Init() {
   phase_ = 0;
   p0_ = 32678;
   p1_ = 32678;
-  p2_ = 32678;
+  p2_ = 0;
   equation_index_ = 0;
 }
 
@@ -54,27 +54,28 @@ void ByteBeats::FillBuffer(
     OutputBuffer* output_buffer) {
   uint32_t p0 = 0;
   uint32_t p1 = 0;
-  uint32_t p2 = 0;
+  // uint32_t p2 = 0;
   int32_t sample = 0;
   uint16_t bytepitch = (65535 - frequency_) >> 11 ; // was 12
   if (bytepitch < 1) {
     bytepitch = 1;
   }
+  equation_index_ = p2_ >> 14 ;
   uint8_t size = kBlockSize / kDownsample;
   while (size--) {
     for (uint8_t i = 0; i < kDownsample; ++i) {
       uint8_t control = input_buffer->ImmediateRead();
       if (control & CONTROL_GATE_RISING) {
-        ++equation_index_;
-        if (equation_index_ > kMaxEquationIndex) {
-          equation_index_ = 0 ;
-        }
+        (void)0; // noop
+        // ++equation_index_;
+        // if (equation_index_ > kMaxEquationIndex) {
+        //   equation_index_ = 0 ;
+        // }
       }
       if (control & CONTROL_GATE) {
         (void)0; // noop
       }
     }
-
 
     ++phase_;
     if (phase_ % bytepitch == 0) ++t_; 
@@ -84,21 +85,29 @@ void ByteBeats::FillBuffer(
         // (atmospheric, hopeful)
         p0 = p0_ >> 9;
         p1 = p1_ >> 11;
-        p2 = p2_ >> 11;
-        // int32_t sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
-        sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*p2) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
+        // p2 = p2_ >> 11;
+        sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
+        // sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*p2) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
         break;
       case 1:
         p0 = p0_ >> 11;
         p1 = p1_ >> 11;
-        p2 = p2_ >> 11;
+        // p2 = p2_ >> 11;
         // equation by stephth via https://www.youtube.com/watch?v=tCRPUv8V22o at 3:38
-        // int32_t sample = ((((t_*p0) & (t_>>4)) | ((t_*5) &
-        //               (t_>>7)) | ((t_*p1) & (t_>>10)))
-        //                & 0xFF) << 8;
-        sample = ((((t_*p0) & (t_>>4)) | ((t_*p2) &
-                      (t_>>7)) | ((t_*p1) & (t_>>10)))
-                       & 0xFF) << 8;
+        sample = ((((t_*p0) & (t_>>4)) | ((t_*5) & (t_>>7)) | ((t_*p1) & (t_>>10))) & 0xFF) << 8;
+        // sample = ((((t_*p0) & (t_>>4)) | ((t_*p2) & (t_>>7)) | ((t_*p1) & (t_>>10))) & 0xFF) << 8;
+        break;
+      case 2: 
+        p0 = p0_ >> 12;
+        p1 = p1_ >> 12;
+        // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/ (t>>13&t)*(t>>8)
+        sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
+        break;
+      case 3: 
+        p0 = p0_ >> 11;
+        p1 = p1_ >> 8;
+        // This one is the second one listed at from http://xifeng.weebly.com/bytebeats.html
+        sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
         break;
     }
     CLIP(sample)
