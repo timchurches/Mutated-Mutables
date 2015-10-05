@@ -36,7 +36,6 @@
 namespace peaks {
 
 const uint8_t kDownsample = 4;
-const uint8_t kUpsample = 2;
 const uint8_t kMaxEquationIndex = 1;
 
 using namespace stmlib;
@@ -78,63 +77,41 @@ void ByteBeats::FillBuffer(
       }
     }
 
-    // ++phase_;
-    // if (phase_ % bytepitch == 0) ++t_; 
+    ++phase_;
+    if (phase_ % bytepitch == 0) ++t_; 
     switch (equation_index_) {
       case 0:
+        // from http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/
+        // (atmospheric, hopeful)
         p0 = p0_ >> 9;
         p1 = p1_ >> 11;
         // p2 = p2_ >> 11;
-        for (uint8_t i = 0; i < kUpsample; ++i) {
-          ++phase_;
-          if (phase_ % bytepitch == 0) ++t_; 
-          // from http://royal-paw.com/2012/01/bytebeats-in-c-and-python-generative-symphonies-from-extremely-small-programs/
-          // (atmospheric, hopeful)
-          sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
-          CLIP(sample)
-          output_buffer->Overwrite(sample);
-        }
+        sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*10) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
+        // sample = ( ( ((t_*3) & (t_>>10)) | ((t_*p0) & (t_>>10)) | ((t_*p2) & ((t_>>8)*p1) & 128) ) & 0xFF) << 8;
         break;
       case 1:
         p0 = p0_ >> 11;
         p1 = p1_ >> 11;
         // p2 = p2_ >> 11;
-        for (uint8_t i = 0; i < kUpsample; ++i) {
-          ++phase_;
-          if (phase_ % bytepitch == 0) ++t_; 
-          // equation by stephth via https://www.youtube.com/watch?v=tCRPUv8V22o at 3:38
-          sample = ((((t_*p0) & (t_>>4)) | ((t_*5) & (t_>>7)) | ((t_*p1) & (t_>>10))) & 0xFF) << 8;
-          CLIP(sample)
-          output_buffer->Overwrite(sample);
-        }
+        // equation by stephth via https://www.youtube.com/watch?v=tCRPUv8V22o at 3:38
+        sample = ((((t_*p0) & (t_>>4)) | ((t_*5) & (t_>>7)) | ((t_*p1) & (t_>>10))) & 0xFF) << 8;
+        // sample = ((((t_*p0) & (t_>>4)) | ((t_*p2) & (t_>>7)) | ((t_*p1) & (t_>>10))) & 0xFF) << 8;
         break;
       case 2: 
         p0 = p0_ >> 12;
         p1 = p1_ >> 12;
-        for (uint8_t i = 0; i < kUpsample; ++i) {
-          ++phase_;
-          if (phase_ % bytepitch == 0) ++t_; 
-          // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/ (t>>13&t)*(t>>8)
-          sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
-          CLIP(sample)
-          output_buffer->Overwrite(sample);
-        }
+        // This one is from http://www.reddit.com/r/bytebeat/comments/20km9l/cool_equations/ (t>>13&t)*(t>>8)
+        sample = ( (((t_ >> p0) & t_) * (t_ >> p1)) & 0xFF) << 8 ;
         break;
       case 3: 
         p0 = p0_ >> 11;
         p1 = p1_ >> 8;
-        for (uint8_t i = 0; i < kUpsample; ++i) {
-          ++phase_;
-          if (phase_ % bytepitch == 0) ++t_; 
-          // This one is the second one listed at from http://xifeng.weebly.com/bytebeats.html
-          sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
-          CLIP(sample)
-          output_buffer->Overwrite(sample);
-        }          
+        // This one is the second one listed at from http://xifeng.weebly.com/bytebeats.html
+        sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
         break;
     }
-    // CLIP(sample)
-    // output_buffer->Overwrite(sample);
+    CLIP(sample)
+    output_buffer->Overwrite(sample);
   }
 }
 
