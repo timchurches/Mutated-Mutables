@@ -129,16 +129,16 @@ void ByteBeats::FillBuffer(
         break;
       case 6:
         p0 = p0_ >> 9;
-        p1 = p1_ >> 9;
-        // Question/Answer from Equation Composer Ptah bank        
-        sample = ((t_*(t_>>8|t_>>p1)&p0&t_>>8))^((t_&(t_>>p0))|(t_>>6));
-        break;
-      default:
-        p0 = p0_ >> 9;
         p1 = p1_ >> 10; // was 9
         // The Smoker from Equation Composer Khepri bank
         sample = sample ^ (t_>>(p1>>4)) >> ((t_/6988*t_%(p0+1))+(t_<<t_/(p1 * 4)));
         break;
+      default:
+        p0 = p0_ >> 9;
+        p1 = p1_ >> 11;
+        // Warping overtone echo drone, from BitWiz
+        sample = ((t_&p0)-(t_%p1))^(t_>>7);    
+        break;      
     }
     CLIP(sample)
     output_buffer->Overwrite(sample);
