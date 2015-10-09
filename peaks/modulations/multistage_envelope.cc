@@ -283,4 +283,5 @@ int16_t RandomisedEnvelope::ProcessSingleSample(uint8_t control) {
   return value_;
 }
 
+
 }  // namespace peaks
