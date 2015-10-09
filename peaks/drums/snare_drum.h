@@ -119,6 +119,8 @@ class RandomisedSnareDrum {
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_frequency(parameter[0] - 32768);
+      base_frequency_ = parameter[0] - 32768;
+      last_frequency_ = base_frequency_;
       set_decay(32768);
       // set_tone(parameter[0]);
       set_tone(32768);

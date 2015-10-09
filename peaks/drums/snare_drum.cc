@@ -136,9 +136,12 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
   if (control & CONTROL_GATE_RISING) {
     // randomise parameters
     // frequency
-    int32_t frequency_random_offset = (((32767 - stmlib::Random::GetSample()) * frequency_randomness_) >> 16);
+    // int32_t frequency_random_offset = (((32767 - stmlib::Random::GetSample()) * frequency_randomness_) >> 16);
+    bool freq_up = (stmlib::Random::GetSample() > 0) ? true : false ;
     // int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
-    int32_t randomised_frequency = last_frequency_ + frequency_random_offset;
+    int32_t randomised_frequency = freq_up ? 
+                                   (last_frequency_ + (frequency_randomness_ >> 3)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 3));
     // constrain randomised frequency
     if (randomised_frequency < -32767) { 
       randomised_frequency = -32767; 
@@ -150,7 +153,7 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
     last_frequency_ = randomised_frequency ;
      
     // now randomise the hit
-    int32_t randomised_hit = last_random_hit_ + (((32767 - stmlib::Random::GetSample()) * hit_randomness_) >> 16);
+    int32_t randomised_hit = last_random_hit_ + ((stmlib::Random::GetSample() * hit_randomness_) >> 16);
     // constrain randomised hit
     if (randomised_hit < 0) { 
       randomised_hit = 0; 
