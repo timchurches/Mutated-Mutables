@@ -106,21 +106,19 @@ class RandomisedBassDrum {
   
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
-      set_frequency(parameter[0] - 32768);
-      base_frequency_ = parameter[0] - 32768;
+      set_frequency(0);
+      base_frequency_ = 0;
       last_frequency_ = base_frequency_;
       set_punch(40000);
       set_tone(8192 + (parameter[0] >> 1));
-      // set_tone(8192);
       set_decay(parameter[1]);
       base_decay_ = parameter[1] ;
     } else {
-      set_frequency(parameter[0] - 32768);
-      base_frequency_ = parameter[0] - 32768;
+      set_frequency(0);
+      base_frequency_ = 0;
       last_frequency_ = base_frequency_;
-      set_punch(40000); // FM
+      set_punch(40000);
       set_tone(8192 + (parameter[0] >> 1));
-      // set_tone(8192);
       set_decay(parameter[1]);
       base_decay_ = parameter[1] ;
       set_frequency_randomness(parameter[2]);

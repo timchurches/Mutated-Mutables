@@ -141,17 +141,9 @@ int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
       randomised_decay = 65335; 
     }
     set_decay(randomised_decay);
-    pulse_up_.Trigger(12 * (16384 + (hit_random_offset >> 1)) * 0.7);
-    // pulse_down_.Trigger(-(hit_random_offset >> 2) * 0.7); // was >> 1
-    attack_fm_.Trigger(14000 + (hit_random_offset >> 3));
-    // original excitation  
-    // pulse_up_.Trigger(12 * 32768 * 0.7);
+    pulse_up_.Trigger(12 * 32768 * 0.7);
     pulse_down_.Trigger(-19662 * 0.7);
-    // attack_fm_.Trigger(18000);
-    // set random tone and punch to match random level
-    // set_tone(8192 + (hit_random_offset >> 3));
-    // set_punch(40000 + (hit_random_offset >> 2));
-    set_punch(24000 + (hit_random_offset >> 1));
+    attack_fm_.Trigger(18000);
   }
   int32_t excitation = 0;
   excitation += pulse_up_.Process();
