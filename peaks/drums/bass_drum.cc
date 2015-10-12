@@ -105,6 +105,7 @@ void RandomisedBassDrum::Init() {
   resonator_.set_mode(SVF_MODE_BP);
   
   set_frequency(0);
+  last_frequency_ = 0;
   set_decay(32768);
   set_tone(32768);
   set_punch(65535);
@@ -116,8 +117,10 @@ int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
   if (control & CONTROL_GATE_RISING) {
     // randomise parameters
     // frequency
-    int32_t frequency_random_offset = ((32767 - (stmlib::Random::GetSample())) * frequency_randomness_) >> 16;
-    int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
+    bool freq_up = (stmlib::Random::GetSample() > 0) ? true : false ;
+    int32_t randomised_frequency = freq_up ? 
+                                   (last_frequency_ + (frequency_randomness_ >> 3)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 3));
     // constrain randomised frequency
     if (randomised_frequency < -32767) { 
       randomised_frequency = -32767; 
@@ -126,6 +129,8 @@ int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
     }
     // set new random frequency
     set_frequency(randomised_frequency) ; 
+    last_frequency_ = randomised_frequency ;
+
     // now random excitation level and decay
     int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
     int32_t randomised_decay = base_decay_ + (hit_random_offset >> 2);
@@ -136,17 +141,9 @@ int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
       randomised_decay = 65335; 
     }
     set_decay(randomised_decay);
-    pulse_up_.Trigger(12 * (16384 + (hit_random_offset >> 1)) * 0.7);
-    // pulse_down_.Trigger(-(hit_random_offset >> 2) * 0.7); // was >> 1
-    attack_fm_.Trigger(14000 + (hit_random_offset >> 3));
-    // original excitation  
-    // pulse_up_.Trigger(12 * 32768 * 0.7);
+    pulse_up_.Trigger(12 * 32768 * 0.7);
     pulse_down_.Trigger(-19662 * 0.7);
-    // attack_fm_.Trigger(18000);
-    // set random tone and punch to match random level
-    // set_tone(8192 + (hit_random_offset >> 3));
-    // set_punch(40000 + (hit_random_offset >> 2));
-    set_punch(24000 + (hit_random_offset >> 1));
+    attack_fm_.Trigger(18000);
   }
   int32_t excitation = 0;
   excitation += pulse_up_.Process();

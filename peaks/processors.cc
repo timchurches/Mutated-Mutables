@@ -61,6 +61,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_BUFFERED_PROCESSOR(PulseRandomizer)
   REGISTER_UNBUFFERED_PROCESSOR(MiniSequencer)
   REGISTER_BUFFERED_PROCESSOR(NumberStation)
+  REGISTER_BUFFERED_PROCESSOR(ByteBeats)
   REGISTER_UNBUFFERED_PROCESSOR(DualAttackEnvelope)
   REGISTER_UNBUFFERED_PROCESSOR(RepeatingAttackEnvelope)
   REGISTER_UNBUFFERED_PROCESSOR(LoopingEnvelope)
@@ -98,6 +99,7 @@ void Processors::Init(uint8_t index) {
   mini_sequencer_.Init();
   number_station_.Init();
   number_station_.set_voice(index == 1);
+  bytebeats_.Init();
   turing_machine_.Init();
   dual_attack_envelope_.Init();
   looping_envelope_.Init();

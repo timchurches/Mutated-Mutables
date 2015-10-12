@@ -127,14 +127,21 @@ void RandomisedSnareDrum::Init() {
   set_snappy(32768);
   set_decay(32768);
   set_frequency(0);
+  base_frequency_ = 0 ;
+  last_frequency_ = 0;
+  last_random_hit_ = 32768 ;
 }
 
 int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
   if (control & CONTROL_GATE_RISING) {
     // randomise parameters
     // frequency
-    int32_t frequency_random_offset = ((32767 - (stmlib::Random::GetSample())) * frequency_randomness_) >> 16;
-    int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
+    // int32_t frequency_random_offset = (((32767 - stmlib::Random::GetSample()) * frequency_randomness_) >> 16);
+    bool freq_up = (stmlib::Random::GetSample() > 0) ? true : false ;
+    // int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
+    int32_t randomised_frequency = freq_up ? 
+                                   (last_frequency_ + (frequency_randomness_ >> 3)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 3));
     // constrain randomised frequency
     if (randomised_frequency < -32767) { 
       randomised_frequency = -32767; 
@@ -142,18 +149,24 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
       randomised_frequency = 32767; 
     }
     // set new random frequency
-    set_frequency(randomised_frequency) ;  
+    set_frequency(randomised_frequency) ; 
+    last_frequency_ = randomised_frequency ;
+     
     // now randomise the hit
-    int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
-    
-    excitation_1_up_.Trigger(15 * hit_random_offset);
-    excitation_1_down_.Trigger(-1 * hit_random_offset);
-    excitation_2_.Trigger(hit_random_offset >> 1);
-    // excitation_1_up_.Trigger(15 * 32768);
-    // excitation_1_down_.Trigger(-1 * 32768);
-    // excitation_2_.Trigger(13107);
-    excitation_noise_.Trigger(snappy_ + ((snappy_ * (hit_random_offset >> 3)) >> 16));
-    // excitation_noise_.Trigger(snappy_);
+    int32_t randomised_hit = last_random_hit_ + ((stmlib::Random::GetSample() * hit_randomness_) >> 16);
+    // constrain randomised hit
+    if (randomised_hit < 0) { 
+      randomised_hit = 0; 
+    } else if (randomised_hit > 65535) { 
+      randomised_hit = 65535; 
+    }
+    last_random_hit_ = randomised_hit;
+    set_tone(randomised_hit);
+    set_decay(randomised_hit);
+    excitation_1_up_.Trigger(15 * 32768);
+    excitation_1_down_.Trigger(-1 * 32768);
+    excitation_2_.Trigger(13107);
+    excitation_noise_.Trigger(snappy_);
   }
   
   int32_t excitation_1 = 0;
