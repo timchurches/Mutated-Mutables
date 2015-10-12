@@ -239,17 +239,17 @@ int16_t RandomisedEnvelope::ProcessSingleSample(uint8_t control) {
     segment_ = 0;
     phase_ = 0;
     // Randomise values here.
-    uint16_t random_offset = stmlib::Random::GetSample();
-    int32_t level_random_offset = ((32767 - (random_offset >> 1)) * level_randomness_) >> 15;
-    int32_t decay_random_offset = (random_offset * decay_randomness_) >> 17;
+    uint32_t random_offset = stmlib::Random::GetWord();
+    int32_t level_random_offset = ((random_offset >> 16) * level_randomness_) >> 17;
+    int32_t decay_random_offset = ((random_offset >> 16) * decay_randomness_) >> 17;
     int32_t randomised_level = base_level_[1] - level_random_offset;
-    int32_t randomised_decay_time = base_time_[1] + decay_random_offset;
+    int32_t randomised_decay_time = base_time_[1] - decay_random_offset;
     // constrain
     if (randomised_level < 0) { 
       randomised_level = 0; 
     } 
-    if (randomised_decay_time > 65535) { 
-      randomised_decay_time = 65535; 
+    if (randomised_decay_time < 0) { 
+      randomised_decay_time = 0; 
     } 
     // reset the level and time values
     level_[1] =  randomised_level ;  
