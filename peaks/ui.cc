@@ -153,28 +153,28 @@ inline void Ui::RefreshLeds() {
   } else {
     switch (function()) {
       case FUNCTION_DUAL_ATTACK_ENVELOPE:
-        leds_.set_pattern(3);
+        leds_.set_pattern(3); // top LED-> X X 0 0 
         break;
       case FUNCTION_REPEATING_ATTACK_ENVELOPE:
-        leds_.set_pattern(5);
-        break;
-      case FUNCTION_RANDOMISED_DRUM_GENERATOR:
-        leds_.set_pattern(7);
+        leds_.set_pattern(5); // top LED-> X 0 X 0
         break;
       case FUNCTION_LOOPING_ENVELOPE:
-        leds_.set_pattern(9);
+        leds_.set_pattern(7); // top LED-> X X X 0
         break;
       case FUNCTION_RANDOMISED_ENVELOPE:
-        leds_.set_pattern(11);
+        leds_.set_pattern(9); // top LED-> X 0 0 X
         break;
       case FUNCTION_BOUNCING_BALL:
-        leds_.set_pattern(13);
+        leds_.set_pattern(11); // top LED-> X X 0 X
+        break;
+      case FUNCTION_RANDOMISED_DRUM_GENERATOR:
+        leds_.set_pattern(13); // top LED-> X 0 X X
         break;
       case FUNCTION_TURING_MACHINE:
-        leds_.set_pattern(15);
+        leds_.set_pattern(15); // top LED-> X X X X
         break;
       case FUNCTION_BYTEBEATS:
-        leds_.set_pattern(6);
+        leds_.set_pattern(6); // top LED-> 0 X X 0
         break;
       default:
         leds_.set_function(function() & 3);

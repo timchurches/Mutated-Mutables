@@ -114,7 +114,7 @@ void ByteBeats::FillBuffer(
         sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
         break;
       case 4: 
-        p0 = p0_ >> 9; // was 11
+        p0 = p0_ >> 8; // was 11
         p1 = p1_ >> 11; // was 8
         //  BitWiz Transplant from Equation Composer Ptah bank        
         sample = (t_-((t_&p0)*p1-1668899)*((t_>>15)%15*t_))>>((t_>>12)%16)>>(p1%15);
@@ -135,9 +135,10 @@ void ByteBeats::FillBuffer(
         break;
       default:
         p0 = p0_ >> 9;
-        p1 = p1_ >> 11;
+        p1 = (p1_ >> 11) + 2;
         // Warping overtone echo drone, from BitWiz
-        sample = ((t_&p0)-(t_%p1))^(t_>>7);    
+        sample = ((t_&p0)-(t_%p1))^(t_>>7);  
+        // sample = t_*(((t_>>p1)^((t_>>p1)-1)^1)%p0) ; 
         break;      
     }
     CLIP(sample)
