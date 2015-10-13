@@ -130,19 +130,27 @@ void RandomisedSnareDrum::Init() {
   base_frequency_ = 0 ;
   last_frequency_ = 0;
   last_random_hit_ = 32768 ;
+  randomised_hit_ = 65535 ;
 }
 
 int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
   if (control & CONTROL_GATE_RISING) {
     // randomise parameters
     // frequency
-    // int32_t frequency_random_offset = (((32767 - stmlib::Random::GetSample()) * frequency_randomness_) >> 16);
-    bool freq_up = (stmlib::Random::GetSample() > 0) ? true : false ;
-    // int32_t randomised_frequency = base_frequency_ - frequency_random_offset;
+    uint32_t random_value = stmlib::Random::GetWord() ;
+    bool freq_up = (random_value > 2147483647) ? true : false ;
     int32_t randomised_frequency = freq_up ? 
-                                   (last_frequency_ + (frequency_randomness_ >> 3)) :
-                                   (last_frequency_ - (frequency_randomness_ >> 3));
-    // constrain randomised frequency
+                                   (last_frequency_ + (frequency_randomness_ >> 2)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 2));
+    // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
+    if (randomised_frequency < -32767 || randomised_frequency > 32767) {
+      // flip the direction
+      freq_up = !freq_up ;
+      randomised_frequency = freq_up ? 
+                                   (last_frequency_ + (frequency_randomness_ >> 2)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 2));
+    }
+    // constrain randomised frequency - probably not necessary
     if (randomised_frequency < -32767) { 
       randomised_frequency = -32767; 
     } else if (randomised_frequency > 32767) { 
@@ -153,16 +161,30 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
     last_frequency_ = randomised_frequency ;
      
     // now randomise the hit
-    int32_t randomised_hit = last_random_hit_ + ((stmlib::Random::GetSample() * hit_randomness_) >> 16);
+    bool hit_up = (random_value > 2147483647) ? true : false ;
+    randomised_hit_ = hit_up ? 
+                                   (last_random_hit_ - (hit_randomness_ >> 2)) :
+                                   (last_random_hit_ + (hit_randomness_ >> 2));
+
+    // int32_t randomised_hit = last_random_hit_ + ((stmlib::Random::GetSample() * hit_randomness_) >> 16);
+    // int32_t randomised_hit = last_random_hit_ + (((random_value >> 16) * hit_randomness_) >> 16);
+    // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
+    if (randomised_hit_ < 0 || randomised_hit_ > 65535) {
+      // flip the direction
+      hit_up = !hit_up ;
+      randomised_hit_ = hit_up ? 
+                                   (last_random_hit_ - (hit_randomness_ >> 2)) :
+                                   (last_random_hit_ + (hit_randomness_ >> 2));
+    }  
     // constrain randomised hit
-    if (randomised_hit < 0) { 
-      randomised_hit = 0; 
-    } else if (randomised_hit > 65535) { 
-      randomised_hit = 65535; 
+    if (randomised_hit_ < 0) { 
+      randomised_hit_ = 0; 
+    } else if (randomised_hit_ > 65535) { 
+      randomised_hit_ = 65535; 
     }
-    last_random_hit_ = randomised_hit;
-    set_tone(randomised_hit);
-    set_decay(randomised_hit);
+    last_random_hit_ = randomised_hit_;
+    set_tone(randomised_hit_);
+    set_decay(randomised_hit_);
     excitation_1_up_.Trigger(15 * 32768);
     excitation_1_down_.Trigger(-1 * 32768);
     excitation_2_.Trigger(13107);
@@ -188,6 +210,8 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
   sd += body_1 * gain_1_ >> 15;
   sd += body_2 * gain_2_ >> 15;
   sd += noise_envelope * noise >> 15;
+  // sd = (sd * (32767 + (randomised_hit_ >> 1))) >> 16;
+  sd = (sd * (16383 + (randomised_hit_ >> 1) + (randomised_hit_ >> 2) )) >> 16;
   CLIP(sd);
   return sd;
 }

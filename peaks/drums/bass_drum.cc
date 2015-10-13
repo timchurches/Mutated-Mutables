@@ -117,7 +117,7 @@ int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
   if (control & CONTROL_GATE_RISING) {
     // randomise parameters
     // frequency
-    bool freq_up = (stmlib::Random::GetSample() > 0) ? true : false ;
+    bool freq_up = (stmlib::Random::GetWord() > 2147483647) ? true : false ;
     int32_t randomised_frequency = freq_up ? 
                                    (last_frequency_ + (frequency_randomness_ >> 3)) :
                                    (last_frequency_ - (frequency_randomness_ >> 3));

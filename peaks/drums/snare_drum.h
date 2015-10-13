@@ -191,6 +191,7 @@ class RandomisedSnareDrum {
 
   uint16_t frequency_randomness_ ;
   uint16_t hit_randomness_ ;
+  int32_t randomised_hit_  ;
 
   int16_t base_frequency_ ;
   int16_t last_frequency_ ;
