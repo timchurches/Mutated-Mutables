@@ -173,6 +173,7 @@ class RandomisedBassDrum {
   int16_t base_frequency_ ;
   int16_t last_frequency_ ;
   uint16_t base_decay_ ;
+  int32_t randomised_decay_ ;  
   
   DISALLOW_COPY_AND_ASSIGN(RandomisedBassDrum);
 };

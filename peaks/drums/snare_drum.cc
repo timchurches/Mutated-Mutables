@@ -161,21 +161,21 @@ int16_t RandomisedSnareDrum::ProcessSingleSample(uint8_t control) {
     last_frequency_ = randomised_frequency ;
      
     // now randomise the hit
-    bool hit_up = (random_value > 2147483647) ? true : false ;
-    randomised_hit_ = hit_up ? 
-                                   (last_random_hit_ - (hit_randomness_ >> 2)) :
-                                   (last_random_hit_ + (hit_randomness_ >> 2));
-
-    // int32_t randomised_hit = last_random_hit_ + ((stmlib::Random::GetSample() * hit_randomness_) >> 16);
+    // Sounds better if each hit is just independently randomised, rather than an autocorrelated random walk like the pitch
+    // bool hit_up = (random_value > 2147483647) ? true : false ;
+    // randomised_hit_ = hit_up ? 
+    //                                (last_random_hit_ - (hit_randomness_ >> 2)) :
+    //                               (last_random_hit_ + (hit_randomness_ >> 2));
+    randomised_hit_ = last_random_hit_ + ((stmlib::Random::GetSample() * hit_randomness_) >> 16);
     // int32_t randomised_hit = last_random_hit_ + (((random_value >> 16) * hit_randomness_) >> 16);
     // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
-    if (randomised_hit_ < 0 || randomised_hit_ > 65535) {
-      // flip the direction
-      hit_up = !hit_up ;
-      randomised_hit_ = hit_up ? 
-                                   (last_random_hit_ - (hit_randomness_ >> 2)) :
-                                   (last_random_hit_ + (hit_randomness_ >> 2));
-    }  
+    // if (randomised_hit_ < 0 || randomised_hit_ > 65535) {
+    //   // flip the direction
+    //   hit_up = !hit_up ;
+    //   randomised_hit_ = hit_up ? 
+    //                                (last_random_hit_ - (hit_randomness_ >> 2)) :
+    //                                (last_random_hit_ + (hit_randomness_ >> 2));
+    // }  
     // constrain randomised hit
     if (randomised_hit_ < 0) { 
       randomised_hit_ = 0; 

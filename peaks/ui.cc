@@ -63,6 +63,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
   { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
   { PROCESSOR_FUNCTION_TURING_MACHINE, PROCESSOR_FUNCTION_TURING_MACHINE },
+  { PROCESSOR_FUNCTION_MOD_SEQUENCER, PROCESSOR_FUNCTION_MOD_SEQUENCER },
   { PROCESSOR_FUNCTION_BYTEBEATS, PROCESSOR_FUNCTION_BYTEBEATS },
 };
 
@@ -172,6 +173,9 @@ inline void Ui::RefreshLeds() {
         break;
       case FUNCTION_TURING_MACHINE:
         leds_.set_pattern(15); // top LED-> X X X X
+        break;
+      case FUNCTION_MOD_SEQUENCER:
+        leds_.set_pattern(10); // top LED-> 0 X 0 X
         break;
       case FUNCTION_BYTEBEATS:
         leds_.set_pattern(6); // top LED-> 0 X X 0

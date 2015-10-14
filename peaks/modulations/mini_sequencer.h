@@ -38,6 +38,7 @@
 namespace peaks {
 
 const uint8_t kMaxNumSteps = 4;
+const uint8_t kMaxModSeqNumSteps = 8;
 
 class MiniSequencer {
  public:
@@ -98,6 +99,74 @@ class MiniSequencer {
   bool reset_at_next_clock_;
 
   DISALLOW_COPY_AND_ASSIGN(MiniSequencer);
+};
+
+class ModSequencer {
+ public:
+  ModSequencer() { }
+  ~ModSequencer() { }
+  
+  void Init() {
+    std::fill(&steps_[0], &steps_[kMaxModSeqNumSteps], 0);
+    num_steps_ = 8;
+    step_ = 0;
+    reset_at_next_clock_ = false;
+  }
+  
+  inline void set_step(uint8_t index, int16_t value) {
+    steps_[index] = value;
+  }
+  
+  inline void set_num_steps(uint8_t num_steps) {
+    num_steps_ = num_steps;
+  }
+  
+  void Configure(uint16_t* parameter, ControlMode control_mode) {
+    if (control_mode == CONTROL_MODE_HALF) {
+      set_step(0, parameter[0] - 32768);
+      set_step(1, parameter[1] - 32768);
+      set_step(2, 32768 - parameter[0]);
+      set_step(3, 32768 - parameter[1]);
+      set_num_steps(4);
+    } else {
+      set_step(0, parameter[0] - 32768);
+      set_step(1, parameter[1] - 32768);
+      set_step(2, parameter[2] - 32768);
+      set_step(3, parameter[3] - 32768);
+      set_step(4, 32768 - parameter[0]);
+      set_step(5, 32768 - parameter[1]);
+      set_step(6, 32768 - parameter[2]);
+      set_step(7, 32768 - parameter[3]);
+     set_num_steps(8);
+    }
+  }
+  
+  inline int16_t ProcessSingleSample(uint8_t control) {
+    if (control & CONTROL_GATE_RISING) {
+      ++step_;
+      if (reset_at_next_clock_) {
+        reset_at_next_clock_  = false;
+        step_ = 0;
+      }
+    }
+    // disable reset action of channel 2 clock for ModSequencer
+    // if (num_steps_ > 4 && control & CONTROL_GATE_RISING_AUXILIARY) {
+    //   reset_at_next_clock_ = true;
+    // }
+    if (step_ >= num_steps_) {
+      step_ = 0;
+    }
+    return steps_[step_];
+  }
+  
+ private:
+  uint8_t num_steps_;
+  uint8_t step_;
+  int16_t steps_[kMaxModSeqNumSteps];
+
+  bool reset_at_next_clock_;
+
+  DISALLOW_COPY_AND_ASSIGN(ModSequencer);
 };
 
 }  // namespace peaks
