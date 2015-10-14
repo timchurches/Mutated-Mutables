@@ -79,7 +79,7 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   // Run the SVF at the double of the original sample rate for stability.
   int32_t filtered_noise = 0;
   filtered_noise += noise_.Process(noise);
-  filtered_noise += noise_.Process(noise);
+  // filtered_noise += noise_.Process(noise);
 
   // The 808-style VCA amplifies only the positive section of the signal.
   if (filtered_noise < 0) {
@@ -93,7 +93,7 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   CLIP(vca_noise);
   int32_t hh = 0;
   hh += vca_coloration_.Process(vca_noise);
-  hh += vca_coloration_.Process(vca_noise);
+  // hh += vca_coloration_.Process(vca_noise);
   hh <<= 1;
   CLIP(hh);
   return hh;

@@ -55,7 +55,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_BUFFERED_PROCESSOR(Lfo)
   REGISTER_UNBUFFERED_PROCESSOR(BassDrum)
   REGISTER_UNBUFFERED_PROCESSOR(SnareDrum)
-  // REGISTER_UNBUFFERED_PROCESSOR(HighHat)
+  REGISTER_UNBUFFERED_PROCESSOR(HighHat)
   REGISTER_BUFFERED_PROCESSOR(FmDrum)
   REGISTER_BUFFERED_PROCESSOR(PulseShaper)
   REGISTER_BUFFERED_PROCESSOR(PulseRandomizer)
@@ -69,7 +69,6 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_UNBUFFERED_PROCESSOR(BouncingBall)
   REGISTER_UNBUFFERED_PROCESSOR(RandomisedBassDrum)
   REGISTER_UNBUFFERED_PROCESSOR(RandomisedSnareDrum)
-  // REGISTER_UNBUFFERED_PROCESSOR(RandomisedHighHat)
   REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
   REGISTER_UNBUFFERED_PROCESSOR(ModSequencer)
 };
@@ -91,7 +90,7 @@ void Processors::Init(uint8_t index) {
   snare_drum_.Init();
   fm_drum_.Init();
   fm_drum_.set_sd_range(index == 1);
-  // high_hat_.Init();
+  high_hat_.Init();
   bouncing_ball_.Init();
   lfo_.Init();
   envelope_.Init();
@@ -108,7 +107,6 @@ void Processors::Init(uint8_t index) {
   randomised_envelope_.Init();
   randomised_bass_drum_.Init();
   randomised_snare_drum_.Init();
-  // randomised_high_hat_.Init();
   mod_sequencer_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
