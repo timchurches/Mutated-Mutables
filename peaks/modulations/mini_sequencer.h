@@ -149,10 +149,10 @@ class ModSequencer {
         step_ = 0;
       }
     }
-    // disable reset action of channel 2 clock for ModSequencer
-    // if (num_steps_ > 4 && control & CONTROL_GATE_RISING_AUXILIARY) {
-    //   reset_at_next_clock_ = true;
-    // }
+    // reset action of channel 2 clock for ModSequencer
+    if (num_steps_ > 4 && control & CONTROL_GATE_RISING_AUXILIARY) {
+      reset_at_next_clock_ = true;
+    }
     if (step_ >= num_steps_) {
       step_ = 0;
     }
