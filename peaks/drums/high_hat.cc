@@ -57,6 +57,57 @@ void HighHat::Init() {
 
 int16_t HighHat::ProcessSingleSample(uint8_t control) {
   if (control & CONTROL_GATE_RISING) {
+  
+    // randomise parameters
+    // frequency
+    uint32_t random_value = stmlib::Random::GetWord() ;
+    bool freq_up = (random_value > 2147483647) ? true : false ;
+    int32_t randomised_frequency = freq_up ? 
+                                   (last_frequency_ + (frequency_randomness_ >> 2)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 2));
+    // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
+    if (randomised_frequency < 0 || randomised_frequency > 65535) {
+      // flip the direction
+      freq_up = !freq_up ;
+      randomised_frequency = freq_up ? 
+                                   (last_frequency_ + (frequency_randomness_ >> 2)) :
+                                   (last_frequency_ - (frequency_randomness_ >> 2));
+    }
+    // constrain randomised frequency - probably not necessary
+    if (randomised_frequency < 0) { 
+      randomised_frequency = 0; 
+    } else if (randomised_frequency > 65535) { 
+      randomised_frequency = 65535; 
+    }
+    // set new random frequency
+    set_frequency(randomised_frequency) ; 
+    last_frequency_ = randomised_frequency ;
+
+    // colour
+    random_value = stmlib::Random::GetWord() ;
+    freq_up = (random_value > 2147483647) ? true : false ;
+    randomised_frequency = freq_up ? 
+                                   (last_colour_ + (colour_randomness_ >> 2)) :
+                                   (last_colour_ - (colour_randomness_ >> 2));
+    // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
+    if (randomised_frequency < 0 || randomised_frequency > 65535) {
+      // flip the direction
+      freq_up = !freq_up ;
+      randomised_frequency = freq_up ? 
+                                   (last_colour_ + (colour_randomness_ >> 2)) :
+                                   (last_colour_ - (colour_randomness_ >> 2));
+    }
+    // constrain randomised frequency - probably not necessary
+    if (randomised_frequency < 0) { 
+      randomised_frequency = 0; 
+    } else if (randomised_frequency > 65535) { 
+      randomised_frequency = 65535; 
+    }
+    // set new random frequency
+    set_colour(randomised_frequency) ; 
+    last_colour_ = randomised_frequency ;
+
+    // Hit it!
     vca_envelope_.Trigger(32768 * 15);
   }
   
@@ -79,7 +130,7 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   // Run the SVF at the double of the original sample rate for stability.
   int32_t filtered_noise = 0;
   filtered_noise += noise_.Process(noise);
-  filtered_noise += noise_.Process(noise);
+  // filtered_noise += noise_.Process(noise);
 
   // The 808-style VCA amplifies only the positive section of the signal.
   if (filtered_noise < 0) {
@@ -93,8 +144,9 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   CLIP(vca_noise);
   int32_t hh = 0;
   hh += vca_coloration_.Process(vca_noise);
-  hh += vca_coloration_.Process(vca_noise);
-  hh <<= 1;
+  // hh += vca_coloration_.Process(vca_noise);
+  // hh <<= 1;
+  hh <<= 2;
   CLIP(hh);
   return hh;
 }
