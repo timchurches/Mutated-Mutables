@@ -117,15 +117,23 @@ void ByteBeats::FillBuffer(
         p0 = p0_ >> 8; // was 11
         p1 = p1_ >> 11; // was 8
         //  BitWiz Transplant from Equation Composer Ptah bank        
-        sample = (t_-((t_&p0)*p1-1668899)*((t_>>15)%15*t_))>>((t_>>12)%16)>>(p1%15);
+        // run at twice normal sample rate
+        for (uint8_t j = 0; j < 2; ++j) {
+          sample = (t_-((t_&p0)*p1-1668899)*((t_>>15)%15*t_))>>((t_>>12)%16)>>(p1%15);
+          if (j == 0) ++t_ ; 
+        }
         break;
       case 5:
         p0 = p0_ >> 11;
         p1 = p1_ >> 9;
         // Arpeggiation from Equation Composer Khepri bank
-        p = ((t_/(1236+p0)) % 128) & ((t_>>(p1>>5))*p1);
-        q = (t_/(t_/((500*p1) % 5) + 1)) % p;
-        sample = (t_>>q>>(p1>>5)) + (t_/(t_>>((p1>>5)&12))>>p);
+        // run at twice normal sample rate
+        // for (uint8_t j = 0; j < 2; ++j) {
+          p = ((t_/(1236+p0)) % 128) & ((t_>>(p1>>5))*p1);
+          q = (t_/(t_/((500*p1) % 5) + 1)) % p;
+          sample = (t_>>q>>(p1>>5)) + (t_/(t_>>((p1>>5)&12))>>p);
+        //  if (j == 0) ++t_ ; 
+        // }
         break;
       case 6:
         p0 = p0_ >> 9;
