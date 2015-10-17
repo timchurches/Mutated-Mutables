@@ -146,12 +146,12 @@ void ByteBeats::FillBuffer(
         p0 = p0_ >> 9;
         p1 = t_ % p1_ ;
         // // run at twice normal sample rate
-        // for (j = 0; j < 2; ++j) {
+        for (j = 0; j < 2; ++j) {
           // Warping overtone echo drone, from BitWiz
           sample = ((t_&p0)-(t_%p1))^(t_>>7);  
           // sample = t_*(((t_>>p1)^((t_>>p1)-1)^1)%p0) ; 
-          // if (j == 0) ++t_ ; 
-        // }
+          if (j == 0) ++t_ ; 
+        }
         break;      
     }
     CLIP(sample)
