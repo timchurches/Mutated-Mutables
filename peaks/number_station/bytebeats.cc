@@ -115,12 +115,12 @@ void ByteBeats::FillBuffer(
         sample = ((( (((((t_ >> p0) | t_) | (t_ >> p0)) * 10) & ((5 * t_) | (t_ >> 10)) ) | (t_ ^ (t_ % p1)) ) & 0xFF)) << 8 ;
         break;
       case 4: 
-        p0 = p0_ >> 8; // was 11
-        p1 = p1_ >> 11; // was 8
+        p0 = p0_ >> 12; // was 9
+        p1 = p1_ >> 12; // was 11
         //  BitWiz Transplant from Equation Composer Ptah bank        
         // run at twice normal sample rate
         for (j = 0; j < 2; ++j) {
-          sample = (t_-((t_&p0)*p1-1668899)*((t_>>15)%15*t_))>>((t_>>12)%16)>>(p1%15);
+          sample = t_*(((t_>>p1)^((t_>>p1)-1)^1)%p0) ; 
           if (j == 0) ++t_ ; 
         }
         break;
