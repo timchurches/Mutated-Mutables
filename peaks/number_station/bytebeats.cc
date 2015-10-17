@@ -59,6 +59,7 @@ void ByteBeats::FillBuffer(
   // temporary vars
   uint32_t p ;
   uint32_t q ;
+  uint8_t j ;
   
   uint16_t bytepitch = (65535 - frequency_) >> 11 ; // was 12
   if (bytepitch < 1) {
@@ -118,7 +119,7 @@ void ByteBeats::FillBuffer(
         p1 = p1_ >> 11; // was 8
         //  BitWiz Transplant from Equation Composer Ptah bank        
         // run at twice normal sample rate
-        for (uint8_t j = 0; j < 2; ++j) {
+        for (j = 0; j < 2; ++j) {
           sample = (t_-((t_&p0)*p1-1668899)*((t_>>15)%15*t_))>>((t_>>12)%16)>>(p1%15);
           if (j == 0) ++t_ ; 
         }
@@ -143,10 +144,14 @@ void ByteBeats::FillBuffer(
         break;
       default:
         p0 = p0_ >> 9;
-        p1 = (p1_ >> 11) + 2;
-        // Warping overtone echo drone, from BitWiz
-        sample = ((t_&p0)-(t_%p1))^(t_>>7);  
-        // sample = t_*(((t_>>p1)^((t_>>p1)-1)^1)%p0) ; 
+        p1 = t_ % p1_ ;
+        // // run at twice normal sample rate
+        // for (j = 0; j < 2; ++j) {
+          // Warping overtone echo drone, from BitWiz
+          sample = ((t_&p0)-(t_%p1))^(t_>>7);  
+          // sample = t_*(((t_>>p1)^((t_>>p1)-1)^1)%p0) ; 
+          // if (j == 0) ++t_ ; 
+        // }
         break;      
     }
     CLIP(sample)
