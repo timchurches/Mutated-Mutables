@@ -86,6 +86,10 @@ class HighHat {
     colour_randomness_ = colour_randomness;
   }
 
+  inline void set_open(bool open) {
+    open_ = open;
+  }
+
 //   noise_.set_frequency(105 << 7);  // 8kHz
 //   noise_.set_resonance(24000);
 //   noise_.set_mode(SVF_MODE_BP);
@@ -115,6 +119,8 @@ class HighHat {
   uint16_t last_frequency_ ;
   uint16_t base_colour_ ;
   uint16_t last_colour_ ;
+  
+  bool open_ ;
 
   DISALLOW_COPY_AND_ASSIGN(HighHat);
 };

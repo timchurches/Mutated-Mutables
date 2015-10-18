@@ -60,8 +60,8 @@ void HighHat::Init() {
 }
 
 int16_t HighHat::ProcessSingleSample(uint8_t control) {
-  if (control & CONTROL_GATE_RISING) {
-  
+  if ((control & CONTROL_GATE_RISING) &&
+      (open_ || (!open_ && !(control & CONTROL_GATE_RISING_AUXILIARY)))) {  
     // randomise parameters
     // frequency
     uint32_t random_value = stmlib::Random::GetWord() ;
