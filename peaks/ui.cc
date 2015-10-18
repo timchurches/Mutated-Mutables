@@ -360,8 +360,7 @@ void Ui::OnSwitchReleased(const Event& e) {
             f = static_cast<Function>(f + FUNCTION_FIRST_ALTERNATE_FUNCTION);
           } else {
             // f = static_cast<Function>((f - FUNCTION_FIRST_EXTENDED_FUNCTION) % 4);
-            f = static_cast<Function>(f & 3);
-            
+            f = static_cast<Function>(f & 3);            
           }
         } else {
           if (f <= FUNCTION_DRUM_GENERATOR) {
