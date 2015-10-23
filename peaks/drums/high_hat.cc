@@ -60,8 +60,8 @@ void HighHat::Init() {
 }
 
 int16_t HighHat::ProcessSingleSample(uint8_t control) {
-  if (control & CONTROL_GATE_RISING) {
-  
+  if ((control & CONTROL_GATE_RISING) &&
+      (open_ || (!open_ && !(control & CONTROL_GATE_RISING_AUXILIARY)))) {  
     // randomise parameters
     // frequency
     uint32_t random_value = stmlib::Random::GetWord() ;
@@ -149,8 +149,8 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   int32_t hh = 0;
   hh += vca_coloration_.Process(vca_noise);
   // hh += vca_coloration_.Process(vca_noise);
-  // hh <<= 1;
-  hh <<= 2;
+  hh <<= 1;
+  // hh <<= 2;
   CLIP(hh);
   return hh;
 }

@@ -95,6 +95,7 @@ void Processors::Init(uint8_t index) {
   fm_drum_.Init();
   fm_drum_.set_sd_range(index == 1);
   high_hat_.Init();
+  high_hat_.set_open(index == 1);
   bouncing_ball_.Init();
   lfo_.Init();
   envelope_.Init();
