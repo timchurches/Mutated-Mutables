@@ -89,20 +89,6 @@ class HighHat {
   inline void set_open(bool open) {
     open_ = open;
   }
-
-//   noise_.set_frequency(105 << 7);  // 8kHz
-//   noise_.set_resonance(24000);
-//   noise_.set_mode(SVF_MODE_BP);
-//   
-//   vca_coloration_.Init();
-//   vca_coloration_.set_frequency(110 << 7);  // 13kHz
-//   vca_coloration_.set_resonance(0);
-//   vca_coloration_.set_mode(SVF_MODE_HP);
-//   
-//   vca_envelope_.Init();
-//   vca_envelope_.set_delay(0);
-//   vca_envelope_.set_decay(4093);
-
   
  private:
   Svf noise_;

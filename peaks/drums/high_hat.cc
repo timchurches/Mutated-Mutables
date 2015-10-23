@@ -149,8 +149,8 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   int32_t hh = 0;
   hh += vca_coloration_.Process(vca_noise);
   // hh += vca_coloration_.Process(vca_noise);
-  // hh <<= 1;
-  hh <<= 2;
+  hh <<= 1;
+  // hh <<= 2;
   CLIP(hh);
   return hh;
 }
