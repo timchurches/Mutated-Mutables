@@ -408,4 +408,196 @@ FmLfo::ComputeSampleFn FmLfo::compute_sample_fn_table_[] = {
   &FmLfo::ComputeSampleNoise
 };
 
+// Repeat for internally waveshape-modulated LFO 
+
+void WsmLfo::Init() {
+  rate_ = 0;
+  shape_ = LFO_SHAPE_SQUARE;
+  parameter_ = 0;
+  reset_phase_ = 0;
+  sync_ = false;
+  previous_parameter_ = 32767;
+  level_ = 32767;
+  wsm_rate_ = 0;
+  wsm_shape_ = LFO_SHAPE_SINE;
+  wsm_parameter_ = 0;
+  wsm_reset_phase_ = 0;
+  wsm_delta_ = 0 ;
+  
+}
+
+void WsmLfo::set_shape_parameter_preset(uint16_t value) {
+  value = (value >> 8) * 7 >> 8;
+  set_shape(static_cast<LfoShape>(presets[value][0]));
+  set_parameter(presets[value][1]);
+}
+
+void WsmLfo::FillBuffer(
+    InputBuffer* input_buffer,
+    OutputBuffer* output_buffer) {
+  // internal waveshape modulation oscillator first
+  if (!sync_) {
+    int32_t wsm_a = lut_lfo_increments[wsm_rate_ >> 8];
+    int32_t wsm_b = lut_lfo_increments[(wsm_rate_ >> 8) + 1];
+    wsm_phase_increment_ = wsm_a + (((wsm_b - wsm_a) >> 1) * (wsm_rate_ & 0xff) >> 7);
+  }
+  // uint8_t wsm_size = kBlockSize;  
+  uint8_t wsm_size = 1;  
+  while (wsm_size--) {
+    uint8_t wsm_control = input_buffer->ImmediateRead();
+    if (wsm_control & CONTROL_GATE_RISING) {
+      bool wsm_reset_phase = true;
+      if (wsm_reset_phase) {
+        wsm_phase_ = wsm_reset_phase_;
+      }
+    }
+    wsm_phase_ += wsm_phase_increment_;
+    int32_t wsm_sample = WsmLfo::WsmComputeSampleSine();
+    wsm_delta_ = (wsm_sample * wsm_depth_) >> 16;
+    parameter_ = wsm_delta_ ;
+  }
+  // now actual LFO
+  if (!sync_) {
+    int32_t a = lut_lfo_increments[rate_ >> 8];
+    int32_t b = lut_lfo_increments[(rate_ >> 8) + 1];
+    phase_increment_ = a + (((b - a) >> 1) * (rate_ & 0xff) >> 7);
+  }
+  uint8_t size = kBlockSize;  
+  while (size--) {
+    uint8_t control = input_buffer->ImmediateRead();
+    if (control & CONTROL_GATE_RISING) {
+      bool reset_phase = true;
+      if (reset_phase) {
+        phase_ = reset_phase_;
+      }
+    }
+    phase_ += phase_increment_;
+    int32_t sample = (this->*compute_sample_fn_table_[shape_])();
+    output_buffer->Overwrite(sample * level_ >> 15);
+  }
+}
+
+int16_t WsmLfo::ComputeSampleSine() {
+  uint32_t phase = phase_;
+  int16_t sine = Interpolate1022(wav_sine, phase);
+  int16_t sample;
+  if (parameter_ > 0) {
+    int32_t wf_balance = parameter_;
+    int32_t wf_gain = 2048 + \
+        (static_cast<int32_t>(parameter_) * (65535 - 2048) >> 15);
+    int32_t original = sine;
+    int32_t folded = Interpolate1022(
+        wav_fold_sine, original * wf_gain + (1UL << 31));
+    sample = original + ((folded - original) * wf_balance >> 15);
+  } else {
+    int32_t wf_balance = -parameter_;
+    int32_t original = sine;
+    phase += 1UL << 30;
+    int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
+    int32_t folded = Interpolate1022(wav_fold_power, tri);
+    sample = original + ((folded - original) * wf_balance >> 15);
+  }
+  return sample;
+}
+
+int16_t WsmLfo::WsmComputeSampleSine() {
+  uint32_t phase = wsm_phase_;
+  int16_t sine = Interpolate1022(wav_sine, phase);
+  int16_t sample;
+  if (wsm_parameter_ > 0) {
+    int32_t wf_balance = wsm_parameter_;
+    int32_t wf_gain = 2048 + \
+        (static_cast<int32_t>(wsm_parameter_) * (65535 - 2048) >> 15);
+    int32_t original = sine;
+    int32_t folded = Interpolate1022(
+        wav_fold_sine, original * wf_gain + (1UL << 31));
+    sample = original + ((folded - original) * wf_balance >> 15);
+  } else {
+    int32_t wf_balance = -wsm_parameter_;
+    int32_t original = sine;
+    phase += 1UL << 30;
+    int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
+    int32_t folded = Interpolate1022(wav_fold_power, tri);
+    sample = original + ((folded - original) * wf_balance >> 15);
+  }
+  return sample;
+}
+
+int16_t WsmLfo::ComputeSampleTriangle() {
+  if (parameter_ != previous_parameter_) {
+    uint16_t slope_offset = parameter_ + 32768;
+    if (slope_offset <= 1) {
+      decay_factor_ = 32768 << kSlopeBits;
+      attack_factor_ = 1 << (kSlopeBits - 1);
+    } else {
+      decay_factor_ = (32768 << kSlopeBits) / slope_offset;
+      attack_factor_ = (32768 << kSlopeBits) / (65536 - slope_offset);
+    }
+    end_of_attack_ = (static_cast<uint32_t>(slope_offset) << 16);
+    previous_parameter_ = parameter_;
+  }
+  
+  uint32_t phase = phase_;
+  uint32_t skewed_phase = phase;
+  if (phase < end_of_attack_) {
+    skewed_phase = (phase >> kSlopeBits) * decay_factor_;
+  } else {
+    skewed_phase = ((phase - end_of_attack_) >> kSlopeBits) * attack_factor_;
+    skewed_phase += 1L << 31;
+  }
+  return skewed_phase < 1UL << 31
+      ? -32768 + (skewed_phase >> 15)
+      :  32767 - (skewed_phase >> 15);
+}
+
+int16_t WsmLfo::ComputeSampleSquare() {
+  uint32_t threshold = static_cast<uint32_t>(parameter_ + 32768) << 16;
+  if (threshold < (phase_increment_ << 1)) {
+    threshold = phase_increment_ << 1;
+  } else if (~threshold < (phase_increment_ << 1)) {
+    threshold = ~(phase_increment_ << 1);
+  }
+  return phase_ < threshold ? 32767 : -32767;
+}
+
+int16_t WsmLfo::ComputeSampleSteps() {
+  uint16_t quantization_levels = 2 + (((parameter_ + 32768) * 15) >> 16);
+  uint16_t scale = 65535 / (quantization_levels - 1);
+  uint32_t phase = phase_;
+  uint32_t tri_phase = phase;
+  uint32_t tri = tri_phase < (1UL << 31) ? tri_phase << 1 : ~(tri_phase << 1);
+  return ((tri >> 16) * quantization_levels >> 16) * scale - 32768;
+}
+
+int16_t WsmLfo::ComputeSampleNoise() {
+  uint32_t phase = phase_;
+  if (phase < phase_increment_) {
+    value_ = next_value_;
+    next_value_ = Random::GetSample();
+  }
+  int16_t sample;
+  int32_t linear_interpolation = value_ + \
+      ((next_value_ - value_) * static_cast<int32_t>(phase >> 17) >> 15);
+  if (parameter_ < 0) {
+    int32_t balance = parameter_ + 32767;
+    sample = value_ + ((linear_interpolation - value_) * balance >> 15);
+  } else {
+    int16_t raised_cosine = Interpolate824(lut_raised_cosine, phase) >> 1;
+    int32_t smooth_interpolation = value_ + \
+        ((next_value_ - value_) * raised_cosine >> 15);
+    sample = linear_interpolation + \
+        ((smooth_interpolation - linear_interpolation) * parameter_ >> 15);
+  }
+  return sample;
+}
+
+/* static */
+WsmLfo::ComputeSampleFn WsmLfo::compute_sample_fn_table_[] = {
+  &WsmLfo::ComputeSampleSine,
+  &WsmLfo::ComputeSampleTriangle,
+  &WsmLfo::ComputeSampleSquare,
+  &WsmLfo::ComputeSampleSteps,
+  &WsmLfo::ComputeSampleNoise
+};
+
 }  // namespace peaks
