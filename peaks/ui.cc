@@ -66,6 +66,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_MOD_SEQUENCER, PROCESSOR_FUNCTION_MOD_SEQUENCER },
   { PROCESSOR_FUNCTION_BYTEBEATS, PROCESSOR_FUNCTION_BYTEBEATS },
   { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
+  { PROCESSOR_FUNCTION_FMLFO, PROCESSOR_FUNCTION_FMLFO },
 };
 
 Storage<0x8020000, 16> storage;
@@ -184,6 +185,9 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_HIGH_HAT:
         leds_.set_pattern(12); // top LED-> 0 0 X X
         break;
+      case FUNCTION_FMLFO:
+        leds_.set_pattern(14); // top LED-> 0 0 X X
+        break;
       default:
         leds_.set_function(function() & 3);
         break;
@@ -195,12 +199,14 @@ inline void Ui::RefreshLeds() {
     switch (function_[i]) {
       case FUNCTION_DRUM_GENERATOR:
       case FUNCTION_FM_DRUM_GENERATOR:
+      case FUNCTION_RANDOMISED_DRUM_GENERATOR:
       case FUNCTION_HIGH_HAT:
         b[i] = abs(brightness_[i]) >> 8;
         b[i] = b[i] > 255 ? 255 : b[i];
         break;
       case FUNCTION_LFO:
       case FUNCTION_TAP_LFO:
+      case FUNCTION_FMLFO:
       case FUNCTION_MINI_SEQUENCER:
       case FUNCTION_MOD_SEQUENCER:
         b[i] = static_cast<uint16_t>(brightness_[i] + 32768) >> 8;
