@@ -243,7 +243,8 @@ void FmLfo::FillBuffer(
     int32_t fm_b = lut_lfo_increments[(fm_rate_ >> 8) + 1];
     fm_phase_increment_ = fm_a + (((fm_b - fm_a) >> 1) * (fm_rate_ & 0xff) >> 7);
   }
-  uint8_t fm_size = kBlockSize;  
+  // uint8_t fm_size = kBlockSize;  
+  uint8_t fm_size = 1;  
   while (fm_size--) {
     uint8_t fm_control = input_buffer->ImmediateRead();
     if (fm_control & CONTROL_GATE_RISING) {
