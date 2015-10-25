@@ -70,7 +70,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
 
   { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
   { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
-  // { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
+  { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
 };
 
 Storage<0x8020000, 16> storage;
@@ -188,7 +188,7 @@ inline void Ui::RefreshLeds() {
           leds_.set_pattern(4); // top LED-> X X x X
           break;
         // extended DRUM functions
-        // case FUNCTION_HIGH_HAT:
+        case FUNCTION_HIGH_HAT:
         case FUNCTION_FM_DRUM_GENERATOR:
         case FUNCTION_RANDOMISED_DRUM_GENERATOR:
           leds_.set_pattern(8); // top LED-> 0 0 X x
@@ -244,9 +244,9 @@ inline void Ui::RefreshLeds() {
         leds_.set_pattern(15); // top LED-> X X x X
         break;
       // extended DRUM functions
-      // case FUNCTION_HIGH_HAT:
-      //   leds_.set_pattern(10); // top LED-> 0 X 0 x
-      //   break;
+      case FUNCTION_HIGH_HAT:
+        leds_.set_pattern(10); // top LED-> 0 X 0 x
+        break;
       case FUNCTION_FM_DRUM_GENERATOR:
         leds_.set_pattern(9); // top LED-> X 0 0 x
         break;
@@ -266,7 +266,7 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_DRUM_GENERATOR:
       case FUNCTION_FM_DRUM_GENERATOR:
       case FUNCTION_RANDOMISED_DRUM_GENERATOR:
-      // case FUNCTION_HIGH_HAT:
+      case FUNCTION_HIGH_HAT:
         b[i] = abs(brightness_[i]) >> 8;
         b[i] = b[i] > 255 ? 255 : b[i];
         break;
@@ -444,7 +444,7 @@ void Ui::SetFunction(uint8_t index, Function f) {
       }
       break;
     case FUNCTION_FM_DRUM_GENERATOR:
-    // case FUNCTION_HIGH_HAT:
+    case FUNCTION_HIGH_HAT:
     case FUNCTION_RANDOMISED_DRUM_GENERATOR:
       if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
         last_ext_drum_function_[0] = last_ext_drum_function_[1] = f;

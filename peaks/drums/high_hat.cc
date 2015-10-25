@@ -49,10 +49,10 @@ void HighHat::Init() {
   noise_.set_resonance(24000);
   noise_.set_mode(SVF_MODE_BP);
   
-  vca_coloration_.Init();
-  vca_coloration_.set_frequency(110 << 7);  // 13kHz
-  vca_coloration_.set_resonance(0);
-  vca_coloration_.set_mode(SVF_MODE_HP);
+  // vca_coloration_.Init();
+  // vca_coloration_.set_frequency(110 << 7);  // 13kHz
+  // vca_coloration_.set_resonance(0);
+  // vca_coloration_.set_mode(SVF_MODE_HP);
   
   vca_envelope_.Init();
   vca_envelope_.set_delay(0);
@@ -87,19 +87,19 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
     set_frequency(randomised_frequency) ; 
     last_frequency_ = randomised_frequency ;
 
-    // colour
+    // decay
     random_value = stmlib::Random::GetWord() ;
     freq_up = (random_value > 2147483647) ? true : false ;
     randomised_frequency = freq_up ? 
-                                   (last_colour_ + (colour_randomness_ >> 2)) :
-                                   (last_colour_ - (colour_randomness_ >> 2));
+                                   (last_decay_ + (decay_randomness_ >> 2)) :
+                                   (last_decay_ - (decay_randomness_ >> 2));
     // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
     if (randomised_frequency < 0 || randomised_frequency > 65535) {
       // flip the direction
       freq_up = !freq_up ;
       randomised_frequency = freq_up ? 
-                                   (last_colour_ + (colour_randomness_ >> 2)) :
-                                   (last_colour_ - (colour_randomness_ >> 2));
+                                   (last_decay_ + (decay_randomness_ >> 2)) :
+                                   (last_decay_ - (decay_randomness_ >> 2));
     }
     // constrain randomised frequency - probably not necessary
     if (randomised_frequency < 0) { 
@@ -107,9 +107,9 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
     } else if (randomised_frequency > 65535) { 
       randomised_frequency = 65535; 
     }
-    // set new random frequency
-    set_colour(randomised_frequency) ; 
-    last_colour_ = randomised_frequency ;
+    // set new random decay
+    set_decay(randomised_frequency) ; 
+    last_decay_ = randomised_frequency ;
 
     // Hit it!
     vca_envelope_.Trigger(32768 * 15);
@@ -146,13 +146,14 @@ int16_t HighHat::ProcessSingleSample(uint8_t control) {
   int32_t envelope = vca_envelope_.Process() >> 4;
   int32_t vca_noise = envelope * filtered_noise >> 14;
   CLIP(vca_noise);
-  int32_t hh = 0;
-  hh += vca_coloration_.Process(vca_noise);
+  return vca_noise;
+  // int32_t hh = 0;
   // hh += vca_coloration_.Process(vca_noise);
-  hh <<= 1;
+  // hh += vca_coloration_.Process(vca_noise);
+  // hh <<= 1;
   // hh <<= 2;
-  CLIP(hh);
-  return hh;
+  // CLIP(hh);
+  // return hh;
 }
 
 

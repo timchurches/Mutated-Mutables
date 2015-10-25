@@ -40,7 +40,7 @@
 #include "peaks/drums/bass_drum.h"
 #include "peaks/drums/fm_drum.h"
 #include "peaks/drums/snare_drum.h"
-// #include "peaks/drums/high_hat.h"
+#include "peaks/drums/high_hat.h"
 #include "peaks/modulations/bouncing_ball.h"
 #include "peaks/modulations/lfo.h"
 #include "peaks/modulations/mini_sequencer.h"
@@ -61,7 +61,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_TAP_LFO,
   PROCESSOR_FUNCTION_BASS_DRUM,
   PROCESSOR_FUNCTION_SNARE_DRUM,
-  // PROCESSOR_FUNCTION_HIGH_HAT,
+  PROCESSOR_FUNCTION_HIGH_HAT,
   PROCESSOR_FUNCTION_FM_DRUM,
   PROCESSOR_FUNCTION_PULSE_SHAPER,
   PROCESSOR_FUNCTION_PULSE_RANDOMIZER,
@@ -213,7 +213,7 @@ class Processors {
   DECLARE_BUFFERED_PROCESSOR(Lfo, lfo_);
   DECLARE_UNBUFFERED_PROCESSOR(BassDrum, bass_drum_);
   DECLARE_UNBUFFERED_PROCESSOR(SnareDrum, snare_drum_);
-  // DECLARE_UNBUFFERED_PROCESSOR(HighHat, high_hat_);
+  DECLARE_UNBUFFERED_PROCESSOR(HighHat, high_hat_);
   DECLARE_BUFFERED_PROCESSOR(FmDrum, fm_drum_);
   DECLARE_BUFFERED_PROCESSOR(PulseShaper, pulse_shaper_);
   DECLARE_BUFFERED_PROCESSOR(PulseRandomizer, pulse_randomizer_);
