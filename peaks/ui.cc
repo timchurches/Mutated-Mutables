@@ -51,23 +51,26 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_LFO, PROCESSOR_FUNCTION_LFO },
   { PROCESSOR_FUNCTION_TAP_LFO, PROCESSOR_FUNCTION_TAP_LFO },
   { PROCESSOR_FUNCTION_BASS_DRUM, PROCESSOR_FUNCTION_SNARE_DRUM },
-
-  { PROCESSOR_FUNCTION_MINI_SEQUENCER, PROCESSOR_FUNCTION_MINI_SEQUENCER },
-  { PROCESSOR_FUNCTION_PULSE_SHAPER, PROCESSOR_FUNCTION_PULSE_SHAPER },
-  { PROCESSOR_FUNCTION_PULSE_RANDOMIZER, PROCESSOR_FUNCTION_PULSE_RANDOMIZER },
-  { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
+  
   { PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE, PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE },
   { PROCESSOR_FUNCTION_REPEATING_ATTACK_ENVELOPE, PROCESSOR_FUNCTION_REPEATING_ATTACK_ENVELOPE },
   { PROCESSOR_FUNCTION_LOOPING_ENVELOPE, PROCESSOR_FUNCTION_LOOPING_ENVELOPE },
   { PROCESSOR_FUNCTION_RANDOMISED_ENVELOPE, PROCESSOR_FUNCTION_RANDOMISED_ENVELOPE },
   { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
-  { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
-  { PROCESSOR_FUNCTION_TURING_MACHINE, PROCESSOR_FUNCTION_TURING_MACHINE },
-  { PROCESSOR_FUNCTION_MOD_SEQUENCER, PROCESSOR_FUNCTION_MOD_SEQUENCER },
-  { PROCESSOR_FUNCTION_BYTEBEATS, PROCESSOR_FUNCTION_BYTEBEATS },
-  { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
+
   { PROCESSOR_FUNCTION_FMLFO, PROCESSOR_FUNCTION_FMLFO },
   { PROCESSOR_FUNCTION_WSMLFO, PROCESSOR_FUNCTION_WSMLFO },
+  
+  { PROCESSOR_FUNCTION_MINI_SEQUENCER, PROCESSOR_FUNCTION_MINI_SEQUENCER },
+  { PROCESSOR_FUNCTION_MOD_SEQUENCER, PROCESSOR_FUNCTION_MOD_SEQUENCER },
+  { PROCESSOR_FUNCTION_PULSE_SHAPER, PROCESSOR_FUNCTION_PULSE_SHAPER },
+  { PROCESSOR_FUNCTION_PULSE_RANDOMIZER, PROCESSOR_FUNCTION_PULSE_RANDOMIZER },
+  { PROCESSOR_FUNCTION_TURING_MACHINE, PROCESSOR_FUNCTION_TURING_MACHINE },
+  { PROCESSOR_FUNCTION_BYTEBEATS, PROCESSOR_FUNCTION_BYTEBEATS },
+
+  { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
+  { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
+  // { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
 };
 
 Storage<0x8020000, 16> storage;
@@ -116,6 +119,13 @@ void Ui::Init() {
   SetFunction(0, function_[0]);
   SetFunction(1, function_[1]);
   double_press_counter_ = 0;
+  
+  last_basic_function_[0] = last_basic_function_[1] = FUNCTION_FIRST_BASIC_FUNCTION;
+  last_ext_env_function_[0] = last_ext_env_function_[1] = FUNCTION_FIRST_EXTENDED_ENV_FUNCTION;
+  last_ext_lfo_function_[0] = last_ext_lfo_function_[1] = FUNCTION_FIRST_EXTENDED_LFO_FUNCTION;
+  last_ext_tap_function_[0] = last_ext_tap_function_[1] = FUNCTION_FIRST_EXTENDED_TAP_FUNCTION;
+  last_ext_drum_function_[0] = last_ext_drum_function_[1] = FUNCTION_FIRST_EXTENDED_DRUM_FUNCTION;
+
 }
 
 void Ui::LockPots() {
@@ -152,46 +162,98 @@ inline void Ui::RefreshLeds() {
       break;
   }
   if ((system_clock.milliseconds() & 256) &&
-      function() >= FUNCTION_FIRST_ALTERNATE_FUNCTION) {
-    leds_.set_function(4);
+      function() > FUNCTION_LAST_BASIC_FUNCTION) {
+      switch (function()) {
+        // x = on blinking, X = on constant, 0 = off
+        // extended ENV functions
+        case FUNCTION_DUAL_ATTACK_ENVELOPE:
+        case FUNCTION_REPEATING_ATTACK_ENVELOPE:
+        case FUNCTION_LOOPING_ENVELOPE:
+        case FUNCTION_RANDOMISED_ENVELOPE:
+        case FUNCTION_BOUNCING_BALL:
+          leds_.set_pattern(1); // top LED-> x 0 X X
+          break;
+        // extended  LFO functions
+        case FUNCTION_FMLFO:
+        case FUNCTION_WSMLFO:
+          leds_.set_pattern(2); // top LED-> 0 x 0 X
+          break;
+        // extended TAP functions
+        case FUNCTION_MINI_SEQUENCER:
+        case FUNCTION_MOD_SEQUENCER:
+        case FUNCTION_PULSE_SHAPER:
+        case FUNCTION_PULSE_RANDOMIZER:
+        case FUNCTION_TURING_MACHINE:
+        case FUNCTION_BYTEBEATS:
+          leds_.set_pattern(4); // top LED-> X X x X
+          break;
+        // extended DRUM functions
+        // case FUNCTION_HIGH_HAT:
+        case FUNCTION_FM_DRUM_GENERATOR:
+        case FUNCTION_RANDOMISED_DRUM_GENERATOR:
+          leds_.set_pattern(8); // top LED-> 0 0 X x
+          break;
+        // the remainder
+        default:
+          leds_.set_function(4);
+          break;
+      }
   } else {
     switch (function()) {
+      // x = on blinking, X = on constant, 0 = off
+      // extended ENV functions
       case FUNCTION_DUAL_ATTACK_ENVELOPE:
-        leds_.set_pattern(3); // top LED-> X X 0 0 
+        leds_.set_pattern(3); // top LED-> x X 0 0 
         break;
       case FUNCTION_REPEATING_ATTACK_ENVELOPE:
-        leds_.set_pattern(5); // top LED-> X 0 X 0
+        leds_.set_pattern(5); // top LED-> x 0 X 0
         break;
       case FUNCTION_LOOPING_ENVELOPE:
-        leds_.set_pattern(7); // top LED-> X X X 0
+        leds_.set_pattern(9); // top LED-> x 0 0 X
         break;
       case FUNCTION_RANDOMISED_ENVELOPE:
-        leds_.set_pattern(9); // top LED-> X 0 0 X
+        leds_.set_pattern(7); // top LED-> x X X 0
         break;
       case FUNCTION_BOUNCING_BALL:
-        leds_.set_pattern(11); // top LED-> X X 0 X
+        leds_.set_pattern(13); // top LED-> x 0 X X
         break;
-      case FUNCTION_RANDOMISED_DRUM_GENERATOR:
-        leds_.set_pattern(13); // top LED-> X 0 X X
-        break;
-      case FUNCTION_TURING_MACHINE:
-        leds_.set_pattern(15); // top LED-> X X X X
-        break;
-      case FUNCTION_MOD_SEQUENCER:
-        leds_.set_pattern(10); // top LED-> 0 X 0 X
-        break;
-      case FUNCTION_BYTEBEATS:
-        leds_.set_pattern(6); // top LED-> 0 X X 0
-        break;
-      case FUNCTION_HIGH_HAT:
-        leds_.set_pattern(12); // top LED-> 0 0 X X
-        break;
+      // extended  LFO functions
       case FUNCTION_FMLFO:
-        leds_.set_pattern(14); // top LED-> 0 0 X X
+        leds_.set_pattern(6); // top LED-> 0 x X 0
         break;
       case FUNCTION_WSMLFO:
-        leds_.set_pattern(13); // top LED-> 0 X X X
+        leds_.set_pattern(10); // top LED-> 0 x 0 X
         break;
+      // extended TAP functions
+      case FUNCTION_MINI_SEQUENCER:
+        leds_.set_pattern(5); // top LED-> X 0 x 0
+        break;
+      case FUNCTION_MOD_SEQUENCER:
+        leds_.set_pattern(6); // top LED-> 0 X x 0
+        break;
+      case FUNCTION_PULSE_SHAPER:
+        leds_.set_pattern(12); // top LED-> 0 0 x X
+        break;
+      case FUNCTION_PULSE_RANDOMIZER:
+        leds_.set_pattern(14); // top LED-> 0 X x X
+        break;
+      case FUNCTION_TURING_MACHINE:
+        leds_.set_pattern(13); // top LED-> X 0 x X
+        break;
+      case FUNCTION_BYTEBEATS:
+        leds_.set_pattern(15); // top LED-> X X x X
+        break;
+      // extended DRUM functions
+      // case FUNCTION_HIGH_HAT:
+      //   leds_.set_pattern(10); // top LED-> 0 X 0 x
+      //   break;
+      case FUNCTION_FM_DRUM_GENERATOR:
+        leds_.set_pattern(9); // top LED-> X 0 0 x
+        break;
+      case FUNCTION_RANDOMISED_DRUM_GENERATOR:
+        leds_.set_pattern(12); // top LED-> 0 0 X x
+        break;
+      // the remainder
       default:
         leds_.set_function(function() & 3);
         break;
@@ -204,7 +266,7 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_DRUM_GENERATOR:
       case FUNCTION_FM_DRUM_GENERATOR:
       case FUNCTION_RANDOMISED_DRUM_GENERATOR:
-      case FUNCTION_HIGH_HAT:
+      // case FUNCTION_HIGH_HAT:
         b[i] = abs(brightness_[i]) >> 8;
         b[i] = b[i] > 255 ? 255 : b[i];
         break;
@@ -338,6 +400,61 @@ void Ui::SetFunction(uint8_t index, Function f) {
     function_[index] = f;
     processors[index].set_function(function_table_[f][index]);
   }
+  // store current function for current function page
+  switch (f) {
+    case FUNCTION_ENVELOPE:
+    case FUNCTION_LFO:
+    case FUNCTION_TAP_LFO:
+    case FUNCTION_DRUM_GENERATOR:
+      if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+        last_basic_function_[0] = last_basic_function_[1] = f;
+      } else {
+        last_basic_function_[index] = f ;
+      }
+      break;
+    case FUNCTION_DUAL_ATTACK_ENVELOPE:
+    case FUNCTION_REPEATING_ATTACK_ENVELOPE:
+    case FUNCTION_LOOPING_ENVELOPE:
+    case FUNCTION_RANDOMISED_ENVELOPE:
+    case FUNCTION_BOUNCING_BALL:
+      if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+        last_ext_env_function_[0] = last_ext_env_function_[1] = f;
+      } else {
+        last_ext_env_function_[index] = f ;
+      }
+      break;
+    case FUNCTION_FMLFO:
+    case FUNCTION_WSMLFO:
+      if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+        last_ext_lfo_function_[0] = last_ext_lfo_function_[1] = f;
+      } else {
+        last_ext_lfo_function_[index] = f ;
+      }
+      break;
+    case FUNCTION_MINI_SEQUENCER:
+    case FUNCTION_MOD_SEQUENCER:
+    case FUNCTION_PULSE_SHAPER:
+    case FUNCTION_PULSE_RANDOMIZER:
+    case FUNCTION_TURING_MACHINE:
+    case FUNCTION_BYTEBEATS:
+      if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+        last_ext_tap_function_[0] = last_ext_tap_function_[1] = f;
+      } else {
+        last_ext_tap_function_[index] = f ;
+      }
+      break;
+    case FUNCTION_FM_DRUM_GENERATOR:
+    // case FUNCTION_HIGH_HAT:
+    case FUNCTION_RANDOMISED_DRUM_GENERATOR:
+      if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+        last_ext_drum_function_[0] = last_ext_drum_function_[1] = f;
+      } else {
+        last_ext_drum_function_[index] = f ;
+      }
+      break;
+    default:
+      break;
+  }
 }
 
 void Ui::OnSwitchReleased(const Event& e) {
@@ -367,19 +484,59 @@ void Ui::OnSwitchReleased(const Event& e) {
       {
         Function f = function();
         if (e.data > kLongPressDuration) {
-          if (f <= FUNCTION_DRUM_GENERATOR) {
-            f = static_cast<Function>(f + FUNCTION_FIRST_ALTERNATE_FUNCTION);
+          if (f < FUNCTION_FIRST_EXTENDED_ENV_FUNCTION) {
+            if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+              f = static_cast<Function>(last_ext_env_function_[0]);            
+            } else {
+              f = static_cast<Function>(last_ext_env_function_[edit_mode_ - EDIT_MODE_FIRST]);
+            }
+          } else if (f < FUNCTION_FIRST_EXTENDED_LFO_FUNCTION) {
+            if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+              f = static_cast<Function>(last_ext_lfo_function_[0]);            
+            } else {
+              f = static_cast<Function>(last_ext_lfo_function_[edit_mode_ - EDIT_MODE_FIRST]);
+            }
+          } else if (f < FUNCTION_FIRST_EXTENDED_TAP_FUNCTION) {
+            if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+              f = static_cast<Function>(last_ext_tap_function_[0]);            
+            } else {
+              f = static_cast<Function>(last_ext_tap_function_[edit_mode_ - EDIT_MODE_FIRST]);
+            }
+          } else if (f < FUNCTION_FIRST_EXTENDED_DRUM_FUNCTION) {
+            if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+              f = static_cast<Function>(last_ext_drum_function_[0]);            
+            } else {
+              f = static_cast<Function>(last_ext_tap_function_[edit_mode_ - EDIT_MODE_FIRST]);
+            }
           } else {
-            // f = static_cast<Function>((f - FUNCTION_FIRST_EXTENDED_FUNCTION) % 4);
-            f = static_cast<Function>(f & 3);            
+            if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
+              f = static_cast<Function>(last_basic_function_[0]);            
+            } else {
+              f = static_cast<Function>(last_basic_function_[edit_mode_ - EDIT_MODE_FIRST]);
+            }
           }
         } else {
-          if (f <= FUNCTION_DRUM_GENERATOR) {
+          if (f <= FUNCTION_LAST_BASIC_FUNCTION) {
             f = static_cast<Function>((f + 1) & 3);
-          } else {
+          } else if (f <= FUNCTION_LAST_EXTENDED_ENV_FUNCTION){
             f = static_cast<Function>(f + 1);
-            if (f >= FUNCTION_LAST) {
-              f = static_cast<Function>(FUNCTION_FIRST_ALTERNATE_FUNCTION);
+            if (f > FUNCTION_LAST_EXTENDED_ENV_FUNCTION) {
+              f = static_cast<Function>(FUNCTION_FIRST_EXTENDED_ENV_FUNCTION);
+            }
+          } else if (f <= FUNCTION_LAST_EXTENDED_LFO_FUNCTION){
+            f = static_cast<Function>(f + 1);
+            if (f > FUNCTION_LAST_EXTENDED_LFO_FUNCTION) {
+              f = static_cast<Function>(FUNCTION_FIRST_EXTENDED_LFO_FUNCTION);
+            }
+          } else if (f <= FUNCTION_LAST_EXTENDED_TAP_FUNCTION){
+            f = static_cast<Function>(f + 1);
+            if (f > FUNCTION_LAST_EXTENDED_TAP_FUNCTION) {
+              f = static_cast<Function>(FUNCTION_FIRST_EXTENDED_TAP_FUNCTION);
+            }
+          } else if (f <= FUNCTION_LAST_EXTENDED_DRUM_FUNCTION){
+            f = static_cast<Function>(f + 1);
+            if (f > FUNCTION_LAST_EXTENDED_DRUM_FUNCTION) {
+              f = static_cast<Function>(FUNCTION_FIRST_EXTENDED_DRUM_FUNCTION);
             }
           }
         }
