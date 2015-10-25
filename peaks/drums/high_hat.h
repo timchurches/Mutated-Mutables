@@ -74,7 +74,11 @@ class HighHat {
   }
 
   void set_decay(uint16_t decay) {
-    vca_envelope_.set_decay(4065 + (decay >> 11));
+    uint16_t decay_value = 4065 + (decay >> 11) ;
+    if (decay_value > 4095) {
+      decay_value = 4095 ;
+    }
+    vca_envelope_.set_decay(decay_value);
   }
 
   void set_frequency_randomness(uint16_t frequency_randomness) {
