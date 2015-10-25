@@ -54,18 +54,18 @@ class HighHat {
       set_frequency(parameter[0]);
       base_frequency_ = parameter[0];
       last_frequency_ = base_frequency_;
-      set_colour(parameter[1]);
-      base_colour_ = parameter[1];
-      last_colour_ = base_colour_;      
+      set_decay(parameter[1]);
+      base_decay_ = parameter[1];
+      last_decay_ = base_decay_;      
     } else {
       set_frequency(parameter[0]);
       base_frequency_ = parameter[0];
       last_frequency_ = base_frequency_;
-      set_colour(parameter[1]);
-      base_colour_ = parameter[1];
-      last_colour_ = base_colour_;      
+      set_decay(parameter[1]);
+      base_decay_ = parameter[1];
+      last_decay_ = base_decay_;      
       set_frequency_randomness(parameter[2]);
-      set_colour_randomness(parameter[3]);
+      set_decay_randomness(parameter[3]);
     }
   }
 
@@ -73,17 +73,16 @@ class HighHat {
     noise_.set_frequency((105 << 7) - ((32767 - frequency)  >> 6));  // 8kHz
   }
 
-  void set_colour(uint16_t colour) {
-    //vca_coloration_.set_frequency((110 << 7) - ((32767 - colour)  >> 6));  // 13kHz
-    vca_coloration_.set_frequency((65535 - (colour >> 1)) >> 2);  // 13kHz
+  void set_decay(uint16_t decay) {
+    vca_envelope_.set_decay(4065 + (decay >> 11));
   }
 
   void set_frequency_randomness(uint16_t frequency_randomness) {
     frequency_randomness_ = frequency_randomness;
   }
 
-  void set_colour_randomness(uint16_t colour_randomness) {
-    colour_randomness_ = colour_randomness;
+  void set_decay_randomness(uint16_t decay_randomness) {
+    decay_randomness_ = decay_randomness;
   }
 
   inline void set_open(bool open) {
@@ -92,19 +91,19 @@ class HighHat {
   
  private:
   Svf noise_;
-  Svf vca_coloration_;
+  // Svf vca_coloration_;
   Excitation vca_envelope_;
   
   uint32_t phase_[6];
 
   uint16_t frequency_randomness_ ;
-  uint16_t colour_randomness_ ;
+  uint16_t decay_randomness_ ;
   int32_t randomised_hit_  ;
 
   uint16_t base_frequency_ ;
   uint16_t last_frequency_ ;
-  uint16_t base_colour_ ;
-  uint16_t last_colour_ ;
+  uint16_t base_decay_ ;
+  uint16_t last_decay_ ;
   
   bool open_ ;
 

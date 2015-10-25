@@ -75,6 +75,8 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_UNBUFFERED_PROCESSOR(RandomisedSnareDrum)
   REGISTER_UNBUFFERED_PROCESSOR(TuringMachine)
   REGISTER_UNBUFFERED_PROCESSOR(ModSequencer)
+  REGISTER_BUFFERED_PROCESSOR(FmLfo)
+  REGISTER_BUFFERED_PROCESSOR(WsmLfo)
 };
 
 void Processors::Init(uint8_t index) {
@@ -92,10 +94,10 @@ void Processors::Init(uint8_t index) {
   
   bass_drum_.Init();
   snare_drum_.Init();
-  fm_drum_.Init();
-  fm_drum_.set_sd_range(index == 1);
   high_hat_.Init();
   high_hat_.set_open(index == 1);
+  fm_drum_.Init();
+  fm_drum_.set_sd_range(index == 1);
   bouncing_ball_.Init();
   lfo_.Init();
   envelope_.Init();
@@ -113,6 +115,8 @@ void Processors::Init(uint8_t index) {
   randomised_bass_drum_.Init();
   randomised_snare_drum_.Init();
   mod_sequencer_.Init();
+  fmlfo_.Init();
+  wsmlfo_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
   set_function(PROCESSOR_FUNCTION_ENVELOPE);
