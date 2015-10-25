@@ -164,7 +164,7 @@ inline void Ui::RefreshLeds() {
   if ((system_clock.milliseconds() & 256) &&
       function() > FUNCTION_LAST_BASIC_FUNCTION) {
       switch (function()) {
-        // x = on blinking, X = on constant, 0 = off
+        // x = on constantly, X = blinking, 0 = off
         // extended ENV functions
         case FUNCTION_DUAL_ATTACK_ENVELOPE:
         case FUNCTION_REPEATING_ATTACK_ENVELOPE:
@@ -200,7 +200,7 @@ inline void Ui::RefreshLeds() {
       }
   } else {
     switch (function()) {
-      // x = on blinking, X = on constant, 0 = off
+      // x = on constantly, X = blinking, 0 = off
       // extended ENV functions
       case FUNCTION_DUAL_ATTACK_ENVELOPE:
         leds_.set_pattern(3); // top LED-> x X 0 0 
@@ -506,7 +506,7 @@ void Ui::OnSwitchReleased(const Event& e) {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
               f = static_cast<Function>(last_ext_drum_function_[0]);            
             } else {
-              f = static_cast<Function>(last_ext_tap_function_[edit_mode_ - EDIT_MODE_FIRST]);
+              f = static_cast<Function>(last_ext_drum_function_[edit_mode_ - EDIT_MODE_FIRST]);
             }
           } else {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
