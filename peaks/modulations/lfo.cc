@@ -600,4 +600,231 @@ WsmLfo::ComputeSampleFn WsmLfo::compute_sample_fn_table_[] = {
   &WsmLfo::ComputeSampleNoise
 };
 
+// PLO
+
+/* static */
+const FrequencyRatio Plo::frequency_ratios_[] = {
+  { 1, 1 },
+  { 5, 4 },
+  { 4, 3 },
+  { 3, 2 },
+  { 5, 3 },
+  { 2, 1 },
+  { 3, 1 },
+  { 4, 1 },
+  { 6, 1 },
+  { 8, 1 },
+  { 12, 1 },
+  { 16, 1 },
+};
+
+/* static */
+const int16_t Plo::num_frequency_ratios_ = \
+    sizeof(Plo::frequency_ratios_) / sizeof(FrequencyRatio);
+
+
+void Plo::Init() {
+  rate_ = 0;
+  shape_ = LFO_SHAPE_SQUARE;
+  parameter_ = 0;
+  reset_phase_ = 0;
+  sync_ = false;
+  previous_parameter_ = 32767;
+  sync_counter_ = kSyncCounterMaxTime;
+  level_ = 32767;
+  pattern_predictor_.Init();
+  
+  frequency_ratio_.p = 1;
+  frequency_ratio_.q = 1;
+  phase_increment_ = 9448928;
+  local_osc_phase_increment_ = phase_increment_;
+  target_phase_increment_ = phase_increment_;
+}
+
+void Plo::set_shape_parameter_preset(uint16_t value) {
+  value = (value >> 8) * 7 >> 8;
+  set_shape(static_cast<LfoShape>(presets[value][0]));
+  set_parameter(presets[value][1]);
+}
+
+void Plo::FillBuffer(
+    InputBuffer* input_buffer,
+    OutputBuffer* output_buffer) {
+  if (!sync_) {
+    int32_t a = lut_lfo_increments[rate_ >> 8];
+    int32_t b = lut_lfo_increments[(rate_ >> 8) + 1];
+    phase_increment_ = a + (((b - a) >> 1) * (rate_ & 0xff) >> 7);
+  }
+  uint8_t size = kBlockSize;  
+  
+  while (size--) {
+    ++sync_counter_;
+    uint8_t control = input_buffer->ImmediateRead();
+    if (control & CONTROL_GATE_RISING) {
+      bool reset_phase = true;
+      if (sync_) {
+      // hacked in Tides PLL code
+      if (true) {
+        if (true) {
+          ++sync_edges_counter_;
+          if (sync_edges_counter_ >= frequency_ratio_.q) {
+            sync_edges_counter_ = 0;
+            if (sync_counter_ < kSyncCounterMaxTime && sync_counter_) {
+              uint64_t increment = frequency_ratio_.p * static_cast<uint64_t>(
+                  0xffffffff / sync_counter_);
+              if (increment > 0x80000000) {
+                increment = 0x80000000;
+              }
+              target_phase_increment_ = static_cast<uint32_t>(increment);
+              local_osc_phase_ = 0;
+            }
+            sync_counter_ = 0;
+          }
+        } else {
+          if (sync_counter_ >= kSyncCounterMaxTime) {
+            phase_ = 0;
+          } else if (sync_counter_) {
+            uint32_t predicted_period = sync_counter_ < 480
+                ? sync_counter_
+                : pattern_predictor_.Predict(sync_counter_);
+            uint64_t increment = frequency_ratio_.p * static_cast<uint64_t>(
+                0xffffffff / (predicted_period * frequency_ratio_.q));
+            if (increment > 0x80000000) {
+              increment = 0x80000000;
+            }
+            phase_increment_ = static_cast<uint32_t>(increment);
+          }
+          sync_counter_ = 0;
+        }
+      }
+      // end hacked in Tides PLL code
+
+// removed Peaks tap LFO code
+//         if (sync_counter_ < kSyncCounterMaxTime) {
+//           uint32_t period = 0;
+//           if (sync_counter_ < 1920) {
+//             period = (3 * period_ + sync_counter_) >> 2;
+//             reset_phase = false;
+//           } else {
+//             period = pattern_predictor_.Predict(sync_counter_);
+//           }
+//           if (period != period_) {
+//             period_ = period;
+//             phase_increment_ = 0xffffffff / period_;
+//           }
+//         }
+//         sync_counter_ = 0;
+
+      } // if (sync_)
+      
+      if (reset_phase) {
+        phase_ = reset_phase_;
+      }
+    }
+    phase_ += phase_increment_;
+    int32_t sample = (this->*compute_sample_fn_table_[shape_])();
+    output_buffer->Overwrite(sample * level_ >> 15);
+  }
+}
+
+int16_t Plo::ComputeSampleSine() {
+  uint32_t phase = phase_;
+  int16_t sine = Interpolate1022(wav_sine, phase);
+  int16_t sample;
+  if (parameter_ > 0) {
+    int32_t wf_balance = parameter_;
+    int32_t wf_gain = 2048 + \
+        (static_cast<int32_t>(parameter_) * (65535 - 2048) >> 15);
+    int32_t original = sine;
+    int32_t folded = Interpolate1022(
+        wav_fold_sine, original * wf_gain + (1UL << 31));
+    sample = original + ((folded - original) * wf_balance >> 15);
+  } else {
+    int32_t wf_balance = -parameter_;
+    int32_t original = sine;
+    phase += 1UL << 30;
+    int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
+    int32_t folded = Interpolate1022(wav_fold_power, tri);
+    sample = original + ((folded - original) * wf_balance >> 15);
+  }
+  return sample;
+}
+
+int16_t Plo::ComputeSampleTriangle() {
+  if (parameter_ != previous_parameter_) {
+    uint16_t slope_offset = parameter_ + 32768;
+    if (slope_offset <= 1) {
+      decay_factor_ = 32768 << kSlopeBits;
+      attack_factor_ = 1 << (kSlopeBits - 1);
+    } else {
+      decay_factor_ = (32768 << kSlopeBits) / slope_offset;
+      attack_factor_ = (32768 << kSlopeBits) / (65536 - slope_offset);
+    }
+    end_of_attack_ = (static_cast<uint32_t>(slope_offset) << 16);
+    previous_parameter_ = parameter_;
+  }
+  
+  uint32_t phase = phase_;
+  uint32_t skewed_phase = phase;
+  if (phase < end_of_attack_) {
+    skewed_phase = (phase >> kSlopeBits) * decay_factor_;
+  } else {
+    skewed_phase = ((phase - end_of_attack_) >> kSlopeBits) * attack_factor_;
+    skewed_phase += 1L << 31;
+  }
+  return skewed_phase < 1UL << 31
+      ? -32768 + (skewed_phase >> 15)
+      :  32767 - (skewed_phase >> 15);
+}
+
+int16_t Plo::ComputeSampleSquare() {
+  uint32_t threshold = static_cast<uint32_t>(parameter_ + 32768) << 16;
+  if (threshold < (phase_increment_ << 1)) {
+    threshold = phase_increment_ << 1;
+  } else if (~threshold < (phase_increment_ << 1)) {
+    threshold = ~(phase_increment_ << 1);
+  }
+  return phase_ < threshold ? 32767 : -32767;
+}
+
+int16_t Plo::ComputeSampleSteps() {
+  uint16_t quantization_levels = 2 + (((parameter_ + 32768) * 15) >> 16);
+  uint16_t scale = 65535 / (quantization_levels - 1);
+  uint32_t phase = phase_;
+  uint32_t tri_phase = phase;
+  uint32_t tri = tri_phase < (1UL << 31) ? tri_phase << 1 : ~(tri_phase << 1);
+  return ((tri >> 16) * quantization_levels >> 16) * scale - 32768;
+}
+
+int16_t Plo::ComputeSampleNoise() {
+  uint32_t phase = phase_;
+  if (phase < phase_increment_) {
+    value_ = next_value_;
+    next_value_ = Random::GetSample();
+  }
+  int16_t sample;
+  int32_t linear_interpolation = value_ + \
+      ((next_value_ - value_) * static_cast<int32_t>(phase >> 17) >> 15);
+  if (parameter_ < 0) {
+    int32_t balance = parameter_ + 32767;
+    sample = value_ + ((linear_interpolation - value_) * balance >> 15);
+  } else {
+    int16_t raised_cosine = Interpolate824(lut_raised_cosine, phase) >> 1;
+    int32_t smooth_interpolation = value_ + \
+        ((next_value_ - value_) * raised_cosine >> 15);
+    sample = linear_interpolation + \
+        ((smooth_interpolation - linear_interpolation) * parameter_ >> 15);
+  }
+  return sample;
+}
+
+/* static */
+Plo::ComputeSampleFn Plo::compute_sample_fn_table_[] = {
+  &Plo::ComputeSampleSine,
+  &Plo::ComputeSampleTriangle,
+  &Plo::ComputeSampleSquare,
+  &Plo::ComputeSampleSteps,
+  &Plo::ComputeSampleNoise
+};
+
 }  // namespace peaks

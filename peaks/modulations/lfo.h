@@ -36,6 +36,11 @@
 
 namespace peaks {
 
+struct FrequencyRatio {
+  uint32_t p;
+  uint32_t q;
+};
+
 enum LfoShape {
   LFO_SHAPE_SINE,
   LFO_SHAPE_TRIANGLE,
@@ -353,6 +358,119 @@ class WsmLfo {
   static ComputeSampleFn compute_sample_fn_table_[];
 
   DISALLOW_COPY_AND_ASSIGN(WsmLfo);
+};
+
+class Plo {
+ public:
+  typedef int16_t (Plo::*ComputeSampleFn)();
+   
+  Plo() { }
+  ~Plo() { }
+  
+  void Init();
+  void FillBuffer(InputBuffer* input_buffer, OutputBuffer* output_buffer);
+  
+  void Configure(uint16_t* parameter, ControlMode control_mode) {
+    if (control_mode == CONTROL_MODE_HALF) {
+      if (sync_) {
+        set_shape_integer(parameter[0]);
+        set_parameter(parameter[1] - 32768);
+      } else {
+        set_rate(parameter[0]);
+        set_shape_parameter_preset(parameter[1]);
+      }
+      set_reset_phase(0);
+      set_level(65535);
+    } else {
+      if (sync_) {
+        set_level(parameter[0]);
+        set_shape_integer(parameter[1]);
+        set_parameter(parameter[2] - 32768);
+        set_reset_phase(parameter[3] - 32768);
+      } else {
+        set_level(65535);
+        set_rate(parameter[0]);
+        set_shape_integer(parameter[1]);
+        set_parameter(parameter[2] - 32768);
+        set_reset_phase(parameter[3] - 32768);
+      }
+    }
+  }
+  
+  inline void set_rate(uint16_t rate) {
+    rate_ = rate;
+  }
+  
+  inline void set_shape(LfoShape shape) {
+    shape_ = shape;
+  }
+
+  inline void set_shape_integer(uint16_t value) {
+    shape_ = static_cast<LfoShape>(value * LFO_SHAPE_LAST >> 16);
+  }
+  
+  void set_shape_parameter_preset(uint16_t value);
+  
+  inline void set_parameter(int16_t parameter) {
+    parameter_ = parameter;
+  }
+  
+  inline void set_reset_phase(int16_t reset_phase) {
+    reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
+  }
+  
+  inline void set_sync(bool sync) {
+    if (!sync_ && sync) {
+      pattern_predictor_.Init();
+    }
+    sync_ = sync;
+  }
+  
+  inline void set_level(uint16_t level) {
+    level_ = level >> 1;
+  }
+  
+ private:
+  int16_t ComputeSampleSine();
+  int16_t ComputeSampleTriangle();
+  int16_t ComputeSampleSquare();
+  int16_t ComputeSampleSteps();
+  int16_t ComputeSampleNoise();
+   
+  uint16_t rate_;
+  LfoShape shape_;
+  int16_t parameter_;
+  int32_t reset_phase_;
+  int32_t level_;
+
+  static const FrequencyRatio frequency_ratios_[];
+  static const int16_t num_frequency_ratios_;
+  FrequencyRatio frequency_ratio_;
+
+  bool sync_;
+  uint32_t sync_counter_;
+  stmlib::PatternPredictor<32, 8> pattern_predictor_;
+  uint32_t sync_edges_counter_;
+  uint32_t local_osc_phase_;
+  uint32_t local_osc_phase_increment_;
+  uint32_t target_phase_increment_;  
+  uint32_t eor_counter_;
+  
+  uint32_t phase_;
+  uint32_t phase_increment_;
+  
+  uint32_t period_;
+  uint32_t end_of_attack_;
+  uint32_t attack_factor_;
+  uint32_t decay_factor_;
+  int16_t previous_parameter_;
+  
+  int32_t value_;
+  int32_t next_value_;
+  
+  static ComputeSampleFn compute_sample_fn_table_[];
+
+  DISALLOW_COPY_AND_ASSIGN(Plo);
 };
 
 }  // namespace peaks
