@@ -517,22 +517,23 @@ int16_t WsmLfo::ComputeSampleSine() {
   uint32_t phase = phase_;
   int16_t sine = Interpolate1022(wav_sine, phase);
   int16_t sample;
-  if (parameter_ > 0) {
-    int32_t wf_balance = parameter_;
+  // if (parameter_ > 0) {
+    // int32_t wf_balance = parameter_;
+    int32_t wf_balance = (parameter_ + 32767) >> 1;
     int32_t wf_gain = 2048 + \
         (static_cast<int32_t>(parameter_) * (65535 - 2048) >> 15);
     int32_t original = sine;
     int32_t folded = Interpolate1022(
         wav_fold_sine, original * wf_gain + (1UL << 31));
     sample = original + ((folded - original) * wf_balance >> 15);
-  } else {
-    int32_t wf_balance = -parameter_;
-    int32_t original = sine;
-    phase += 1UL << 30;
-    int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
-    int32_t folded = Interpolate1022(wav_fold_power, tri);
-    sample = original + ((folded - original) * wf_balance >> 15);
-  }
+//   } else {
+//     int32_t wf_balance = -parameter_;
+//     int32_t original = sine;
+//     phase += 1UL << 30;
+//     int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
+//     int32_t folded = Interpolate1022(wav_fold_power, tri);
+//     sample = original + ((folded - original) * wf_balance >> 15);
+//   }
   return sample;
 }
 
