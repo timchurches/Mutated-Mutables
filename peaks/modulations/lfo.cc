@@ -509,7 +509,7 @@ void WsmLfo::FillBuffer(
     }
     phase_ += phase_increment_;
     int32_t sample = (this->*compute_sample_fn_table_[shape_])();
-    output_buffer->Overwrite(sample * level_ >> 15);
+    output_buffer->Overwrite(sample);
   }
 }
 
@@ -539,6 +539,8 @@ int16_t WsmLfo::ComputeSampleSine() {
 int16_t WsmLfo::WsmComputeSampleSine() {
   uint32_t phase = wsm_phase_;
   int16_t sine = Interpolate1022(wav_sine, phase);
+  return sine ;
+  /*
   int16_t sample;
   if (wsm_parameter_ > 0) {
     int32_t wf_balance = wsm_parameter_;
@@ -557,6 +559,7 @@ int16_t WsmLfo::WsmComputeSampleSine() {
     sample = original + ((folded - original) * wf_balance >> 15);
   }
   return sample;
+  */ 
 }
 
 int16_t WsmLfo::ComputeSampleTriangle() {
