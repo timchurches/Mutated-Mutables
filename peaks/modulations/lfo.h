@@ -271,8 +271,8 @@ class WsmLfo {
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       if (sync_) {
-        set_shape_integer(parameter[0]);
-        set_parameter(parameter[1] - 32768);
+        set_pitch_coefficient(parameter[0]);
+        set_shape_parameter_preset(parameter[1]);
       } else {
         set_rate(parameter[0]);
         set_shape_parameter_preset(parameter[1]);
@@ -281,8 +281,8 @@ class WsmLfo {
       set_level(65535);
     } else {
       if (sync_) {
-        set_shape_integer(parameter[0]);
-        set_parameter(parameter[1] - 32768);
+        set_pitch_coefficient(parameter[0]);
+        set_shape_parameter_preset(parameter[1]);
       } else {
         set_rate(parameter[0]);
         set_shape_parameter_preset(parameter[1]);
@@ -307,6 +307,8 @@ class WsmLfo {
   }
   
   void set_shape_parameter_preset(uint16_t value);
+
+  void set_pitch_coefficient(uint16_t value);
 
   inline void set_sync(bool sync) {
     if (!sync_ && sync) {
@@ -374,6 +376,8 @@ class WsmLfo {
   
   int32_t value_;
   int32_t next_value_;
+  
+  int8_t pitch_multiplier_ ;
   
   static ComputeSampleFn compute_sample_fn_table_[];
 

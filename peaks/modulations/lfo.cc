@@ -427,12 +427,36 @@ void WsmLfo::Init() {
   sync_counter_ = kSyncCounterMaxTime;
   pattern_predictor_.Init();
   
+  pitch_multiplier_ = 0;  
 }
 
 void WsmLfo::set_shape_parameter_preset(uint16_t value) {
   value = (value >> 8) * 7 >> 8;
   set_shape(static_cast<LfoShape>(presets[value][0]));
   set_parameter(presets[value][1]);
+}
+
+// const uint16_t pitch_multipliers[16] = {
+// 1365,  // 1/6
+// 2048,  // 1/4
+// 2730,  // 1/3
+// 4096,  // 1/2
+// 4915,  // 3/5
+// 5461,  // 2/3
+// 6144,  // 3/4
+// 6553,  // 4/5
+// 8192,  // 1
+// 10240, // 5/4
+// 10922, // 4/3
+// 12288, // 3/2
+// 13653, // 5/3
+// 16384, // 2
+// 24576, // 3
+// 32768, // 4
+// };
+
+void WsmLfo::set_pitch_coefficient(uint16_t value) {
+  pitch_multiplier_ = static_cast<int8_t>(static_cast<int16_t>(-32767 + value) >> 13);
 }
 
 void WsmLfo::FillBuffer(
@@ -470,7 +494,11 @@ void WsmLfo::FillBuffer(
           if (period != period_) {
             period_ = period;
             phase_increment_ = 0xffffffff / period_;
-            phase_increment_ = phase_increment_ >> 1;
+            // uint64_t scaled_phase_increment = (phase_increment_ * 6553) >> 8;
+            // phase_increment_ = static_cast<uint32_t>(scaled_phase_increment) ;
+            phase_increment_ = pitch_multiplier_ < 0 ? 
+                                phase_increment_ >> -pitch_multiplier_ :
+                                phase_increment_ << pitch_multiplier_ ;
           }
         }
         sync_counter_ = 0;
