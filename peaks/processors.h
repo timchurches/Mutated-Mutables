@@ -144,8 +144,9 @@ class Processors {
   inline void set_function(ProcessorFunction function) {
     function_ = function;
     lfo_.set_sync(function == PROCESSOR_FUNCTION_TAP_LFO);
+    wsmlfo_.set_sync(function == PROCESSOR_FUNCTION_PLO);
     callbacks_ = callbacks_table_[function];
-    if (function != PROCESSOR_FUNCTION_TAP_LFO) {
+    if (function != PROCESSOR_FUNCTION_TAP_LFO and function != PROCESSOR_FUNCTION_PLO) {
       (this->*callbacks_.init_fn)();
     }
     Configure();
@@ -179,24 +180,6 @@ class Processors {
   
  private:
   void Configure() {
-    /*
-    if (function_ == PROCESSOR_FUNCTION_SNARE_DRUM ||
-        function_ == PROCESSOR_FUNCTION_HIGH_HAT) {
-      uint16_t tone_parameter = control_mode_ == CONTROL_MODE_FULL
-          ? parameter_[1] : parameter_[0];
-      uint16_t snappy_parameter = control_mode_ == CONTROL_MODE_FULL
-          ? parameter_[2] : parameter_[1];
-      if (tone_parameter >= 65000 && snappy_parameter >= 65000) {
-        if (function_ != PROCESSOR_FUNCTION_HIGH_HAT) {
-          set_function(PROCESSOR_FUNCTION_HIGH_HAT);
-        }
-      } else if (tone_parameter <= 64500 || snappy_parameter <= 64500) {
-        if (function_ != PROCESSOR_FUNCTION_SNARE_DRUM) {
-          set_function(PROCESSOR_FUNCTION_SNARE_DRUM);
-        }
-      }
-    }
-    */
     (this->*callbacks_.configure)(&parameter_[0], control_mode_);
   }
   
@@ -232,7 +215,6 @@ class Processors {
   DECLARE_UNBUFFERED_PROCESSOR(ModSequencer, mod_sequencer_);
   DECLARE_BUFFERED_PROCESSOR(FmLfo, fmlfo_);
   DECLARE_BUFFERED_PROCESSOR(WsmLfo, wsmlfo_);
-  DECLARE_BUFFERED_PROCESSOR(Plo, plo_);
   
   DISALLOW_COPY_AND_ASSIGN(Processors);
 };
