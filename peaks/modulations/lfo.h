@@ -209,8 +209,15 @@ class FmLfo {
   }
 
   inline void set_fm_depth(uint16_t fm_depth) {
-    fm_depth_ = fm_depth;
+    if (fm_depth < 32768) {
+      fm_depth_ = (32767 - fm_depth) << 1;
+      fm_parameter_ = 0;
+    } else {
+      fm_depth_ = (fm_depth - 32768) << 1;
+      fm_parameter_ = 16383;
+    }
   }
+  
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
@@ -222,6 +229,10 @@ class FmLfo {
   inline void set_level(uint16_t level) {
     level_ = level >> 1;
   }
+
+  inline void set_mod_type(bool mod_type) {
+    mod_type_ = mod_type;
+  }
   
     
  private:
@@ -230,7 +241,7 @@ class FmLfo {
   int16_t ComputeSampleSquare();
   int16_t ComputeSampleSteps();
   int16_t ComputeSampleNoise();
-  int16_t FmComputeSampleSine();
+  int16_t ComputeModulation();
    
   uint16_t rate_;
   LfoShape shape_;
@@ -242,7 +253,7 @@ class FmLfo {
   uint32_t phase_increment_;
 
   uint16_t fm_rate_;
-  LfoShape fm_shape_;
+  // LfoShape fm_shape_;
   uint16_t fm_depth_;
   int16_t fm_parameter_;
   int32_t fm_reset_phase_;
@@ -252,6 +263,7 @@ class FmLfo {
   int16_t fm_delta_ ;
 
   bool sync_;
+  bool mod_type_ ;
   
   uint32_t period_;
   uint32_t end_of_attack_;
@@ -261,6 +273,9 @@ class FmLfo {
   
   int32_t value_;
   int32_t next_value_;
+
+  int32_t fm_value_;
+  int32_t fm_next_value_;
   
   static ComputeSampleFn compute_sample_fn_table_[];
 
@@ -332,7 +347,13 @@ class WsmLfo {
   }
 
   inline void set_wsm_depth(uint16_t wsm_depth) {
-    wsm_depth_ = wsm_depth;
+    if (wsm_depth < 32768) {
+      wsm_depth_ = (32767 - wsm_depth) << 1;
+      wsm_parameter_ = 0;
+    } else {
+      wsm_depth_ = (wsm_depth - 32768) << 1;
+      wsm_parameter_ = 16383;
+    }
   }
   
   inline void set_parameter(int16_t parameter) {
@@ -357,6 +378,7 @@ class WsmLfo {
   // int16_t ComputeSampleSteps();
   int16_t ComputeSampleNoise();
   int16_t ComputeModulationSine();
+  int16_t ComputeModulation();
    
   uint16_t rate_;
   WsmLfoShape shape_;
@@ -367,7 +389,7 @@ class WsmLfo {
   uint16_t wsm_rate_;
   // LfoShape wsm_shape_;
   uint16_t wsm_depth_;
-  // int16_t wsm_parameter_;
+  int16_t wsm_parameter_;
   // int32_t wsm_reset_phase_;
 
   uint32_t wsm_phase_;
@@ -377,6 +399,7 @@ class WsmLfo {
   bool sync_;
   uint32_t sync_counter_;
   stmlib::PatternPredictor<32, 8> pattern_predictor_;
+  bool mod_type_ ;
   
   uint32_t phase_;
   uint32_t phase_increment_;
@@ -389,6 +412,9 @@ class WsmLfo {
   
   int32_t value_;
   int32_t next_value_;
+
+  int32_t wsm_value_;
+  int32_t wsm_next_value_;
   
   int8_t pitch_multiplier_ ;
   

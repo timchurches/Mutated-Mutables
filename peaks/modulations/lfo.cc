@@ -221,7 +221,7 @@ void FmLfo::Init() {
   previous_parameter_ = 32767;
   level_ = 32767;
   fm_rate_ = 0;
-  fm_shape_ = LFO_SHAPE_SINE;
+  // fm_shape_ = LFO_SHAPE_SINE;
   fm_parameter_ = 0;
   fm_reset_phase_ = 0;
   fm_delta_ = 0 ;
@@ -254,7 +254,7 @@ void FmLfo::FillBuffer(
       }
     }
     fm_phase_ += fm_phase_increment_;
-    int32_t fm_sample = FmLfo::FmComputeSampleSine();
+    int32_t fm_sample = FmLfo::ComputeModulation();
     fm_delta_ = (fm_sample * fm_depth_) >> 18;
   }
   // now actual LFO
@@ -308,25 +308,44 @@ int16_t FmLfo::ComputeSampleSine() {
   return sample;
 }
 
-int16_t FmLfo::FmComputeSampleSine() {
+int16_t FmLfo::ComputeModulation() {
   uint32_t phase = fm_phase_;
   int16_t sine = Interpolate1022(wav_sine, phase);
   int16_t sample;
-  if (fm_parameter_ > 0) {
-    int32_t wf_balance = fm_parameter_;
-    int32_t wf_gain = 2048 + \
-        (static_cast<int32_t>(fm_parameter_) * (65535 - 2048) >> 15);
-    int32_t original = sine;
-    int32_t folded = Interpolate1022(
-        wav_fold_sine, original * wf_gain + (1UL << 31));
-    sample = original + ((folded - original) * wf_balance >> 15);
+  if (!mod_type_) {
+    if (fm_parameter_ > 0) {
+      int32_t wf_balance = fm_parameter_;
+      int32_t wf_gain = 2048 + \
+          (static_cast<int32_t>(fm_parameter_) * (65535 - 2048) >> 15);
+      int32_t original = sine;
+      int32_t folded = Interpolate1022(
+          wav_fold_sine, original * wf_gain + (1UL << 31));
+      sample = original + ((folded - original) * wf_balance >> 15);
+    } else {
+      int32_t wf_balance = -fm_parameter_;
+      int32_t original = sine;
+      phase += 1UL << 30;
+      int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
+      int32_t folded = Interpolate1022(wav_fold_power, tri);
+      sample = original + ((folded - original) * wf_balance >> 15);
+    }
   } else {
-    int32_t wf_balance = -fm_parameter_;
-    int32_t original = sine;
-    phase += 1UL << 30;
-    int32_t tri = phase < (1UL << 31) ? phase << 1 : ~(phase << 1);
-    int32_t folded = Interpolate1022(wav_fold_power, tri);
-    sample = original + ((folded - original) * wf_balance >> 15);
+    if (phase < fm_phase_increment_) {
+      fm_value_ = fm_next_value_;
+      fm_next_value_ = Random::GetSample();
+    }
+    int32_t linear_interpolation = fm_value_ + \
+        ((fm_next_value_ - fm_value_) * static_cast<int32_t>(phase >> 17) >> 15);
+    if (fm_parameter_ < 0) {
+      int32_t balance = fm_parameter_ ;
+      sample = fm_value_ + ((linear_interpolation - fm_value_) * balance >> 15);
+    } else {
+      int16_t raised_cosine = Interpolate824(lut_raised_cosine, phase) >> 1;
+      int32_t smooth_interpolation = fm_value_ + \
+          ((next_value_ - fm_value_) * raised_cosine >> 15);
+      sample = linear_interpolation + \
+          ((smooth_interpolation - linear_interpolation) * fm_parameter_ >> 15);
+    }
   }
   return sample;
 }
@@ -420,7 +439,7 @@ void WsmLfo::Init() {
   level_ = 32767;
   wsm_rate_ = 0;
   /// wsm_shape_ = LFO_SHAPE_SINE;
-  // wsm_parameter_ = 0;
+  wsm_parameter_ = 0;
   // wsm_reset_phase_ = 0;
   wsm_delta_ = 0 ;
 
@@ -428,6 +447,8 @@ void WsmLfo::Init() {
   pattern_predictor_.Init();
   
   pitch_multiplier_ = 0;  
+  
+  mod_type_ = 0 ;
 }
 
 const int16_t wsmlfo_presets[7][2] = {
@@ -478,7 +499,8 @@ void WsmLfo::FillBuffer(
   int32_t wsm_b = lut_lfo_increments[(wsm_rate_ >> 8) + 1];
   wsm_phase_increment_ = wsm_a + (((wsm_b - wsm_a) >> 1) * (wsm_rate_ & 0xff) >> 7);
   wsm_phase_ += wsm_phase_increment_;
-  int32_t wsm_sample = WsmLfo::ComputeModulationSine();
+  // int32_t wsm_sample = WsmLfo::ComputeModulationSine();
+  int32_t wsm_sample = WsmLfo::ComputeModulation();
   wsm_delta_ = (wsm_sample * wsm_depth_) >> 16;
   parameter_ = wsm_delta_ ;
   // now actual LFO
@@ -570,6 +592,36 @@ int16_t WsmLfo::ComputeModulationSine() {
   int16_t sine = Interpolate1022(wav_sine, phase);
   return sine ;
 }
+
+
+int16_t WsmLfo::ComputeModulation() {
+  uint32_t phase = wsm_phase_;
+  int16_t sample;
+  if (!mod_type_) {
+    int16_t sine = Interpolate1022(wav_sine, phase);
+    int32_t wf_balance = wsm_parameter_;
+    int32_t wf_gain = 2048 + \
+        (static_cast<int32_t>(wsm_parameter_) * (65535 - 2048) >> 15);
+    int32_t original = sine;
+    int32_t folded = Interpolate1022(
+        wav_fold_sine, original * wf_gain + (1UL << 31));
+    sample = original + ((folded - original) * wf_balance >> 15);
+  } else {
+    if (phase < wsm_phase_increment_) {
+      wsm_value_ = wsm_next_value_;
+      wsm_next_value_ = Random::GetSample();
+    }
+    int32_t linear_interpolation = wsm_value_ + \
+        ((wsm_next_value_ - wsm_value_) * static_cast<int32_t>(phase >> 17) >> 15);
+    int16_t raised_cosine = Interpolate824(lut_raised_cosine, phase) >> 1;
+    int32_t smooth_interpolation = wsm_value_ + \
+          ((wsm_next_value_ - wsm_value_) * raised_cosine >> 15);
+    sample = linear_interpolation + \
+          ((smooth_interpolation - linear_interpolation) * wsm_parameter_ >> 15);
+  }
+  return sample;
+}
+
 
 int16_t WsmLfo::ComputeSampleTriangle() {
   if (parameter_ != previous_parameter_) {

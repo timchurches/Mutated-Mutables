@@ -59,6 +59,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_BOUNCING_BALL, PROCESSOR_FUNCTION_BOUNCING_BALL },
 
   { PROCESSOR_FUNCTION_FMLFO, PROCESSOR_FUNCTION_FMLFO },
+  { PROCESSOR_FUNCTION_RFMLFO, PROCESSOR_FUNCTION_RFMLFO },
   { PROCESSOR_FUNCTION_WSMLFO, PROCESSOR_FUNCTION_WSMLFO },
   { PROCESSOR_FUNCTION_PLO, PROCESSOR_FUNCTION_PLO },
   
@@ -176,6 +177,7 @@ inline void Ui::RefreshLeds() {
           break;
         // extended  LFO functions
         case FUNCTION_FMLFO:
+        case FUNCTION_RFMLFO:
         case FUNCTION_WSMLFO:
         case FUNCTION_PLO:
           leds_.set_pattern(2); // top LED-> 0 x 0 X
@@ -222,6 +224,9 @@ inline void Ui::RefreshLeds() {
       // extended  LFO functions
       case FUNCTION_FMLFO:
         leds_.set_pattern(6); // top LED-> 0 x X 0
+        break;
+      case FUNCTION_RFMLFO:
+        leds_.set_pattern(7); // top LED-> X x X 0
         break;
       case FUNCTION_WSMLFO:
         leds_.set_pattern(10); // top LED-> 0 x 0 X
@@ -278,6 +283,7 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_LFO:
       case FUNCTION_TAP_LFO:
       case FUNCTION_FMLFO:
+      case FUNCTION_RFMLFO:
       case FUNCTION_WSMLFO:
       case FUNCTION_MINI_SEQUENCER:
       case FUNCTION_MOD_SEQUENCER:

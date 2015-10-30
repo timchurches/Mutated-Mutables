@@ -78,6 +78,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_TURING_MACHINE,
   PROCESSOR_FUNCTION_MOD_SEQUENCER,
   PROCESSOR_FUNCTION_FMLFO,
+  PROCESSOR_FUNCTION_RFMLFO,
   PROCESSOR_FUNCTION_WSMLFO,
   PROCESSOR_FUNCTION_PLO,
   PROCESSOR_FUNCTION_LAST
@@ -145,6 +146,7 @@ class Processors {
     function_ = function;
     lfo_.set_sync(function == PROCESSOR_FUNCTION_TAP_LFO);
     wsmlfo_.set_sync(function == PROCESSOR_FUNCTION_PLO);
+    fmlfo_.set_mod_type(function == PROCESSOR_FUNCTION_RFMLFO);
     callbacks_ = callbacks_table_[function];
     if (function != PROCESSOR_FUNCTION_TAP_LFO and function != PROCESSOR_FUNCTION_PLO) {
       (this->*callbacks_.init_fn)();
