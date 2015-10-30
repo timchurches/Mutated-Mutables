@@ -50,6 +50,16 @@ enum LfoShape {
   LFO_SHAPE_LAST
 };
 
+enum WsmLfoShape {
+  WSMLFO_SHAPE_FOLDED_SINE,
+  WSMLFO_SHAPE_FOLDED_POWER_SINE,
+  WSMLFO_SHAPE_OVERDRIVEN_SINE,
+  WSMLFO_SHAPE_TRIANGLE,
+  WSMLFO_SHAPE_SQUARE,
+  WSMLFO_SHAPE_NOISE,
+  WSMLFO_SHAPE_LAST
+};
+
 class Lfo {
  public:
   typedef int16_t (Lfo::*ComputeSampleFn)();
@@ -298,12 +308,12 @@ class WsmLfo {
     rate_ = rate;
   }
 
-  inline void set_shape(LfoShape shape) {
+  inline void set_shape(WsmLfoShape shape) {
     shape_ = shape;
   }
 
   inline void set_shape_integer(uint16_t value) {
-    shape_ = static_cast<LfoShape>(value * LFO_SHAPE_LAST >> 16);
+    shape_ = static_cast<WsmLfoShape>(value * WSMLFO_SHAPE_LAST >> 16);
   }
   
   void set_shape_parameter_preset(uint16_t value);
@@ -324,6 +334,7 @@ class WsmLfo {
   inline void set_wsm_depth(uint16_t wsm_depth) {
     wsm_depth_ = wsm_depth;
   }
+  
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
@@ -338,24 +349,26 @@ class WsmLfo {
   
     
  private:
-  int16_t ComputeSampleSine();
+  int16_t ComputeSampleFoldedSine();
+  int16_t ComputeSampleFoldedPowerSine();
+  int16_t ComputeSampleOverdrivenSine();
   int16_t ComputeSampleTriangle();
   int16_t ComputeSampleSquare();
-  int16_t ComputeSampleSteps();
+  // int16_t ComputeSampleSteps();
   int16_t ComputeSampleNoise();
-  int16_t WsmComputeSampleSine();
+  int16_t ComputeModulationSine();
    
   uint16_t rate_;
-  LfoShape shape_;
+  WsmLfoShape shape_;
   int16_t parameter_;
   int32_t reset_phase_;
   int32_t level_;
   
   uint16_t wsm_rate_;
-  LfoShape wsm_shape_;
+  // LfoShape wsm_shape_;
   uint16_t wsm_depth_;
-  int16_t wsm_parameter_;
-  int32_t wsm_reset_phase_;
+  // int16_t wsm_parameter_;
+  // int32_t wsm_reset_phase_;
 
   uint32_t wsm_phase_;
   uint32_t wsm_phase_increment_;
