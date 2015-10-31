@@ -231,7 +231,7 @@ class FmLfo {
   }
 
   inline void set_mod_type(bool mod_type) {
-    mod_type_ = mod_type;
+    random_mod_ = mod_type;
   }
   
     
@@ -253,7 +253,6 @@ class FmLfo {
   uint32_t phase_increment_;
 
   uint16_t fm_rate_;
-  // LfoShape fm_shape_;
   uint16_t fm_depth_;
   int16_t fm_parameter_;
   int32_t fm_reset_phase_;
@@ -262,8 +261,7 @@ class FmLfo {
   uint32_t fm_phase_increment_;
   int16_t fm_delta_ ;
 
-  bool sync_;
-  bool mod_type_ ;
+  bool random_mod_ ;
   
   uint32_t period_;
   uint32_t end_of_attack_;
@@ -282,6 +280,7 @@ class FmLfo {
   DISALLOW_COPY_AND_ASSIGN(FmLfo);
 };
 
+//////////////////////////////
 // And repeat again for waveshape modulated LFO
 class WsmLfo {
  public:
@@ -295,24 +294,130 @@ class WsmLfo {
   
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
-      if (sync_) {
-        set_pitch_coefficient(parameter[0]);
-        set_shape_parameter_preset(parameter[1]);
-      } else {
-        set_rate(parameter[0]);
-        set_shape_parameter_preset(parameter[1]);
-      }
+      set_rate(parameter[0]);
+      set_shape_parameter_preset(parameter[1]);
       set_reset_phase(0);
       set_level(65535);
     } else {
-      if (sync_) {
-        set_pitch_coefficient(parameter[0]);
-        set_shape_parameter_preset(parameter[1]);
-      } else {
-        set_rate(parameter[0]);
-        set_shape_parameter_preset(parameter[1]);
-      }
+      set_rate(parameter[0]);
+      set_shape_parameter_preset(parameter[1]);
       set_reset_phase(0);
+      set_level(65535);
+      set_wsm_rate(parameter[2]);
+      set_wsm_depth(parameter[3]);
+    }
+  }
+  
+  inline void set_rate(uint16_t rate) {
+    rate_ = rate;
+  }
+
+  inline void set_shape(WsmLfoShape shape) {
+    shape_ = shape;
+  }
+
+  inline void set_shape_integer(uint16_t value) {
+    shape_ = static_cast<WsmLfoShape>(value * WSMLFO_SHAPE_LAST >> 16);
+  }
+  
+  void set_shape_parameter_preset(uint16_t value);
+  
+  inline void set_wsm_rate(uint16_t wsm_rate) {
+    wsm_rate_ = wsm_rate;
+  }
+
+  inline void set_wsm_depth(uint16_t wsm_depth) {
+    if (wsm_depth < 32768) {
+      wsm_depth_ = (32767 - wsm_depth) << 1;
+      wsm_parameter_ = 0;
+    } else {
+      wsm_depth_ = (wsm_depth - 32768) << 1;
+      wsm_parameter_ = 16383;
+    }
+  }
+  
+  inline void set_parameter(int16_t parameter) {
+    parameter_ = parameter;
+  }
+  
+  inline void set_reset_phase(int16_t reset_phase) {
+    reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
+  }
+    
+  inline void set_level(uint16_t level) {
+    level_ = level >> 1;
+  }
+  
+  inline void set_mod_type(bool mod_type) {
+    random_mod_ = mod_type;
+  }
+    
+ private:
+  int16_t ComputeSampleFoldedSine();
+  int16_t ComputeSampleFoldedPowerSine();
+  int16_t ComputeSampleOverdrivenSine();
+  int16_t ComputeSampleTriangle();
+  int16_t ComputeSampleSquare();
+  int16_t ComputeSampleNoise();
+  int16_t ComputeModulation();
+   
+  uint16_t rate_;
+  WsmLfoShape shape_;
+  int16_t parameter_;
+  int32_t reset_phase_;
+  int32_t level_;
+  
+  uint16_t wsm_rate_;
+  uint16_t wsm_depth_;
+  int16_t wsm_parameter_;
+  int32_t wsm_reset_phase_;
+
+  uint32_t wsm_phase_;
+  uint32_t wsm_phase_increment_;
+  int16_t wsm_delta_ ;
+
+  bool random_mod_ ;
+  
+  uint32_t phase_;
+  uint32_t phase_increment_;
+  
+  uint32_t period_;
+  uint32_t end_of_attack_;
+  uint32_t attack_factor_;
+  uint32_t decay_factor_;
+  int16_t previous_parameter_;
+  
+  int32_t value_;
+  int32_t next_value_;
+
+  int32_t wsm_value_;
+  int32_t wsm_next_value_;
+    
+  static ComputeSampleFn compute_sample_fn_table_[];
+
+  DISALLOW_COPY_AND_ASSIGN(WsmLfo);
+};
+
+//////////////////////////////////
+// And repeat again for audio-rate PLL oscillators
+class Plo {
+ public:
+  typedef int16_t (Plo::*ComputeSampleFn)();
+   
+  Plo() { }
+  ~Plo() { }
+  
+  void Init();
+  void FillBuffer(InputBuffer* input_buffer, OutputBuffer* output_buffer);
+  
+  void Configure(uint16_t* parameter, ControlMode control_mode) {
+    if (control_mode == CONTROL_MODE_HALF) {
+      set_pitch_coefficient(parameter[0]);
+      set_shape_parameter_preset(parameter[1]);
+      set_level(65535);
+    } else {
+      set_pitch_coefficient(parameter[0]);
+      set_shape_parameter_preset(parameter[1]);
       set_level(65535);
       set_wsm_rate(parameter[2]);
       set_wsm_depth(parameter[3]);
@@ -347,27 +452,24 @@ class WsmLfo {
   }
 
   inline void set_wsm_depth(uint16_t wsm_depth) {
-    if (wsm_depth < 32768) {
-      wsm_depth_ = (32767 - wsm_depth) << 1;
-      wsm_parameter_ = 0;
-    } else {
-      wsm_depth_ = (wsm_depth - 32768) << 1;
-      wsm_parameter_ = 16383;
-    }
+      wsm_depth_ = wsm_depth;
   }
   
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
   
-  inline void set_reset_phase(int16_t reset_phase) {
-    reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
-  }
+  // inline void set_reset_phase(int16_t reset_phase) {
+  //   reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
+  // }
     
   inline void set_level(uint16_t level) {
     level_ = level >> 1;
   }
   
+  // inline void set_mod_type(bool mod_type) {
+  //   random_mod_ = mod_type;
+  // }
     
  private:
   int16_t ComputeSampleFoldedSine();
@@ -375,10 +477,8 @@ class WsmLfo {
   int16_t ComputeSampleOverdrivenSine();
   int16_t ComputeSampleTriangle();
   int16_t ComputeSampleSquare();
-  // int16_t ComputeSampleSteps();
   int16_t ComputeSampleNoise();
   int16_t ComputeModulationSine();
-  int16_t ComputeModulation();
    
   uint16_t rate_;
   WsmLfoShape shape_;
@@ -387,19 +487,15 @@ class WsmLfo {
   int32_t level_;
   
   uint16_t wsm_rate_;
-  // LfoShape wsm_shape_;
   uint16_t wsm_depth_;
   int16_t wsm_parameter_;
-  // int32_t wsm_reset_phase_;
 
   uint32_t wsm_phase_;
   uint32_t wsm_phase_increment_;
-  int16_t wsm_delta_ ;
 
   bool sync_;
   uint32_t sync_counter_;
   stmlib::PatternPredictor<32, 8> pattern_predictor_;
-  bool mod_type_ ;
   
   uint32_t phase_;
   uint32_t phase_increment_;
@@ -420,7 +516,7 @@ class WsmLfo {
   
   static ComputeSampleFn compute_sample_fn_table_[];
 
-  DISALLOW_COPY_AND_ASSIGN(WsmLfo);
+  DISALLOW_COPY_AND_ASSIGN(Plo);
 };
 
 }  // namespace peaks

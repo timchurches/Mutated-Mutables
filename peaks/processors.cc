@@ -79,6 +79,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_BUFFERED_PROCESSOR(FmLfo)
   REGISTER_BUFFERED_PROCESSOR(WsmLfo)
   REGISTER_BUFFERED_PROCESSOR(WsmLfo)
+  REGISTER_BUFFERED_PROCESSOR(Plo)
 };
 
 void Processors::Init(uint8_t index) {
@@ -119,6 +120,7 @@ void Processors::Init(uint8_t index) {
   mod_sequencer_.Init();
   fmlfo_.Init();
   wsmlfo_.Init();
+  plo_.Init();
   
   control_mode_ = CONTROL_MODE_FULL;
   set_function(PROCESSOR_FUNCTION_ENVELOPE);

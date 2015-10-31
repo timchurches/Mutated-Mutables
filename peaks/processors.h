@@ -80,6 +80,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_FMLFO,
   PROCESSOR_FUNCTION_RFMLFO,
   PROCESSOR_FUNCTION_WSMLFO,
+  PROCESSOR_FUNCTION_RWSMLFO,
   PROCESSOR_FUNCTION_PLO,
   PROCESSOR_FUNCTION_LAST
 };
@@ -145,10 +146,12 @@ class Processors {
   inline void set_function(ProcessorFunction function) {
     function_ = function;
     lfo_.set_sync(function == PROCESSOR_FUNCTION_TAP_LFO);
-    wsmlfo_.set_sync(function == PROCESSOR_FUNCTION_PLO);
     fmlfo_.set_mod_type(function == PROCESSOR_FUNCTION_RFMLFO);
+    wsmlfo_.set_mod_type(function == PROCESSOR_FUNCTION_RWSMLFO);
+    plo_.set_sync(function == PROCESSOR_FUNCTION_PLO);
     callbacks_ = callbacks_table_[function];
-    if (function != PROCESSOR_FUNCTION_TAP_LFO and function != PROCESSOR_FUNCTION_PLO) {
+    if (function != PROCESSOR_FUNCTION_TAP_LFO and 
+        function != PROCESSOR_FUNCTION_PLO) {
       (this->*callbacks_.init_fn)();
     }
     Configure();
@@ -217,6 +220,7 @@ class Processors {
   DECLARE_UNBUFFERED_PROCESSOR(ModSequencer, mod_sequencer_);
   DECLARE_BUFFERED_PROCESSOR(FmLfo, fmlfo_);
   DECLARE_BUFFERED_PROCESSOR(WsmLfo, wsmlfo_);
+  DECLARE_BUFFERED_PROCESSOR(Plo, plo_);
   
   DISALLOW_COPY_AND_ASSIGN(Processors);
 };

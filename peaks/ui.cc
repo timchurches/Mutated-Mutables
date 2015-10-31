@@ -61,6 +61,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_FMLFO, PROCESSOR_FUNCTION_FMLFO },
   { PROCESSOR_FUNCTION_RFMLFO, PROCESSOR_FUNCTION_RFMLFO },
   { PROCESSOR_FUNCTION_WSMLFO, PROCESSOR_FUNCTION_WSMLFO },
+  { PROCESSOR_FUNCTION_RWSMLFO, PROCESSOR_FUNCTION_RWSMLFO },
   { PROCESSOR_FUNCTION_PLO, PROCESSOR_FUNCTION_PLO },
   
   { PROCESSOR_FUNCTION_MINI_SEQUENCER, PROCESSOR_FUNCTION_MINI_SEQUENCER },
@@ -179,6 +180,7 @@ inline void Ui::RefreshLeds() {
         case FUNCTION_FMLFO:
         case FUNCTION_RFMLFO:
         case FUNCTION_WSMLFO:
+        case FUNCTION_RWSMLFO:
         case FUNCTION_PLO:
           leds_.set_pattern(2); // top LED-> 0 x 0 X
           break;
@@ -230,6 +232,9 @@ inline void Ui::RefreshLeds() {
         break;
       case FUNCTION_WSMLFO:
         leds_.set_pattern(10); // top LED-> 0 x 0 X
+        break;
+      case FUNCTION_RWSMLFO:
+        leds_.set_pattern(11); // top LED-> X x 0 X
         break;
       case FUNCTION_PLO:
         leds_.set_pattern(14); // top LED-> 0 x X X
@@ -285,6 +290,8 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_FMLFO:
       case FUNCTION_RFMLFO:
       case FUNCTION_WSMLFO:
+      case FUNCTION_RWSMLFO:
+      case FUNCTION_PLO:
       case FUNCTION_MINI_SEQUENCER:
       case FUNCTION_MOD_SEQUENCER:
         b[i] = static_cast<uint16_t>(brightness_[i] + 32768) >> 8;
@@ -435,7 +442,10 @@ void Ui::SetFunction(uint8_t index, Function f) {
       }
       break;
     case FUNCTION_FMLFO:
+    case FUNCTION_RFMLFO:
     case FUNCTION_WSMLFO:
+    case FUNCTION_RWSMLFO:
+    case FUNCTION_PLO:
       if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
         last_ext_lfo_function_[0] = last_ext_lfo_function_[1] = f;
       } else {
