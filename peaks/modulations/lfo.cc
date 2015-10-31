@@ -381,7 +381,7 @@ int16_t FmLfo::ComputeSampleNoise() {
   int16_t sample;
   int32_t linear_interpolation = value_ + \
       ((next_value_ - value_) * static_cast<int32_t>(phase >> 17) >> 15);
-  if (parameter_ < 0) {
+  if (parameter_ <= 0) {
     int32_t balance = parameter_ + 32767;
     sample = value_ + ((linear_interpolation - value_) * balance >> 15);
   } else {
@@ -589,7 +589,7 @@ int16_t WsmLfo::ComputeSampleNoise() {
   int16_t sample;
   int32_t linear_interpolation = value_ + \
       ((next_value_ - value_) * static_cast<int32_t>(phase >> 17) >> 15);
-  if (parameter_ < 0) {
+  if (parameter_ <= 0) {
     int32_t balance = parameter_ + 32767;
     sample = value_ + ((linear_interpolation - value_) * balance >> 15);
   } else {
