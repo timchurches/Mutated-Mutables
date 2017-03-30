@@ -115,12 +115,15 @@ struct Settings {
   uint8_t padding[4];
 };
 
+class CalibrationData;
+
 class Ui {
  public:
   Ui() { }
   ~Ui() { }
   
   void Init();
+  void Init(CalibrationData* calibration_data);
   void Poll();
   void PollPots();
   void DoEvents();
@@ -149,6 +152,8 @@ class Ui {
     panel_gate_state_ = state;
     return state;
   }
+  
+  inline bool calibrating() const { return calibrating_; }
   
  private:
   inline Function function() const {
@@ -190,6 +195,9 @@ class Ui {
   
   bool snap_mode_;
   bool snapped_[kNumAdcChannels];
+  
+  CalibrationData* calibration_data_;
+  bool calibrating_;
   
   // store last used function on each page
   Function last_basic_function_[2];
