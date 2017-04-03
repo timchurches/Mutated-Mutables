@@ -122,7 +122,6 @@ class Ui {
   Ui() { }
   ~Ui() { }
   
-  void Init();
   void Init(CalibrationData* calibration_data);
   void Poll();
   void PollPots();
