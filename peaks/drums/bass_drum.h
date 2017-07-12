@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,13 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
 //
 // 808-style bass drum.
- 
+
 #ifndef PEAKS_DRUMS_BASS_DRUM_H_
 #define PEAKS_DRUMS_BASS_DRUM_H_
 
@@ -49,7 +49,7 @@ class BassDrum {
 
   void Init();
   void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
-  
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_frequency(0);
@@ -63,11 +63,11 @@ class BassDrum {
       set_decay(parameter[3]);
     }
   }
-  
+
   void set_frequency(int16_t frequency) {
     frequency_ = (31 << 7) + (static_cast<int32_t>(frequency) * 896 >> 15);
   }
-  
+
   void set_decay(uint16_t decay) {
     uint32_t scaled;
     uint32_t squared;
@@ -76,7 +76,7 @@ class BassDrum {
     scaled = squared * scaled >> 18;
     resonator_.set_resonance(32768 - 128 - scaled);
   }
-  
+
   void set_tone(uint16_t tone) {
     uint32_t coefficient = tone;
     coefficient = coefficient * coefficient >> 16;
@@ -106,7 +106,7 @@ class RandomisedBassDrum {
   ~RandomisedBassDrum() { }
 
   void Init();
-  int16_t ProcessSingleSample(uint8_t control) IN_RAM;
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
   
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
@@ -129,11 +129,11 @@ class RandomisedBassDrum {
       set_hit_randomness(parameter[3]);
     }
   }
-  
+
   void set_frequency(int16_t frequency) {
     frequency_ = (31 << 7) + (static_cast<int32_t>(frequency) * 896 >> 15);
   }
-  
+
   void set_decay(uint16_t decay) {
     uint32_t scaled;
     uint32_t squared;
@@ -142,7 +142,7 @@ class RandomisedBassDrum {
     scaled = squared * scaled >> 18;
     resonator_.set_resonance(32768 - 128 - scaled);
   }
-  
+
   void set_tone(uint16_t tone) {
     uint32_t coefficient = tone;
     coefficient = coefficient * coefficient >> 16;
@@ -170,15 +170,15 @@ class RandomisedBassDrum {
   int32_t frequency_;
   int32_t lp_coefficient_;
   int32_t lp_state_;
-  
+
   uint16_t frequency_randomness_ ;
   uint16_t hit_randomness_ ;
 
   int16_t base_frequency_ ;
   int16_t last_frequency_ ;
   uint16_t base_decay_ ;
-  int32_t randomised_decay_ ;  
-  
+  int32_t randomised_decay_ ;
+
   DISALLOW_COPY_AND_ASSIGN(RandomisedBassDrum);
 };
 

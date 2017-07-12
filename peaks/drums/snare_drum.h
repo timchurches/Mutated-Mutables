@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,13 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
 //
 // 808-style snare drum.
- 
+
 #ifndef PEAKS_DRUMS_SNARE_DRUM_H_
 #define PEAKS_DRUMS_SNARE_DRUM_H_
 
@@ -51,7 +51,7 @@ class SnareDrum {
 
   void Init();
   void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
-  
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_frequency(0);
@@ -84,7 +84,7 @@ class SnareDrum {
     body_2_.set_resonance(26500 + (decay >> 5));
     excitation_noise_.set_decay(4092 + (decay >> 14));
   }
-  
+
   void set_frequency(int16_t frequency) {
     int16_t base_note = 52 << 7;
     int32_t transposition = frequency;
@@ -102,10 +102,10 @@ class SnareDrum {
   Svf body_1_;
   Svf body_2_;
   Svf noise_;
-  
+
   int32_t gain_1_;
   int32_t gain_2_;
-  
+
   uint16_t snappy_;
 
   DISALLOW_COPY_AND_ASSIGN(SnareDrum);
@@ -118,7 +118,7 @@ class RandomisedSnareDrum {
   ~RandomisedSnareDrum() { }
 
   void Init();
-  int16_t ProcessSingleSample(uint8_t control) IN_RAM;
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
   
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
@@ -161,7 +161,7 @@ class RandomisedSnareDrum {
     body_2_.set_resonance(26500 + (decay >> 5));
     excitation_noise_.set_decay(4092 + (decay >> 14));
   }
-  
+
   void set_frequency(int16_t frequency) {
     int16_t base_note = 52 << 7;
     int32_t transposition = frequency;
@@ -187,10 +187,10 @@ class RandomisedSnareDrum {
   Svf body_1_;
   Svf body_2_;
   Svf noise_;
-  
+
   int32_t gain_1_;
   int32_t gain_2_;
-  
+
   uint16_t snappy_;
 
   uint16_t frequency_randomness_ ;
@@ -200,7 +200,7 @@ class RandomisedSnareDrum {
   int16_t base_frequency_ ;
   int16_t last_frequency_ ;
   uint16_t last_random_hit_ ;
-  
+
   DISALLOW_COPY_AND_ASSIGN(RandomisedSnareDrum);
 };
 

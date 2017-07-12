@@ -84,7 +84,6 @@ void BassDrum::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
     attack_fm_.Process();
     resonator_.set_frequency(frequency_ + (attack_fm_.done() ? 0 : 17 << 7));
 
-
     int32_t resonator_output = (excitation >> 4) + \
         resonator_.Process<SVF_MODE_BP>(excitation);
     lp_state_ += (resonator_output - lp_state_) * lp_coefficient_ >> 15;
@@ -124,59 +123,64 @@ void RandomisedBassDrum::Init() {
   lp_state_ = 0;
 }
 
-int16_t RandomisedBassDrum::ProcessSingleSample(uint8_t control) {
-  if (control & CONTROL_GATE_RISING) {
-    // randomise parameters
-    // frequency
-    bool freq_up = (stmlib::Random::GetWord() > 2147483647) ? true : false ;
-    int32_t randomised_frequency = freq_up ?
-                                   (last_frequency_ + (frequency_randomness_ >> 2)) :
-                                   (last_frequency_ - (frequency_randomness_ >> 2));
-    // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
-    if (randomised_frequency < -32767 || randomised_frequency > 32767) {
-      // flip the direction
-      freq_up = !freq_up ;
-      randomised_frequency = freq_up ?
-                                   (last_frequency_ + (frequency_randomness_ >> 2)) :
-                                   (last_frequency_ - (frequency_randomness_ >> 2));
-    }
-    // constrain randomised frequency - probably not needed
-    if (randomised_frequency < -32767) {
-      randomised_frequency = -32767;
-    } else if (randomised_frequency > 32767) {
-      randomised_frequency = 32767;
-    }
-    // set new random frequency
-    set_frequency(randomised_frequency) ;
-    last_frequency_ = randomised_frequency ;
+void BassDrum::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
+  while (size--) {
+    GateFlags gate_flag = *gate_flags++;
+    if (gate_flag & GATE_FLAG_RISING) {
+      // randomise parameters
+      // frequency
+      bool freq_up = (stmlib::Random::GetWord() > 2147483647) ? true : false ;
+      int32_t randomised_frequency = freq_up ?
+                                     (last_frequency_ + (frequency_randomness_ >> 2)) :
+                                     (last_frequency_ - (frequency_randomness_ >> 2));
+      // Check if we haven't walked out-of-bounds, and if so, reverse direction on last step
+      if (randomised_frequency < -32767 || randomised_frequency > 32767) {
+        // flip the direction
+        freq_up = !freq_up ;
+        randomised_frequency = freq_up ?
+                                     (last_frequency_ + (frequency_randomness_ >> 2)) :
+                                     (last_frequency_ - (frequency_randomness_ >> 2));
+      }
+      // constrain randomised frequency - probably not needed
+      if (randomised_frequency < -32767) {
+        randomised_frequency = -32767;
+      } else if (randomised_frequency > 32767) {
+        randomised_frequency = 32767;
+      }
+      // set new random frequency
+      set_frequency(randomised_frequency) ;
+      last_frequency_ = randomised_frequency ;
 
-    // now random excitation level and decay
-    int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
-    int32_t randomised_decay_ = base_decay_ + (hit_random_offset >> 2);
-    // constrain randomised decay
-    if (randomised_decay_ < 0) {
-      randomised_decay_ = 0;
-    } else if (randomised_decay_ > 65335) {
-      randomised_decay_ = 65335;
+      // now random excitation level and decay
+      int32_t hit_random_offset = (stmlib::Random::GetSample() * hit_randomness_) >> 16;
+      int32_t randomised_decay_ = base_decay_ + (hit_random_offset >> 2);
+      // constrain randomised decay
+      if (randomised_decay_ < 0) {
+        randomised_decay_ = 0;
+      } else if (randomised_decay_ > 65335) {
+        randomised_decay_ = 65335;
+      }
+      set_decay(randomised_decay_);
+      pulse_up_.Trigger(12 * 32768 * 0.7);
+      pulse_down_.Trigger(-19662 * 0.7);
+      attack_fm_.Trigger(18000);
     }
-    set_decay(randomised_decay_);
-    pulse_up_.Trigger(12 * 32768 * 0.7);
-    pulse_down_.Trigger(-19662 * 0.7);
-    attack_fm_.Trigger(18000);
-  }
-  int32_t excitation = 0;
-  excitation += pulse_up_.Process();
-  excitation += !pulse_down_.done() ? 16384 : 0;
-  excitation += pulse_down_.Process();
-  attack_fm_.Process();
-  resonator_.set_frequency(frequency_ + (attack_fm_.done() ? 0 : 17 << 7));
+    int32_t excitation = 0;
+    excitation += pulse_up_.Process();
+    excitation += !pulse_down_.done() ? 16384 : 0;
+    excitation += pulse_down_.Process();
+    attack_fm_.Process();
+    resonator_.set_frequency(frequency_ + (attack_fm_.done() ? 0 : 17 << 7));
 
-  int32_t resonator_output = (excitation >> 4) + resonator_.Process(excitation);
-  lp_state_ += (resonator_output - lp_state_) * lp_coefficient_ >> 15;
-  // int32_t output = lp_state_ ;
-  int32_t output = (lp_state_ * (16383 + (randomised_decay_ >> 1) + (randomised_decay_ >> 2) )) >> 16;
-  CLIP(output);
-  return output;
+    int32_t resonator_output = (excitation >> 4) + \
+        resonator_.Process<SVF_MODE_BP>(excitation);
+
+    lp_state_ += (resonator_output - lp_state_) * lp_coefficient_ >> 15;
+    // int32_t output = lp_state_ ;
+    int32_t output = (lp_state_ * (16383 + (randomised_decay_ >> 1) + (randomised_decay_ >> 2) )) >> 16;
+    CLIP(output);
+
+    *out++ = output;
 }
 
 
