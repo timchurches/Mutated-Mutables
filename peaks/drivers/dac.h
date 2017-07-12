@@ -29,9 +29,13 @@
 #ifndef PEAKS_DRIVERS_DAC_H_
 #define PEAKS_DRIVERS_DAC_H_
 
+#include <stm32f10x_conf.h>
+
 #include "stmlib/stmlib.h"
 
 namespace peaks {
+
+const uint16_t kPinSS = GPIO_Pin_12;
 
 class Dac {
  public:
@@ -40,20 +44,48 @@ class Dac {
 
   void Init();
 
-  void Write(uint16_t channel_1, uint16_t channel_2) {
-    data_[0] = channel_1;
-    data_[1] = channel_2;
+  inline void Write(int index, uint16_t value) {
+    data_[index] = value;
+  }
+
+  inline bool Update() {
+    GPIOB->BSRR = kPinSS;
+    GPIOB->BRR = kPinSS;
+    
+    if (wrote_both_channels_) {
+      SPI2->DR = 0x2400 | (data_[0] >> 8);
+      wrote_both_channels_ = false;
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      SPI2->DR = data_[0] << 8;
+    } else {
+      SPI2->DR = 0x1000 | (data_[1] >> 8);
+      wrote_both_channels_ = true;
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      SPI2->DR = data_[1] << 8;
+    }
+    return wrote_both_channels_;
   }
   
   void Write(uint16_t channel_1);
 
-  bool ready() { return active_channel_ == 0; }
-
-  void Update();
-
  private:
   uint16_t data_[2];
-  uint8_t active_channel_;
+  bool wrote_both_channels_;
+  
   DISALLOW_COPY_AND_ASSIGN(Dac);
 };
 

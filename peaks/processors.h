@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -85,64 +85,49 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_LAST
 };
 
-#define DECLARE_BUFFERED_PROCESSOR(ClassName, variable) \
+#define DECLARE_PROCESSOR(ClassName, variable) \
   void ClassName ## Init() { \
     variable.Init(); \
   } \
-  void ClassName ## FillBuffer() { \
-    variable.FillBuffer(&input_buffer_, &output_buffer_); \
+  void ClassName ## Process(const GateFlags* gate_flags, int16_t* out, size_t size) { \
+    variable.Process(gate_flags, out, size); \
   } \
   void ClassName ## Configure(uint16_t* p, ControlMode control_mode) { \
     variable.Configure(p, control_mode); \
   } \
   ClassName variable;
-
-#define DECLARE_UNBUFFERED_PROCESSOR(ClassName, variable) \
-  void ClassName ## Init() { \
-    variable.Init(); \
-  } \
-  int16_t ClassName ## ProcessSingleSample(uint8_t control) { \
-    return variable.ProcessSingleSample(control); \
-  } \
-  void ClassName ## Configure(uint16_t* p, ControlMode control_mode) { \
-    variable.Configure(p, control_mode); \
-  } \
-  ClassName variable;
-  
 
 class Processors {
  public:
   Processors() { }
   ~Processors() { }
-  
+
   void Init(uint8_t index);
-  
-  typedef void (Processors::*InitFn)(); 
-  typedef int16_t (Processors::*ProcessSingleSampleFn)(uint8_t); 
-  typedef void (Processors::*FillBufferFn)(); 
+
+  typedef void (Processors::*InitFn)();
+  typedef void (Processors::*ProcessFn)(const GateFlags*, int16_t*, size_t);
   typedef void (Processors::*ConfigureFn)(uint16_t*, ControlMode);
-  
+
   struct ProcessorCallbacks {
     InitFn init_fn;
-    ProcessSingleSampleFn process_single_sample;
-    FillBufferFn fill_buffer;
-    ConfigureFn configure;
+    ProcessFn process_fn;
+    ConfigureFn configure_fn;
   };
-  
+
   inline void set_control_mode(ControlMode control_mode) {
     control_mode_ = control_mode;
     Configure();
   }
-  
+
   inline void set_parameter(uint8_t index, uint16_t parameter) {
     parameter_[index] = parameter;
     Configure();
   }
-  
+
   inline void CopyParameters(uint16_t* parameters, uint16_t size) {
     std::copy(&parameters[0], &parameters[size], &parameter_[0]);
   }
-  
+
   inline void set_function(ProcessorFunction function) {
     function_ = function;
     lfo_.set_sync(function == PROCESSOR_FUNCTION_TAP_LFO);
@@ -150,78 +135,57 @@ class Processors {
     wsmlfo_.set_mod_type(function == PROCESSOR_FUNCTION_RWSMLFO);
     plo_.set_sync(function == PROCESSOR_FUNCTION_PLO);
     callbacks_ = callbacks_table_[function];
-    if (function != PROCESSOR_FUNCTION_TAP_LFO and 
+    if (function != PROCESSOR_FUNCTION_TAP_LFO and
         function != PROCESSOR_FUNCTION_PLO) {
       (this->*callbacks_.init_fn)();
     }
     Configure();
   }
-  
+
   inline ProcessorFunction function() const { return function_; }
 
-  inline int16_t Process(uint8_t control) {
-    if (callbacks_.process_single_sample) {
-      return (this->*callbacks_.process_single_sample)(control);
-    } else {
-      input_buffer_.Overwrite(control);
-      return output_buffer_.ImmediateRead();
-    }
+  inline void Process(const GateFlags* gate_flags, int16_t* output, size_t size) {
+    (this->*callbacks_.process_fn)(gate_flags, output, size);
   }
-  
-  inline bool Buffer() {
-    if (callbacks_.fill_buffer) {
-      if (output_buffer_.writable() < kBlockSize) {
-        return false;
-      } else {
-        (this->*callbacks_.fill_buffer)();
-        return true;
-      }
-    } else {
-      return true;
-    }
-  }
-  
+
   inline const NumberStation& number_station() const { return number_station_; }
-  
+
  private:
   void Configure() {
-    (this->*callbacks_.configure)(&parameter_[0], control_mode_);
+    (this->*callbacks_.configure_fn)(&parameter_[0], control_mode_);
   }
-  
-  InputBuffer input_buffer_;
-  OutputBuffer output_buffer_;
-  
+
   ControlMode control_mode_;
   ProcessorFunction function_;
   uint16_t parameter_[4];
-  
+
   ProcessorCallbacks callbacks_;
   static const ProcessorCallbacks callbacks_table_[PROCESSOR_FUNCTION_LAST];
-  
-  DECLARE_UNBUFFERED_PROCESSOR(MultistageEnvelope, envelope_);
-  DECLARE_BUFFERED_PROCESSOR(Lfo, lfo_);
-  DECLARE_UNBUFFERED_PROCESSOR(BassDrum, bass_drum_);
-  DECLARE_UNBUFFERED_PROCESSOR(SnareDrum, snare_drum_);
-  DECLARE_UNBUFFERED_PROCESSOR(HighHat, high_hat_);
-  DECLARE_BUFFERED_PROCESSOR(FmDrum, fm_drum_);
-  DECLARE_BUFFERED_PROCESSOR(PulseShaper, pulse_shaper_);
-  DECLARE_BUFFERED_PROCESSOR(PulseRandomizer, pulse_randomizer_);
-  DECLARE_UNBUFFERED_PROCESSOR(BouncingBall, bouncing_ball_);
-  DECLARE_UNBUFFERED_PROCESSOR(MiniSequencer, mini_sequencer_);
-  DECLARE_BUFFERED_PROCESSOR(NumberStation, number_station_);
-  DECLARE_BUFFERED_PROCESSOR(ByteBeats, bytebeats_);
-  DECLARE_UNBUFFERED_PROCESSOR(DualAttackEnvelope, dual_attack_envelope_);
-  DECLARE_UNBUFFERED_PROCESSOR(LoopingEnvelope, looping_envelope_);
-  DECLARE_UNBUFFERED_PROCESSOR(RepeatingAttackEnvelope, repeating_attack_envelope_);
-  DECLARE_UNBUFFERED_PROCESSOR(RandomisedEnvelope, randomised_envelope_);
-  DECLARE_UNBUFFERED_PROCESSOR(RandomisedBassDrum, randomised_bass_drum_);
-  DECLARE_UNBUFFERED_PROCESSOR(RandomisedSnareDrum, randomised_snare_drum_);
-  DECLARE_UNBUFFERED_PROCESSOR(TuringMachine, turing_machine_);
-  DECLARE_UNBUFFERED_PROCESSOR(ModSequencer, mod_sequencer_);
-  DECLARE_BUFFERED_PROCESSOR(FmLfo, fmlfo_);
-  DECLARE_BUFFERED_PROCESSOR(WsmLfo, wsmlfo_);
-  DECLARE_BUFFERED_PROCESSOR(Plo, plo_);
-  
+
+  DECLARE_PROCESSOR(MultistageEnvelope, envelope_);
+  DECLARE_PROCESSOR(Lfo, lfo_);
+  DECLARE_PROCESSOR(BassDrum, bass_drum_);
+  DECLARE_PROCESSOR(SnareDrum, snare_drum_);
+  DECLARE_PROCESSOR(HighHat, high_hat_);
+  DECLARE_PROCESSOR(FmDrum, fm_drum_);
+  DECLARE_PROCESSOR(PulseShaper, pulse_shaper_);
+  DECLARE_PROCESSOR(PulseRandomizer, pulse_randomizer_);
+  DECLARE_PROCESSOR(BouncingBall, bouncing_ball_);
+  DECLARE_PROCESSOR(MiniSequencer, mini_sequencer_);
+  DECLARE_PROCESSOR(NumberStation, number_station_);
+  DECLARE_PROCESSOR(ByteBeats, bytebeats_);
+  DECLARE_PROCESSOR(DualAttackEnvelope, dual_attack_envelope_);
+  DECLARE_PROCESSOR(LoopingEnvelope, looping_envelope_);
+  DECLARE_PROCESSOR(RepeatingAttackEnvelope, repeating_attack_envelope_);
+  DECLARE_PROCESSOR(RandomisedEnvelope, randomised_envelope_);
+  DECLARE_PROCESSOR(RandomisedBassDrum, randomised_bass_drum_);
+  DECLARE_PROCESSOR(RandomisedSnareDrum, randomised_snare_drum_);
+  DECLARE_PROCESSOR(TuringMachine, turing_machine_);
+  DECLARE_PROCESSOR(ModSequencer, mod_sequencer_);
+  DECLARE_PROCESSOR(FmLfo, fmlfo_);
+  DECLARE_PROCESSOR(WsmLfo, wsmlfo_);
+  DECLARE_PROCESSOR(Plo, plo_);
+
   DISALLOW_COPY_AND_ASSIGN(Processors);
 };
 
