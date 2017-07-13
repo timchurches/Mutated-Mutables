@@ -76,14 +76,6 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
 };
 
 void Processors::Init(uint8_t index) {
-  input_buffer_.Init();
-  output_buffer_.Init();
-
-  for (uint16_t i = 0; i < kBlockSize; ++i) {
-    output_buffer_.Overwrite(0);
-    input_buffer_.Overwrite(0);
-  }
-
   for (uint16_t i = 0; i < PROCESSOR_FUNCTION_LAST; ++i) {
     (this->*callbacks_table_[i].init_fn)();
   }

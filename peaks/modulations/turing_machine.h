@@ -107,11 +107,11 @@ class TuringMachine {
     }
   }
 
-  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
     while (size--) {
       GateFlags gate_flag = *gate_flags++;
 
-      if (control & GATE_FLAG_RISING) {
+      if (gate_flag & GATE_FLAG_RISING) {
         ++turing_div_counter_;
         if (turing_div_counter_ >= turing_divider_) {
           turing_div_counter_ = 0 ;

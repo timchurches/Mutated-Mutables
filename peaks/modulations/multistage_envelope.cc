@@ -112,7 +112,7 @@ void DualAttackEnvelope::Process(
         : value_;
       segment_ = 0;
       phase_ = 0;
-    } else if (control & GATE_FLAG_FALLING && sustain_point_) {
+    } else if (gate_flag & GATE_FLAG_FALLING && sustain_point_) {
       start_value_ = value_;
       segment_ = sustain_point_;
       phase_ = 0;
@@ -127,7 +127,7 @@ void DualAttackEnvelope::Process(
 
     bool done = segment_ == num_segments_;
     bool sustained = sustain_point_ && segment_ == sustain_point_ &&
-      control & CONTROL_GATE;
+      gate_flag & GATE_FLAG_HIGH;
 
     phase_increment_ =
       sustained || done ? 0 : lut_env_increments[time_[segment_] >> 8];
@@ -138,7 +138,7 @@ void DualAttackEnvelope::Process(
         lookup_table_table[LUT_ENV_LINEAR + shape_[segment_]], phase_);
     value_ = a + ((b - a) * (t >> 1) >> 15);
     phase_ += phase_increment_;
-    *out++ == value_;
+    *out++ = value_;
   }
 }
 
@@ -158,13 +158,13 @@ void RepeatingAttackEnvelope::Process(
   while (size--) {
     GateFlags gate_flag = *gate_flags++;
 
-    if (control & GATE_FLAG_RISING) {
+    if (gate_flag & GATE_FLAG_RISING) {
       start_value_ = (segment_ == num_segments_ || hard_reset_)
           ? level_[0]
           : value_;
       segment_ = 0;
       phase_ = 0;
-    } else if (control & GATE_FLAG_FALLING && sustain_point_) {
+    } else if (gate_flag & GATE_FLAG_FALLING && sustain_point_) {
       start_value_ = value_;
       segment_ = sustain_point_;
       phase_ = 0;
@@ -172,14 +172,14 @@ void RepeatingAttackEnvelope::Process(
       start_value_ = level_[segment_ + 1];
       ++segment_;
       phase_ = 0;
-      if ((segment_ == loop_end_) && (control & CONTROL_GATE)) {
+      if ((segment_ == loop_end_) && (gate_flag & GATE_FLAG_HIGH)) {
         segment_ = loop_start_;
       }
     }
 
     bool done = segment_ == num_segments_;
     bool sustained = sustain_point_ && segment_ == sustain_point_ &&
-        control & CONTROL_GATE;
+        gate_flag & GATE_FLAG_HIGH;
 
     phase_increment_ =
         sustained || done ? 0 : lut_env_increments[time_[segment_] >> 8];
@@ -210,13 +210,13 @@ void LoopingEnvelope::Process(
   while (size--) {
     GateFlags gate_flag = *gate_flags++;
 
-    if (control & GATE_FLAG_RISING) {
+    if (gate_flag & GATE_FLAG_RISING) {
       start_value_ = (segment_ == num_segments_ || hard_reset_)
         ? level_[0]
         : value_;
       segment_ = 0;
       phase_ = 0;
-    } else if (control & CONTROL_GATE_FALLING && sustain_point_) {
+    } else if (gate_flag & GATE_FLAG_FALLING && sustain_point_) {
       start_value_ = value_;
       segment_ = sustain_point_;
       phase_ = 0;
@@ -231,7 +231,7 @@ void LoopingEnvelope::Process(
 
     bool done = segment_ == num_segments_;
     bool sustained = sustain_point_ && segment_ == sustain_point_ &&
-        control & CONTROL_GATE;
+        gate_flag & GATE_FLAG_HIGH;
 
     phase_increment_ =
         sustained || done ? 0 : lut_env_increments[time_[segment_] >> 8];
@@ -263,7 +263,7 @@ void RandomisedEnvelope::Process(
   while (size--) {
     GateFlags gate_flag = *gate_flags++;
 
-    if (control & GATE_FLAG_RISING) {
+    if (gate_flag & GATE_FLAG_RISING) {
       start_value_ = (segment_ == num_segments_ || hard_reset_)
         ? level_[0]
         : value_;
@@ -285,7 +285,7 @@ void RandomisedEnvelope::Process(
       // reset the level and time values
       level_[1] =  randomised_level ;
       time_[1] =  randomised_decay_time ;
-    } else if (control & CONTROL_GATE_FALLING && sustain_point_) {
+    } else if (gate_flag & GATE_FLAG_FALLING && sustain_point_) {
       start_value_ = value_;
       segment_ = sustain_point_;
       phase_ = 0;
@@ -300,7 +300,7 @@ void RandomisedEnvelope::Process(
 
     bool done = segment_ == num_segments_;
     bool sustained = sustain_point_ && segment_ == sustain_point_ &&
-        control & CONTROL_GATE;
+        gate_flag & GATE_FLAG_HIGH;
 
     phase_increment_ =
         sustained || done ? 0 : lut_env_increments[time_[segment_] >> 8];

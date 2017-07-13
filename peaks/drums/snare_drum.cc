@@ -128,7 +128,6 @@ void RandomisedSnareDrum::Init() {
 
   noise_.Init();
   noise_.set_resonance(2000);
-  noise_.set_mode(SVF_MODE_BP);
 
   set_tone(0);
   set_snappy(32768);

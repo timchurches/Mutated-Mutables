@@ -111,11 +111,10 @@ void RandomisedBassDrum::Init() {
   attack_fm_.set_decay(4093);
 
   resonator_.set_punch(32768);
-  resonator_.set_mode(SVF_MODE_BP);
 
   set_frequency(0);
   last_frequency_ = 0;
-  randomised_decay_ = 32768 ;
+  randomised_decay_ = 32768;
   set_decay(32768);
   set_tone(32768);
   set_punch(65535);
@@ -123,7 +122,7 @@ void RandomisedBassDrum::Init() {
   lp_state_ = 0;
 }
 
-void BassDrum::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
+void RandomisedBassDrum::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
   while (size--) {
     GateFlags gate_flag = *gate_flags++;
     if (gate_flag & GATE_FLAG_RISING) {
@@ -181,6 +180,7 @@ void BassDrum::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
     CLIP(output);
 
     *out++ = output;
+  }
 }
 
 

@@ -164,7 +164,7 @@ class ModSequencer {
       }
 
       // reset action of channel 2 clock for ModSequencer
-      if (num_steps_ > 4 && control & GATE_FLAG_AUXILIARY_RISING) {
+      if (num_steps_ > 4 && gate_flag & GATE_FLAG_AUXILIARY_RISING) {
         reset_at_next_clock_ = true;
       }
       if (step_ >= num_steps_) {

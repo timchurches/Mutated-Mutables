@@ -61,7 +61,7 @@ void HighHat::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
   while (size--) {
     GateFlags gate_flag = *gate_flags++;
 
-    if (gate_flag & GATE_FLAG_RISING) &&
+    if (gate_flag & GATE_FLAG_RISING &&
       (open_ || (!open_ && !(gate_flag & GATE_FLAG_AUXILIARY_RISING)))) {
 
       // randomise parameters
@@ -141,7 +141,7 @@ void HighHat::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
 
     // Run the SVF at the double of the original sample rate for stability.
     int32_t filtered_noise = 0;
-    filtered_noise += noise_.Process(noise);
+    filtered_noise += noise_.Process<SVF_MODE_BP>(noise);
     // filtered_noise += noise_.Process(noise);
 
     // The 808-style VCA amplifies only the positive section of the signal.
@@ -154,11 +154,11 @@ void HighHat::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
     int32_t envelope = vca_envelope_.Process() >> 4;
     int32_t vca_noise = envelope * filtered_noise >> 14;
     CLIP(vca_noise);
-    *out++ = hh;
+    *out++ = vca_noise;
   }
   // int32_t hh = 0;
-  // hh += vca_coloration_.Process(vca_noise);
-  // hh += vca_coloration_.Process(vca_noise);
+  // hh += vca_coloration_.Process<SVF_MODE_HP>(vca_noise);
+  // hh += vca_coloration_.Process<SVF_MODE_HP>(vca_noise);
   // hh <<= 1;
   // hh <<= 2;
   // CLIP(hh);
