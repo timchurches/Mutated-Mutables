@@ -65,9 +65,10 @@ void ByteBeats::Process(const GateFlags* gate_flags, int16_t* out, size_t size) 
   }
   equation_index_ = p2_ >> 13 ;
 
-  while (size--) {
-    int cycles = (kDownsample < size) ? kDownsample : size;
-    for (uint8_t i = 0; i < cycles; ++i) {
+  while (size > 0) {
+    int cycles = (size > kDownsample) ? kDownsample : size;
+
+    for (uint8_t i = 0; i < cycles; i++) {
       GateFlags gate_flag = *gate_flags++;
       if (gate_flag & GATE_FLAG_RISING) {
         // (void)0; // noop
@@ -77,9 +78,6 @@ void ByteBeats::Process(const GateFlags* gate_flags, int16_t* out, size_t size) 
         // if (equation_index_ > kMaxEquationIndex) {
         //   equation_index_ = 0 ;
         // }
-      }
-      if (gate_flag & GATE_FLAG_HIGH) {
-        (void)0; // noop
       }
     }
 
@@ -155,8 +153,10 @@ void ByteBeats::Process(const GateFlags* gate_flags, int16_t* out, size_t size) 
     }
     CLIP(sample)
     cycles = kDownsample;
-    while (size-- > 0 && cycles-- > 0) {
-      *out++ = sample;
+    while (cycles-- > 0) {
+      if (size-- > 0) {
+        *out++ = sample;
+      }
     }
   }
 }
