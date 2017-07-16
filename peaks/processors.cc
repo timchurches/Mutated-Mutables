@@ -73,6 +73,7 @@ Processors::callbacks_table_[PROCESSOR_FUNCTION_LAST] = {
   REGISTER_PROCESSOR(WsmLfo)
   REGISTER_PROCESSOR(WsmLfo)
   REGISTER_PROCESSOR(Plo)
+  REGISTER_PROCESSOR(SampleDrum)
 };
 
 void Processors::Init(uint8_t index) {
@@ -102,6 +103,7 @@ void Processors::Init(uint8_t index) {
   randomised_envelope_.Init();
   randomised_bass_drum_.Init();
   randomised_snare_drum_.Init();
+  sample_drum_.Init();
   mod_sequencer_.Init();
   fmlfo_.Init();
   wsmlfo_.Init();

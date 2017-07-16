@@ -15,10 +15,11 @@ CC_FILES       = bass_drum.cc \
 		processors.cc \
 		pulse_shaper.cc \
 		pulse_randomizer.cc \
+		bytebeats.cc \
 		random.cc \
 		resources.cc \
 		snare_drum.cc \
-		svf.cc
+		sample_drum.cc
 OBJ_FILES      = $(CC_FILES:.cc=.o)
 OBJS           = $(patsubst %,$(BUILD_DIR)%,$(OBJ_FILES)) $(STARTUP_OBJ)
 DEPS           = $(OBJS:.o=.d)

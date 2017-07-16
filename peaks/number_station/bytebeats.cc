@@ -36,7 +36,6 @@
 namespace peaks {
 
 const uint8_t kDownsample = 4;
-const uint8_t kMaxEquationIndex = 1;
 
 using namespace stmlib;
 

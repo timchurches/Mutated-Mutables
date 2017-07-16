@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -105,17 +105,17 @@ void NumberStation::Process(
         }
       }
     }
-  
-    // Generate a distorted sine wave with fluctuating frequency.    
+
+    // Generate a distorted sine wave with fluctuating frequency.
     int32_t digit;
     if (voice_) {
       uint16_t integral = phase_ >> 16;
       uint16_t fractional = phase_ & 0xffff;
       if (integral < voice_digits[digit_ + 1]) {
-        uint8_t mask_a = integral * 53;
-        uint8_t mask_b = mask_a + 53;
-        int32_t a = static_cast<int32_t>(wav_digits[integral] ^ mask_a);
-        int32_t b = static_cast<int32_t>(wav_digits[integral + 1] ^ mask_b);
+      //  uint8_t mask_a = integral * 53;
+      //  uint8_t mask_b = mask_a + 53;
+        int32_t a = 0; //static_cast<int32_t>(wav_digits[integral] ^ mask_a);
+        int32_t b = 0; //static_cast<int32_t>(wav_digits[integral + 1] ^ mask_b);
         digit = (a << 8) + (((b - a) * fractional) >> 8);
         digit -= 32768;
         phase_ += phase_increment;
@@ -131,7 +131,7 @@ void NumberStation::Process(
       gate_ = tone_amplitude_ > 0;
     }
     digit = digit + ((digit - ((digit + 4096) ^ 0x055a)) * distortion_ >> 15);
-    
+
     // Generate narrow-band noise.
     int32_t random_sample = Random::GetSample();
     lp_noise_ += (random_sample - lp_noise_) >> 6;

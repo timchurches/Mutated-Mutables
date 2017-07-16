@@ -10,10 +10,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,7 +21,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-# 
+#
 # See http://creativecommons.org/licenses/MIT/ for more information.
 #
 # -----------------------------------------------------------------------------
@@ -68,6 +68,33 @@ waveforms.append(('overdrive', numpy.round(32767 * overdrive).astype(int)))
 Surprise!
 ----------------------------------------------------------------------------"""
 
-digits = file('peaks/data/digits.bin', 'rb').read()
-digits = map(ord, digits)
-waveforms_8 = [('digits', digits)]
+snap = file('peaks/data/snap.bin', 'rb').read()
+snap = map(ord, snap)
+
+clap = file('peaks/data/clap.bin', 'rb').read()
+clap = map(ord, clap)
+
+wood = file('peaks/data/wood.bin', 'rb').read()
+wood = map(ord, wood)
+
+bells = file('peaks/data/bells.bin', 'rb').read()
+bells = map(ord, bells)
+
+shaker = file('peaks/data/shaker.bin', 'rb').read()
+shaker = map(ord, shaker)
+
+tambourine = file('peaks/data/tambourine.bin', 'rb').read()
+tambourine = map(ord, tambourine)
+
+scissors = file('peaks/data/scissors.bin', 'rb').read()
+scissors = map(ord, scissors)
+
+waveforms_8 = [
+  ('snap', snap),
+  ('clap', clap),
+  ('wood', wood),
+  ('bells', bells),
+  ('shaker', shaker),
+  ('tambourine', tambourine),
+  ('scissors', scissors)
+]

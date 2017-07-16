@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -64,7 +64,13 @@ extern const uint16_t lut_svf_scale[];
 extern const uint32_t lut_lfo_increments[];
 extern const uint32_t lut_env_increments[];
 extern const uint32_t lut_oscillator_increments[];
-extern const uint8_t wav_digits[];
+extern const uint8_t wav_snap[];
+extern const uint8_t wav_clap[];
+extern const uint8_t wav_wood[];
+extern const uint8_t wav_bells[];
+extern const uint8_t wav_shaker[];
+extern const uint8_t wav_tambourine[];
+extern const uint8_t wav_scissors[];
 extern const int16_t wav_sine[];
 extern const int16_t wav_fold_power[];
 extern const int16_t wav_fold_sine[];
@@ -94,8 +100,20 @@ extern const int16_t wav_overdrive[];
 #define LUT_ENV_INCREMENTS_SIZE 257
 #define LUT_OSCILLATOR_INCREMENTS 2
 #define LUT_OSCILLATOR_INCREMENTS_SIZE 97
-#define WAV_DIGITS 0
-#define WAV_DIGITS_SIZE 36824
+#define WAV_SNAP 0
+#define WAV_SNAP_SIZE 3548
+#define WAV_CLAP 1
+#define WAV_CLAP_SIZE 3030
+#define WAV_WOOD 2
+#define WAV_WOOD_SIZE 3727
+#define WAV_BELLS 3
+#define WAV_BELLS_SIZE 6452
+#define WAV_SHAKER 4
+#define WAV_SHAKER_SIZE 6339
+#define WAV_TAMBOURINE 5
+#define WAV_TAMBOURINE_SIZE 6801
+#define WAV_SCISSORS 6
+#define WAV_SCISSORS_SIZE 7319
 #define WAV_SINE 0
 #define WAV_SINE_SIZE 1025
 #define WAV_FOLD_POWER 1

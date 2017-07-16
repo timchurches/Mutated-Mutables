@@ -41,6 +41,7 @@
 #include "peaks/drums/fm_drum.h"
 #include "peaks/drums/snare_drum.h"
 #include "peaks/drums/high_hat.h"
+#include "peaks/drums/sample_drum.h"
 #include "peaks/modulations/bouncing_ball.h"
 #include "peaks/modulations/lfo.h"
 #include "peaks/modulations/mini_sequencer.h"
@@ -82,6 +83,7 @@ enum ProcessorFunction {
   PROCESSOR_FUNCTION_WSMLFO,
   PROCESSOR_FUNCTION_RWSMLFO,
   PROCESSOR_FUNCTION_PLO,
+  PROCESSOR_FUNCTION_SAMPLE_DRUM,
   PROCESSOR_FUNCTION_LAST
 };
 
@@ -180,6 +182,7 @@ class Processors {
   DECLARE_PROCESSOR(RandomisedEnvelope, randomised_envelope_);
   DECLARE_PROCESSOR(RandomisedBassDrum, randomised_bass_drum_);
   DECLARE_PROCESSOR(RandomisedSnareDrum, randomised_snare_drum_);
+  DECLARE_PROCESSOR(SampleDrum, sample_drum_);
   DECLARE_PROCESSOR(TuringMachine, turing_machine_);
   DECLARE_PROCESSOR(ModSequencer, mod_sequencer_);
   DECLARE_PROCESSOR(FmLfo, fmlfo_);

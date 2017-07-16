@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_LFO, PROCESSOR_FUNCTION_LFO },
   { PROCESSOR_FUNCTION_TAP_LFO, PROCESSOR_FUNCTION_TAP_LFO },
   { PROCESSOR_FUNCTION_BASS_DRUM, PROCESSOR_FUNCTION_SNARE_DRUM },
-  
+
   { PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE, PROCESSOR_FUNCTION_DUAL_ATTACK_ENVELOPE },
   { PROCESSOR_FUNCTION_REPEATING_ATTACK_ENVELOPE, PROCESSOR_FUNCTION_REPEATING_ATTACK_ENVELOPE },
   { PROCESSOR_FUNCTION_LOOPING_ENVELOPE, PROCESSOR_FUNCTION_LOOPING_ENVELOPE },
@@ -65,7 +65,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_WSMLFO, PROCESSOR_FUNCTION_WSMLFO },
   { PROCESSOR_FUNCTION_RWSMLFO, PROCESSOR_FUNCTION_RWSMLFO },
   { PROCESSOR_FUNCTION_PLO, PROCESSOR_FUNCTION_PLO },
-  
+
   { PROCESSOR_FUNCTION_MINI_SEQUENCER, PROCESSOR_FUNCTION_MINI_SEQUENCER },
   { PROCESSOR_FUNCTION_MOD_SEQUENCER, PROCESSOR_FUNCTION_MOD_SEQUENCER },
   { PROCESSOR_FUNCTION_PULSE_SHAPER, PROCESSOR_FUNCTION_PULSE_SHAPER },
@@ -76,6 +76,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
   { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
   { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
+  { PROCESSOR_FUNCTION_SAMPLE_DRUM, PROCESSOR_FUNCTION_SAMPLE_DRUM },
 };
 
 Storage<0x8020000, 16> storage;
@@ -92,9 +93,9 @@ void Ui::Init(CalibrationData* calibration_data) {
   fill(&adc_threshold_[0], &adc_threshold_[kNumAdcChannels], 0);
   fill(&snapped_[0], &snapped_[kNumAdcChannels], false);
   panel_gate_state_ = 0;
-  
+
   calibrating_ = switches_.pressed_immediate(1);
-  
+
   if (!storage.ParsimoniousLoad(&settings_, &version_token_)) {
     edit_mode_ = EDIT_MODE_TWIN;
     function_[0] = FUNCTION_ENVELOPE;
@@ -105,7 +106,7 @@ void Ui::Init(CalibrationData* calibration_data) {
     function_[0] = static_cast<Function>(settings_.function[0]);
     function_[1] = static_cast<Function>(settings_.function[1]);
     copy(&settings_.pot_value[0], &settings_.pot_value[8], &pot_value_[0]);
-    
+
     if (edit_mode_ == EDIT_MODE_FIRST || edit_mode_ == EDIT_MODE_SECOND) {
       LockPots();
       for (uint8_t i = 0; i < 4; ++i) {
@@ -118,17 +119,17 @@ void Ui::Init(CalibrationData* calibration_data) {
       }
     }
   }
-  
+
   if (switches_.pressed_immediate(SWITCH_TWIN_MODE)) {
     settings_.snap_mode = !settings_.snap_mode;
     SaveState();
   }
-  
+
   ChangeControlMode();
   SetFunction(0, function_[0]);
   SetFunction(1, function_[1]);
   double_press_counter_ = 0;
-  
+
   last_basic_function_[0] = last_basic_function_[1] = FUNCTION_FIRST_BASIC_FUNCTION;
   last_ext_env_function_[0] = last_ext_env_function_[1] = FUNCTION_FIRST_EXTENDED_ENV_FUNCTION;
   last_ext_lfo_function_[0] = last_ext_lfo_function_[1] = FUNCTION_FIRST_EXTENDED_LFO_FUNCTION;
@@ -209,6 +210,7 @@ inline void Ui::RefreshLeds() {
         case FUNCTION_HIGH_HAT:
         case FUNCTION_FM_DRUM_GENERATOR:
         case FUNCTION_RANDOMISED_DRUM_GENERATOR:
+        case FUNCTION_SAMPLE_DRUM:
           leds_.set_pattern(8); // top LED-> 0 0 X x
           break;
         // the remainder
@@ -221,7 +223,7 @@ inline void Ui::RefreshLeds() {
       // x = on constantly, X = blinking, 0 = off
       // extended ENV functions
       case FUNCTION_DUAL_ATTACK_ENVELOPE:
-        leds_.set_pattern(3); // top LED-> x X 0 0 
+        leds_.set_pattern(3); // top LED-> x X 0 0
         break;
       case FUNCTION_REPEATING_ATTACK_ENVELOPE:
         leds_.set_pattern(5); // top LED-> x 0 X 0
@@ -280,13 +282,16 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_RANDOMISED_DRUM_GENERATOR:
         leds_.set_pattern(12); // top LED-> 0 0 X x
         break;
+      case FUNCTION_SAMPLE_DRUM:
+        leds_.set_pattern(11); // top LED-> X X 0 x
+        break;
       // the remainder
       default:
         leds_.set_function(function() & 3);
         break;
     }
   }
-  
+
   uint8_t b[2];
   for (uint8_t i = 0; i < 2; ++i) {
     switch (function_[i]) {
@@ -322,7 +327,7 @@ inline void Ui::RefreshLeds() {
         break;
     }
   }
-  
+
   if (processors[0].function() == PROCESSOR_FUNCTION_NUMBER_STATION) {
     leds_.set_pattern(
         processors[0].number_station().digit() ^ \
@@ -330,7 +335,7 @@ inline void Ui::RefreshLeds() {
     b[0] = processors[0].number_station().gate() ? 255 : 0;
     b[1] = processors[1].number_station().gate() ? 255 : 0;
   }
-  
+
   leds_.set_levels(b[0], b[1]);
 }
 
@@ -384,7 +389,7 @@ void Ui::Poll() {
           system_clock.milliseconds() - press_time_[i] + 1);
     }
   }
-  
+
   RefreshLeds();
   leds_.Write();
 }
@@ -397,14 +402,14 @@ void Ui::OnSwitchPressed(const Event& e) {
   switch (e.control_id) {
     case SWITCH_TWIN_MODE:
       break;
-      
+
     case SWITCH_FUNCTION:
       break;
-      
+
     case SWITCH_GATE_TRIG_1:
       panel_gate_control_[0] = true;
       break;
-    
+
     case SWITCH_GATE_TRIG_2:
       panel_gate_control_[1] = true;
       break;
@@ -490,6 +495,7 @@ void Ui::SetFunction(uint8_t index, Function f) {
     case FUNCTION_FM_DRUM_GENERATOR:
     case FUNCTION_HIGH_HAT:
     case FUNCTION_RANDOMISED_DRUM_GENERATOR:
+    case FUNCTION_SAMPLE_DRUM:
       if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
         last_ext_drum_function_[0] = last_ext_drum_function_[1] = f;
       } else {
@@ -512,7 +518,7 @@ void Ui::OnSwitchReleased(const Event& e) {
       function_[0] = FUNCTION_ENVELOPE;
       function_[1] = FUNCTION_ENVELOPE;
       settings_.snap_mode = false;
-      
+
       SaveState();
       ChangeControlMode();
       SetFunction(0, function_[0]);
@@ -540,42 +546,42 @@ void Ui::OnSwitchReleased(const Event& e) {
           LockPots();
         }
       }
-      
+
       ChangeControlMode();
       SaveState();
       break;
-      
+
     case SWITCH_FUNCTION:
       {
         Function f = function();
         if (e.data > kLongPressDuration) {
           if (f < FUNCTION_FIRST_EXTENDED_ENV_FUNCTION) {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
-              f = static_cast<Function>(last_ext_env_function_[0]);            
+              f = static_cast<Function>(last_ext_env_function_[0]);
             } else {
               f = static_cast<Function>(last_ext_env_function_[edit_mode_ - EDIT_MODE_FIRST]);
             }
           } else if (f < FUNCTION_FIRST_EXTENDED_LFO_FUNCTION) {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
-              f = static_cast<Function>(last_ext_lfo_function_[0]);            
+              f = static_cast<Function>(last_ext_lfo_function_[0]);
             } else {
               f = static_cast<Function>(last_ext_lfo_function_[edit_mode_ - EDIT_MODE_FIRST]);
             }
           } else if (f < FUNCTION_FIRST_EXTENDED_TAP_FUNCTION) {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
-              f = static_cast<Function>(last_ext_tap_function_[0]);            
+              f = static_cast<Function>(last_ext_tap_function_[0]);
             } else {
               f = static_cast<Function>(last_ext_tap_function_[edit_mode_ - EDIT_MODE_FIRST]);
             }
           } else if (f < FUNCTION_FIRST_EXTENDED_DRUM_FUNCTION) {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
-              f = static_cast<Function>(last_ext_drum_function_[0]);            
+              f = static_cast<Function>(last_ext_drum_function_[0]);
             } else {
               f = static_cast<Function>(last_ext_drum_function_[edit_mode_ - EDIT_MODE_FIRST]);
             }
           } else {
             if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
-              f = static_cast<Function>(last_basic_function_[0]);            
+              f = static_cast<Function>(last_basic_function_[0]);
             } else {
               f = static_cast<Function>(last_basic_function_[edit_mode_ - EDIT_MODE_FIRST]);
             }
@@ -609,7 +615,7 @@ void Ui::OnSwitchReleased(const Event& e) {
         SaveState();
       }
       break;
-      
+
     case SWITCH_GATE_TRIG_1:
       panel_gate_control_[0] = false;
       break;
@@ -651,13 +657,13 @@ void Ui::OnPotChanged(const Event& e) {
       {
         uint8_t index = e.control_id + (edit_mode_ - EDIT_MODE_FIRST) * 4;
         Processors* p = &processors[edit_mode_ - EDIT_MODE_FIRST];
-        
+
         int16_t delta = static_cast<int16_t>(pot_value_[index]) - \
             static_cast<int16_t>(e.data >> 8);
         if (delta < 0) {
           delta = -delta;
         }
-        
+
         if (!settings_.snap_mode || snapped_[e.control_id] || delta <= 2) {
           p->set_parameter(e.control_id, e.data);
           pot_value_[index] = e.data >> 8;

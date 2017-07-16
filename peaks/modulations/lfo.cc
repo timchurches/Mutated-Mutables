@@ -257,8 +257,6 @@ void FmLfo::Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
     uint32_t unclipped_modulated_rate = rate_ + fm_delta_;
     if (unclipped_modulated_rate > 65535) {
       unclipped_modulated_rate = 65335 ;
-    } else if (unclipped_modulated_rate <0) {
-      unclipped_modulated_rate = 0 ;
     }
     uint16_t modulated_rate = static_cast<uint16_t>(unclipped_modulated_rate) ;
     int32_t a = lut_lfo_increments[modulated_rate >> 8];
@@ -420,17 +418,6 @@ void WsmLfo::Init() {
   wsm_reset_phase_ = 0;
   wsm_delta_ = 0 ;
 }
-
-const int16_t wsmlfo_presets[7][2] = {
-  { WSMLFO_SHAPE_FOLDED_SINE, 0 },
-  { WSMLFO_SHAPE_FOLDED_POWER_SINE, 0 },
-  { WSMLFO_SHAPE_OVERDRIVEN_SINE, 0 },
-  { WSMLFO_SHAPE_TRIANGLE, 0 },
-  { WSMLFO_SHAPE_TRIANGLE, 32767 },
-  { WSMLFO_SHAPE_SQUARE, 0 },
-  { WSMLFO_SHAPE_NOISE, -32767 },
-  // { WSMLFO_SHAPE_NOISE, 32767 },
-} ;
 
 void WsmLfo::set_shape_parameter_preset(uint16_t value) {
   value = (value >> 8) * 7 >> 8;

@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ enum Function {
   FUNCTION_LFO,
   FUNCTION_TAP_LFO,
   FUNCTION_DRUM_GENERATOR,
-  
+
   FUNCTION_DUAL_ATTACK_ENVELOPE,
   FUNCTION_REPEATING_ATTACK_ENVELOPE,
   FUNCTION_LOOPING_ENVELOPE,
@@ -89,6 +89,7 @@ enum Function {
   FUNCTION_FM_DRUM_GENERATOR,
   FUNCTION_RANDOMISED_DRUM_GENERATOR,
   FUNCTION_HIGH_HAT,
+  FUNCTION_SAMPLE_DRUM,
 
   FUNCTION_LAST,
   FUNCTION_FIRST_BASIC_FUNCTION = FUNCTION_ENVELOPE,
@@ -104,7 +105,7 @@ enum Function {
   FUNCTION_LAST_EXTENDED_TAP_FUNCTION = FUNCTION_BYTEBEATS,
 
   FUNCTION_FIRST_EXTENDED_DRUM_FUNCTION = FUNCTION_FM_DRUM_GENERATOR,
-  FUNCTION_LAST_EXTENDED_DRUM_FUNCTION = FUNCTION_HIGH_HAT,
+  FUNCTION_LAST_EXTENDED_DRUM_FUNCTION = FUNCTION_SAMPLE_DRUM,
 };
 
 struct Settings {
@@ -121,26 +122,26 @@ class Ui {
  public:
   Ui() { }
   ~Ui() { }
-  
+
   void Init(CalibrationData* calibration_data);
   void Poll();
   void PollPots();
   void DoEvents();
   void FlushEvents();
-  
+
   void set_led_brightness(int channel, int16_t value) {
     brightness_[channel] = value;
   }
-  
+
   inline uint32_t ReadPanelGateState() {
     uint32_t state = 0;
     state |= panel_gate_control_[0] ? 1 : 0;
     state |= panel_gate_control_[1] ? 2 : 0;
     return state;
   }
-  
+
   inline bool calibrating() const { return calibrating_; }
-  
+
  private:
   inline Function function() const {
     return edit_mode_ == EDIT_MODE_SECOND ? function_[1] : function_[0];
@@ -150,7 +151,7 @@ class Ui {
   void OnSwitchReleased(const stmlib::Event& e);
   void OnPotChanged(const stmlib::Event& e);
   void RefreshLeds();
-  
+
   void ChangeControlMode();
   void SetFunction(uint8_t index, Function f);
   void SaveState();
@@ -161,38 +162,38 @@ class Ui {
   uint32_t press_time_[kNumSwitches];
   bool panel_gate_control_[2];
   static const ProcessorFunction function_table_[FUNCTION_LAST][2];
-  
+
   stmlib::EventQueue<32> queue_;
-  
+
   Leds leds_;
   Switches switches_;
   Adc adc_;
-  
+
   EditMode edit_mode_;
   Function function_[2];
   Settings settings_;
   uint16_t version_token_;
-  
+
   int16_t brightness_[2];
-  
+
   uint8_t panel_gate_state_;
-  
+
   uint8_t double_press_counter_;
   uint8_t pot_value_[8];
-  
+
   bool snap_mode_;
   bool snapped_[kNumAdcChannels];
-  
+
   CalibrationData* calibration_data_;
   bool calibrating_;
-  
+
   // store last used function on each page
   Function last_basic_function_[2];
   Function last_ext_env_function_[2];
   Function last_ext_lfo_function_[2];
   Function last_ext_tap_function_[2];
   Function last_ext_drum_function_[2];
-  
+
   DISALLOW_COPY_AND_ASSIGN(Ui);
 };
 
