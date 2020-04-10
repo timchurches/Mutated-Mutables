@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -67,13 +67,13 @@ enum WsmLfoShape {
 class Lfo {
  public:
   typedef int16_t (Lfo::*ComputeSampleFn)();
-   
+
   Lfo() { }
   ~Lfo() { }
-  
+
   void Init();
-  void FillBuffer(InputBuffer* input_buffer, OutputBuffer* output_buffer);
-  
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       if (sync_) {
@@ -84,7 +84,7 @@ class Lfo {
         set_shape_parameter_preset(parameter[1]);
       }
       set_reset_phase(0);
-      set_level(65535);
+      set_level(40960);
     } else {
       if (sync_) {
         set_level(parameter[0]);
@@ -92,7 +92,7 @@ class Lfo {
         set_parameter(parameter[2] - 32768);
         set_reset_phase(parameter[3] - 32768);
       } else {
-        set_level(65535);
+        set_level(40960);
         set_rate(parameter[0]);
         set_shape_integer(parameter[1]);
         set_parameter(parameter[2] - 32768);
@@ -100,11 +100,11 @@ class Lfo {
       }
     }
   }
-  
+
   inline void set_rate(uint16_t rate) {
     rate_ = rate;
   }
-  
+
   inline void set_shape(LfoShape shape) {
     shape_ = shape;
   }
@@ -112,35 +112,35 @@ class Lfo {
   inline void set_shape_integer(uint16_t value) {
     shape_ = static_cast<LfoShape>(value * LFO_SHAPE_LAST >> 16);
   }
-  
+
   void set_shape_parameter_preset(uint16_t value);
-  
+
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
-  
+
   inline void set_reset_phase(int16_t reset_phase) {
     reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
   }
-  
+
   inline void set_sync(bool sync) {
     if (!sync_ && sync) {
       pattern_predictor_.Init();
     }
     sync_ = sync;
   }
-  
+
   inline void set_level(uint16_t level) {
     level_ = level >> 1;
   }
-  
+
  private:
   int16_t ComputeSampleSine();
   int16_t ComputeSampleTriangle();
   int16_t ComputeSampleSquare();
   int16_t ComputeSampleSteps();
   int16_t ComputeSampleNoise();
-   
+
   uint16_t rate_;
   LfoShape shape_;
   int16_t parameter_;
@@ -150,19 +150,19 @@ class Lfo {
   bool sync_;
   uint32_t sync_counter_;
   stmlib::PatternPredictor<32, 8> pattern_predictor_;
-  
+
   uint32_t phase_;
   uint32_t phase_increment_;
-  
+
   uint32_t period_;
   uint32_t end_of_attack_;
   uint32_t attack_factor_;
   uint32_t decay_factor_;
   int16_t previous_parameter_;
-  
+
   int32_t value_;
   int32_t next_value_;
-  
+
   static ComputeSampleFn compute_sample_fn_table_[];
 
   DISALLOW_COPY_AND_ASSIGN(Lfo);
@@ -172,13 +172,13 @@ class Lfo {
 class FmLfo {
  public:
   typedef int16_t (FmLfo::*ComputeSampleFn)();
-   
+
   FmLfo() { }
   ~FmLfo() { }
-  
+
   void Init();
-  void FillBuffer(InputBuffer* input_buffer, OutputBuffer* output_buffer);
-  
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_rate(parameter[0]);
@@ -193,7 +193,7 @@ class FmLfo {
       set_fm_depth(parameter[3]);
     }
   }
-  
+
   inline void set_rate(uint16_t rate) {
     rate_ = rate;
   }
@@ -205,9 +205,9 @@ class FmLfo {
   inline void set_shape_integer(uint16_t value) {
     shape_ = static_cast<LfoShape>(value * LFO_SHAPE_LAST >> 16);
   }
-  
+
   void set_shape_parameter_preset(uint16_t value);
-  
+
   inline void set_fm_rate(uint16_t fm_rate) {
     fm_rate_ = fm_rate;
   }
@@ -221,15 +221,15 @@ class FmLfo {
       fm_parameter_ = 16383;
     }
   }
-  
+
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
-  
+
   inline void set_reset_phase(int16_t reset_phase) {
     reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
   }
-    
+
   inline void set_level(uint16_t level) {
     level_ = level >> 1;
   }
@@ -237,8 +237,8 @@ class FmLfo {
   inline void set_mod_type(bool mod_type) {
     random_mod_ = mod_type;
   }
-  
-    
+
+
  private:
   int16_t ComputeSampleSine();
   int16_t ComputeSampleTriangle();
@@ -246,13 +246,13 @@ class FmLfo {
   int16_t ComputeSampleSteps();
   int16_t ComputeSampleNoise();
   int16_t ComputeModulation();
-   
+
   uint16_t rate_;
   LfoShape shape_;
   int16_t parameter_;
   int32_t reset_phase_;
   int32_t level_;
-  
+
   uint32_t phase_;
   uint32_t phase_increment_;
 
@@ -266,19 +266,19 @@ class FmLfo {
   int16_t fm_delta_ ;
 
   bool random_mod_ ;
-  
+
   uint32_t period_;
   uint32_t end_of_attack_;
   uint32_t attack_factor_;
   uint32_t decay_factor_;
   int16_t previous_parameter_;
-  
+
   int32_t value_;
   int32_t next_value_;
 
   int32_t fm_value_;
   int32_t fm_next_value_;
-  
+
   static ComputeSampleFn compute_sample_fn_table_[];
 
   DISALLOW_COPY_AND_ASSIGN(FmLfo);
@@ -289,13 +289,13 @@ class FmLfo {
 class WsmLfo {
  public:
   typedef int16_t (WsmLfo::*ComputeSampleFn)();
-   
+
   WsmLfo() { }
   ~WsmLfo() { }
-  
+
   void Init();
-  void FillBuffer(InputBuffer* input_buffer, OutputBuffer* output_buffer);
-  
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_rate(parameter[0]);
@@ -311,7 +311,7 @@ class WsmLfo {
       set_wsm_depth(parameter[3]);
     }
   }
-  
+
   inline void set_rate(uint16_t rate) {
     rate_ = rate;
   }
@@ -323,9 +323,9 @@ class WsmLfo {
   inline void set_shape_integer(uint16_t value) {
     shape_ = static_cast<WsmLfoShape>(value * WSMLFO_SHAPE_LAST >> 16);
   }
-  
+
   void set_shape_parameter_preset(uint16_t value);
-  
+
   inline void set_wsm_rate(uint16_t wsm_rate) {
     wsm_rate_ = wsm_rate;
   }
@@ -339,23 +339,23 @@ class WsmLfo {
       wsm_parameter_ = 16383;
     }
   }
-  
+
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
-  
+
   inline void set_reset_phase(int16_t reset_phase) {
     reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
   }
-    
+
   inline void set_level(uint16_t level) {
     level_ = level >> 1;
   }
-  
+
   inline void set_mod_type(bool mod_type) {
     random_mod_ = mod_type;
   }
-    
+
  private:
   int16_t ComputeSampleFoldedSine();
   int16_t ComputeSampleFoldedPowerSine();
@@ -364,13 +364,13 @@ class WsmLfo {
   int16_t ComputeSampleSquare();
   int16_t ComputeSampleNoise();
   int16_t ComputeModulation();
-   
+
   uint16_t rate_;
   WsmLfoShape shape_;
   int16_t parameter_;
   int32_t reset_phase_;
   int32_t level_;
-  
+
   uint16_t wsm_rate_;
   uint16_t wsm_depth_;
   int16_t wsm_parameter_;
@@ -381,22 +381,22 @@ class WsmLfo {
   int16_t wsm_delta_ ;
 
   bool random_mod_ ;
-  
+
   uint32_t phase_;
   uint32_t phase_increment_;
-  
+
   uint32_t period_;
   uint32_t end_of_attack_;
   uint32_t attack_factor_;
   uint32_t decay_factor_;
   int16_t previous_parameter_;
-  
+
   int32_t value_;
   int32_t next_value_;
 
   int32_t wsm_value_;
   int32_t wsm_next_value_;
-    
+
   static ComputeSampleFn compute_sample_fn_table_[];
 
   DISALLOW_COPY_AND_ASSIGN(WsmLfo);
@@ -407,13 +407,13 @@ class WsmLfo {
 class Plo {
  public:
   typedef int16_t (Plo::*ComputeSampleFn)();
-   
+
   Plo() { }
   ~Plo() { }
-  
+
   void Init();
-  void FillBuffer(InputBuffer* input_buffer, OutputBuffer* output_buffer);
-  
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size);
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_pitch_coefficient(parameter[0]);
@@ -427,7 +427,7 @@ class Plo {
       set_wsm_depth(parameter[3]);
     }
   }
-  
+
   inline void set_rate(uint16_t rate) {
     rate_ = rate;
   }
@@ -439,7 +439,7 @@ class Plo {
   inline void set_shape_integer(uint16_t value) {
     shape_ = static_cast<WsmLfoShape>(value * WSMLFO_SHAPE_LAST >> 16);
   }
-  
+
   void set_shape_parameter_preset(uint16_t value);
 
   void set_pitch_coefficient(uint16_t value);
@@ -450,7 +450,7 @@ class Plo {
     }
     sync_ = sync;
   }
-  
+
   inline void set_wsm_rate(uint16_t wsm_rate) {
     wsm_rate_ = wsm_rate;
   }
@@ -458,23 +458,23 @@ class Plo {
   inline void set_wsm_depth(uint16_t wsm_depth) {
       wsm_depth_ = wsm_depth;
   }
-  
+
   inline void set_parameter(int16_t parameter) {
     parameter_ = parameter;
   }
-  
+
   // inline void set_reset_phase(int16_t reset_phase) {
   //   reset_phase_ = static_cast<int32_t>(reset_phase) << 16;
   // }
-    
+
   inline void set_level(uint16_t level) {
     level_ = level >> 1;
   }
-  
+
   // inline void set_mod_type(bool mod_type) {
   //   random_mod_ = mod_type;
   // }
-    
+
  private:
   int16_t ComputeSampleFoldedSine();
   int16_t ComputeSampleFoldedPowerSine();
@@ -483,13 +483,13 @@ class Plo {
   int16_t ComputeSampleSquare();
   int16_t ComputeSampleNoise();
   int16_t ComputeModulationSine();
-   
+
   uint16_t rate_;
   WsmLfoShape shape_;
   int16_t parameter_;
   int32_t reset_phase_;
   int32_t level_;
-  
+
   uint16_t wsm_rate_;
   uint16_t wsm_depth_;
   int16_t wsm_parameter_;
@@ -500,24 +500,24 @@ class Plo {
   bool sync_;
   uint32_t sync_counter_;
   stmlib::PatternPredictor<32, 8> pattern_predictor_;
-  
+
   uint32_t phase_;
   uint32_t phase_increment_;
-  
+
   uint32_t period_;
   uint32_t end_of_attack_;
   uint32_t attack_factor_;
   uint32_t decay_factor_;
   int16_t previous_parameter_;
-  
+
   int32_t value_;
   int32_t next_value_;
 
   int32_t wsm_value_;
   int32_t wsm_next_value_;
-  
+
   int8_t pitch_multiplier_ ;
-  
+
   static ComputeSampleFn compute_sample_fn_table_[];
 
   DISALLOW_COPY_AND_ASSIGN(Plo);

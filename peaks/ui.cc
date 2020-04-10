@@ -36,6 +36,8 @@
 
 #include <algorithm>
 
+#include "peaks/calibration_data.h"
+
 namespace peaks {
 
 using namespace std;
@@ -78,16 +80,20 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
 
 Storage<0x8020000, 16> storage;
 
-void Ui::Init() {
+void Ui::Init(CalibrationData* calibration_data) {
+  calibration_data_ = calibration_data;
   leds_.Init();
   switches_.Init();
   adc_.Init();
   system_clock.Tick();
 
+  fill(&adc_lp_[0], &adc_lp_[kNumAdcChannels], 0);
   fill(&adc_value_[0], &adc_value_[kNumAdcChannels], 0);
   fill(&adc_threshold_[0], &adc_threshold_[kNumAdcChannels], 0);
   fill(&snapped_[0], &snapped_[kNumAdcChannels], false);
   panel_gate_state_ = 0;
+  
+  calibrating_ = switches_.pressed_immediate(1);
   
   if (!storage.ParsimoniousLoad(&settings_, &version_token_)) {
     edit_mode_ = EDIT_MODE_TWIN;
@@ -152,6 +158,12 @@ void Ui::SaveState() {
 }
 
 inline void Ui::RefreshLeds() {
+    if (calibrating_) {
+    leds_.set_pattern(0xf);
+    leds_.set_twin_mode(true);
+    leds_.set_levels(0, 0);
+    return;
+  }
   uint8_t flash = (system_clock.milliseconds() >> 7) & 7;
   switch (edit_mode_) {
     case EDIT_MODE_FIRST:
@@ -294,7 +306,13 @@ inline void Ui::RefreshLeds() {
       case FUNCTION_PLO:
       case FUNCTION_MINI_SEQUENCER:
       case FUNCTION_MOD_SEQUENCER:
-        b[i] = static_cast<uint16_t>(brightness_[i] + 32768) >> 8;
+        {
+          int32_t brightness = int32_t(brightness_[i]) * 409 >> 8;
+          brightness += 32768;
+          brightness >>= 8;
+          CONSTRAIN(brightness, 0, 255);
+          b[i] = brightness;
+        }
         break;
       case FUNCTION_TURING_MACHINE:
         b[i] = static_cast<uint16_t>(brightness_[i]) >> 5;
@@ -318,8 +336,9 @@ inline void Ui::RefreshLeds() {
 
 void Ui::PollPots() {
   for (uint8_t i = 0; i < kNumAdcChannels; ++i) {
-    int32_t value = adc_.value(i);
-    int32_t current_value = static_cast<int32_t>(adc_value_[i]);
+    adc_lp_[i] = (int32_t(adc_.value(i)) + adc_lp_[i] * 7) >> 3;
+    int32_t value = adc_lp_[i];
+    int32_t current_value = adc_value_[i];
     if (value >= current_value + adc_threshold_[i] ||
         value <= current_value - adc_threshold_[i] ||
         !adc_threshold_[i]) {
@@ -393,14 +412,18 @@ void Ui::OnSwitchPressed(const Event& e) {
 }
 
 void Ui::ChangeControlMode() {
+  uint16_t parameters[4];
+  for (int i = 0; i < 4; ++i) {
+    parameters[i] = adc_value_[i];
+  }
   if (edit_mode_ == EDIT_MODE_SPLIT) {
-    processors[0].CopyParameters(&adc_value_[0], 2);
-    processors[1].CopyParameters(&adc_value_[2], 2);
+    processors[0].CopyParameters(&parameters[0], 2);
+    processors[1].CopyParameters(&parameters[2], 2);
     processors[0].set_control_mode(CONTROL_MODE_HALF);
     processors[1].set_control_mode(CONTROL_MODE_HALF);
   } else if (edit_mode_ == EDIT_MODE_TWIN) {
-    processors[0].CopyParameters(&adc_value_[0], 4);
-    processors[1].CopyParameters(&adc_value_[0], 4);
+    processors[0].CopyParameters(&parameters[0], 4);
+    processors[1].CopyParameters(&parameters[0], 4);
     processors[0].set_control_mode(CONTROL_MODE_FULL);
     processors[1].set_control_mode(CONTROL_MODE_FULL);
   } else {
@@ -479,6 +502,27 @@ void Ui::SetFunction(uint8_t index, Function f) {
 }
 
 void Ui::OnSwitchReleased(const Event& e) {
+	  if (calibrating_) {
+    if (e.control_id == SWITCH_TWIN_MODE) {
+      // Save calibration.
+      calibration_data_->Save();
+
+      // Reset all settings to defaults.
+      edit_mode_ = EDIT_MODE_TWIN;
+      function_[0] = FUNCTION_ENVELOPE;
+      function_[1] = FUNCTION_ENVELOPE;
+      settings_.snap_mode = false;
+      
+      SaveState();
+      ChangeControlMode();
+      SetFunction(0, function_[0]);
+      SetFunction(1, function_[1]);
+
+      // Done with calibration.
+      calibrating_ = false;
+    }
+    return;
+  }
   switch (e.control_id) {
     case SWITCH_TWIN_MODE:
       if (e.data > kLongPressDuration) {
@@ -577,6 +621,17 @@ void Ui::OnSwitchReleased(const Event& e) {
 }
 
 void Ui::OnPotChanged(const Event& e) {
+  if (calibrating_) {
+    pot_value_[e.control_id] = e.data >> 8;
+    for (uint8_t i = 0; i < 2; ++i) {
+      int32_t coarse = pot_value_[i * 2];
+      int32_t fine = pot_value_[i * 2 + 1];
+      int32_t offset = ((coarse - 128) << 3) + ((fine - 128) >> 1);
+      calibration_data_->set_dac_offset(i, -offset);
+    }
+    return;
+  }
+
   switch (edit_mode_) {
     case EDIT_MODE_TWIN:
       processors[0].set_parameter(e.control_id, e.data);

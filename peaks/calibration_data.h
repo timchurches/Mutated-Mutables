@@ -24,71 +24,46 @@
 //
 // -----------------------------------------------------------------------------
 //
-// Driver for DAC.
+// Calibration settings.
 
-#ifndef PEAKS_DRIVERS_DAC_H_
-#define PEAKS_DRIVERS_DAC_H_
-
-#include <stm32f10x_conf.h>
+#ifndef PEAKS_CALIBRATION_DATA_H_
+#define PEAKS_CALIBRATION_DATA_H_
 
 #include "stmlib/stmlib.h"
 
 namespace peaks {
 
-const uint16_t kPinSS = GPIO_Pin_12;
+struct CalibrationSettings {
+  int16_t dac_offset[2];
+};
 
-class Dac {
+class CalibrationData {
  public:
-  Dac() { }
-  ~Dac() { }
-
+  CalibrationData() { }
+  ~CalibrationData() { }
+  
   void Init();
-
-  inline void Write(int index, uint16_t value) {
-    data_[index] = value;
-  }
-
-  inline bool Update() {
-    GPIOB->BSRR = kPinSS;
-    GPIOB->BRR = kPinSS;
-    
-    if (wrote_both_channels_) {
-      SPI2->DR = 0x2400 | (data_[0] >> 8);
-      wrote_both_channels_ = false;
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      SPI2->DR = data_[0] << 8;
-    } else {
-      SPI2->DR = 0x1000 | (data_[1] >> 8);
-      wrote_both_channels_ = true;
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      __asm__("nop");
-      SPI2->DR = data_[1] << 8;
-    }
-    return wrote_both_channels_;
+  
+  inline uint16_t DacCode(uint8_t channel, int16_t value) const {
+    int32_t shifted_value = 32767 - static_cast<int32_t>(value);
+    shifted_value += static_cast<int32_t>(
+        calibration_settings_.dac_offset[channel]);
+    CONSTRAIN(shifted_value, 0, 65535);
+    return static_cast<uint16_t>(shifted_value);
   }
   
-  void Write(uint16_t channel_1);
-
+  inline void set_dac_offset(uint8_t channel, int16_t offset) {
+    calibration_settings_.dac_offset[channel] = offset;
+  }
+  
+  void Save();
+  
  private:
-  uint16_t data_[2];
-  bool wrote_both_channels_;
+  CalibrationSettings calibration_settings_;
   
-  DISALLOW_COPY_AND_ASSIGN(Dac);
+  DISALLOW_COPY_AND_ASSIGN(CalibrationData);
 };
 
 }  // namespace peaks
 
-#endif  // PEAKS_DRIVERS_DAC_H_
+#endif  // PEAKS_CALIBRATION_DATA_H_

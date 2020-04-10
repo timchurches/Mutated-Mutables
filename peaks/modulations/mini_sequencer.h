@@ -2,9 +2,9 @@
 //
 // Author: Olivier Gillet (ol.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
-// Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
-// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
+// Modifications may be determined by examining the differences between the last commit
+// by Olivier Gillet (pichenettes) and the HEAD commit at
+// https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -48,22 +48,25 @@ class MiniSequencer {
  public:
   MiniSequencer() { }
   ~MiniSequencer() { }
-  
+
   void Init() {
     std::fill(&steps_[0], &steps_[kMaxNumSteps], 0);
     num_steps_ = 4;
     step_ = 0;
     reset_at_next_clock_ = false;
   }
-  
+
   inline void set_step(uint8_t index, int16_t value) {
-    steps_[index] = value;
+    int32_t difference = abs(int32_t(steps_[index]) - value);
+    if (difference > 0) {
+      steps_[index] = value;
+    }
   }
-  
+
   inline void set_num_steps(uint8_t num_steps) {
     num_steps_ = num_steps;
   }
-  
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_step(0, parameter[0] - 32768);
@@ -77,24 +80,27 @@ class MiniSequencer {
       set_num_steps(4);
     }
   }
-  
-  inline int16_t ProcessSingleSample(uint8_t control) {
-    if (control & CONTROL_GATE_RISING) {
-      ++step_;
-      if (reset_at_next_clock_) {
-        reset_at_next_clock_  = false;
+
+  void Process(const GateFlags* gate_flags, int16_t* out, size_t size) {
+    while (size--) {
+      GateFlags gate_flag = *gate_flags++;
+      if (gate_flag & GATE_FLAG_RISING) {
+        ++step_;
+        if (reset_at_next_clock_) {
+          reset_at_next_clock_  = false;
+          step_ = 0;
+        }
+      }
+      if (num_steps_ > 2 && gate_flag & GATE_FLAG_AUXILIARY_RISING) {
+        reset_at_next_clock_ = true;
+      }
+      if (step_ >= num_steps_) {
         step_ = 0;
       }
+      *out++ = static_cast<int32_t>(steps_[step_]) * 40960 >> 16;
     }
-    if (num_steps_ > 2 && control & CONTROL_GATE_RISING_AUXILIARY) {
-      reset_at_next_clock_ = true;
-    }
-    if (step_ >= num_steps_) {
-      step_ = 0;
-    }
-    return steps_[step_];
   }
-  
+
  private:
   uint8_t num_steps_;
   uint8_t step_;
@@ -109,22 +115,22 @@ class ModSequencer {
  public:
   ModSequencer() { }
   ~ModSequencer() { }
-  
+
   void Init() {
     std::fill(&steps_[0], &steps_[kMaxModSeqNumSteps], 0);
     num_steps_ = 8;
     step_ = 0;
     reset_at_next_clock_ = false;
   }
-  
+
   inline void set_step(uint8_t index, int16_t value) {
     steps_[index] = value;
   }
-  
+
   inline void set_num_steps(uint8_t num_steps) {
     num_steps_ = num_steps;
   }
-  
+
   void Configure(uint16_t* parameter, ControlMode control_mode) {
     if (control_mode == CONTROL_MODE_HALF) {
       set_step(0, parameter[0] - 32768);
@@ -144,25 +150,30 @@ class ModSequencer {
      set_num_steps(8);
     }
   }
-  
-  inline int16_t ProcessSingleSample(uint8_t control) {
-    if (control & CONTROL_GATE_RISING) {
-      ++step_;
-      if (reset_at_next_clock_) {
-        reset_at_next_clock_  = false;
+
+  void Process(
+      const GateFlags* gate_flags, int16_t* out, size_t size) {
+    while (size--) {
+      GateFlags gate_flag = *gate_flags++;
+      if (gate_flag & GATE_FLAG_RISING) {
+        ++step_;
+        if (reset_at_next_clock_) {
+          reset_at_next_clock_  = false;
+          step_ = 0;
+        }
+      }
+
+      // reset action of channel 2 clock for ModSequencer
+      if (num_steps_ > 4 && gate_flag & GATE_FLAG_AUXILIARY_RISING) {
+        reset_at_next_clock_ = true;
+      }
+      if (step_ >= num_steps_) {
         step_ = 0;
       }
+      *out++ = steps_[step_];
     }
-    // reset action of channel 2 clock for ModSequencer
-    if (num_steps_ > 4 && control & CONTROL_GATE_RISING_AUXILIARY) {
-      reset_at_next_clock_ = true;
-    }
-    if (step_ >= num_steps_) {
-      step_ = 0;
-    }
-    return steps_[step_];
   }
-  
+
  private:
   uint8_t num_steps_;
   uint8_t step_;
