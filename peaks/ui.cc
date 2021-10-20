@@ -74,6 +74,7 @@ const ProcessorFunction Ui::function_table_[FUNCTION_LAST][2] = {
   { PROCESSOR_FUNCTION_BYTEBEATS, PROCESSOR_FUNCTION_BYTEBEATS },
 
   { PROCESSOR_FUNCTION_FM_DRUM, PROCESSOR_FUNCTION_FM_DRUM },
+  { PROCESSOR_FUNCTION_CYMBAL, PROCESSOR_FUNCTION_CYMBAL },
   { PROCESSOR_FUNCTION_RANDOMISED_BASS_DRUM, PROCESSOR_FUNCTION_RANDOMISED_SNARE_DRUM },
   { PROCESSOR_FUNCTION_HIGH_HAT, PROCESSOR_FUNCTION_HIGH_HAT },
 };
@@ -207,6 +208,7 @@ inline void Ui::RefreshLeds() {
           break;
         // extended DRUM functions
         case FUNCTION_HIGH_HAT:
+		case FUNCTION_CYMBAL:
         case FUNCTION_FM_DRUM_GENERATOR:
         case FUNCTION_RANDOMISED_DRUM_GENERATOR:
           leds_.set_pattern(8); // top LED-> 0 0 X x
@@ -272,13 +274,16 @@ inline void Ui::RefreshLeds() {
         break;
       // extended DRUM functions
       case FUNCTION_HIGH_HAT:
+        leds_.set_pattern(12); // top LED-> 0 0 X x
+        break;
+      case FUNCTION_CYMBAL:
         leds_.set_pattern(10); // top LED-> 0 X 0 x
         break;
       case FUNCTION_FM_DRUM_GENERATOR:
         leds_.set_pattern(9); // top LED-> X 0 0 x
         break;
       case FUNCTION_RANDOMISED_DRUM_GENERATOR:
-        leds_.set_pattern(12); // top LED-> 0 0 X x
+        leds_.set_pattern(11); // top LED-> X X 0 x
         break;
       // the remainder
       default:
@@ -489,6 +494,7 @@ void Ui::SetFunction(uint8_t index, Function f) {
       break;
     case FUNCTION_FM_DRUM_GENERATOR:
     case FUNCTION_HIGH_HAT:
+    case FUNCTION_CYMBAL:
     case FUNCTION_RANDOMISED_DRUM_GENERATOR:
       if (edit_mode_ == EDIT_MODE_SPLIT || edit_mode_ == EDIT_MODE_TWIN) {
         last_ext_drum_function_[0] = last_ext_drum_function_[1] = f;
