@@ -131,9 +131,9 @@ class MultistageEnvelope {
   }
 
  private:
-  int16_t level_[kMaxNumSegments];
-  uint16_t time_[kMaxNumSegments];
-  EnvelopeShape shape_[kMaxNumSegments];
+  int16_t level_[kMaxNumSegments] = {};
+  uint16_t time_[kMaxNumSegments] = {};
+  EnvelopeShape shape_[kMaxNumSegments] = {};
 
   int16_t segment_;
   int16_t start_value_;
@@ -239,9 +239,9 @@ class DualAttackEnvelope {
   }
 
  private:
-  int16_t level_[kMaxNumSegments];
-  uint16_t time_[kMaxNumSegments];
-  EnvelopeShape shape_[kMaxNumSegments];
+  int16_t level_[kMaxNumSegments] = {};
+  uint16_t time_[kMaxNumSegments] = {};
+  EnvelopeShape shape_[kMaxNumSegments] = {};
 
   int16_t segment_;
   int16_t start_value_;
@@ -346,9 +346,9 @@ class RepeatingAttackEnvelope {
   }
 
  private:
-  int16_t level_[kMaxNumSegments];
-  uint16_t time_[kMaxNumSegments];
-  EnvelopeShape shape_[kMaxNumSegments];
+  int16_t level_[kMaxNumSegments] = {};
+  uint16_t time_[kMaxNumSegments] = {};
+  EnvelopeShape shape_[kMaxNumSegments] = {};
 
   int16_t segment_;
   int16_t start_value_;
@@ -454,9 +454,9 @@ class LoopingEnvelope {
   }
 
  private:
-  int16_t level_[kMaxNumSegments];
-  uint16_t time_[kMaxNumSegments];
-  EnvelopeShape shape_[kMaxNumSegments];
+  int16_t level_[kMaxNumSegments] = {};
+  uint16_t time_[kMaxNumSegments] = {};
+  EnvelopeShape shape_[kMaxNumSegments] = {};
 
   int16_t segment_;
   int16_t start_value_;
@@ -573,12 +573,12 @@ class RandomisedEnvelope {
   }
 
  private:
-  int16_t level_[kMaxNumSegments];
-  int16_t base_level_[kMaxNumSegments];
+  int16_t level_[kMaxNumSegments] = {};
+  int16_t base_level_[kMaxNumSegments] = {};
 
-  uint16_t base_time_[kMaxNumSegments];
-  uint16_t time_[kMaxNumSegments];
-  EnvelopeShape shape_[kMaxNumSegments];
+  uint16_t base_time_[kMaxNumSegments] = {};
+  uint16_t time_[kMaxNumSegments] = {};
+  EnvelopeShape shape_[kMaxNumSegments] = {};
 
   int16_t segment_;
   int16_t start_value_;
