@@ -1,9 +1,9 @@
-// Copyright 2013 Olivier Gillet, 2015 Tim Churches
+// Copyright 2013 Emilie Gillet, 2015 Tim Churches
 //
-// Author: Olivier Gillet (ol.gillet@gmail.com)
+// Author: Emilie Gillet (emilie.o.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
 // Modifications may be determined by examining the differences between the last commit
-// by Olivier Gillet (pichenettes) and the HEAD commit at
+// by Emilie Gillet (pichenettes) and the HEAD commit at
 // https://github.com/timchurches/Mutated-Mutables/tree/master/peaks
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

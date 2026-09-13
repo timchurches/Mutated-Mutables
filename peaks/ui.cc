@@ -1,9 +1,9 @@
-// Copyright 2013 Olivier Gillet.
+// Copyright 2013 Emilie Gillet.
 //
-// Author: Olivier Gillet (ol.gillet@gmail.com)
+// Author: Emilie Gillet (emilie.o.gillet@gmail.com)
 // Modifications: Tim Churches (tim.churches@gmail.com)
 // Modifications may be determined by examining the differences between the last commit 
-// by Olivier Gillet (pichenettes) and the HEAD commit at 
+// by Emilie Gillet (pichenettes) and the HEAD commit at 
 // https://github.com/timchurches/Mutated-Mutables/tree/master/peaks 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -82,6 +82,7 @@ Storage<0x8020000, 16> storage;
 
 void Ui::Init(CalibrationData* calibration_data) {
   calibration_data_ = calibration_data;
+  
   leds_.Init();
   switches_.Init();
   adc_.Init();
@@ -502,7 +503,7 @@ void Ui::SetFunction(uint8_t index, Function f) {
 }
 
 void Ui::OnSwitchReleased(const Event& e) {
-	  if (calibrating_) {
+  if (calibrating_) {
     if (e.control_id == SWITCH_TWIN_MODE) {
       // Save calibration.
       calibration_data_->Save();
@@ -523,6 +524,7 @@ void Ui::OnSwitchReleased(const Event& e) {
     }
     return;
   }
+  
   switch (e.control_id) {
     case SWITCH_TWIN_MODE:
       if (e.data > kLongPressDuration) {
